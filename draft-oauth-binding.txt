@@ -1,0 +1,280 @@
+
+
+
+Network Working Group                                     C. Scholz, Ed.
+Internet-Draft                                           COM.lounge GmbH
+Intended status: Standards Track                                E. Maler
+Expires: December 23, 2010                                        PayPal
+                                                           June 21, 2010
+
+
+               The OAuth Dynamic Client Binding Protocol
+                     draft-oauth-binding-v1-00.txt
+
+Abstract
+
+   This specification describes the OAuth Dynamic Client Binding
+   protocol.
+
+Status of this Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on December 23, 2010.
+
+Copyright Notice
+
+   Copyright (c) 2010 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+
+Scholz & Maler          Expires December 23, 2010               [Page 1]
+
+Internet-Draft        OAuth Dynamic Client Binding0            June 2010
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . . . 3
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . . . 3
+     1.2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . 3
+     1.3.  Overview  . . . . . . . . . . . . . . . . . . . . . . . . . 4
+   2.  Security Considerations . . . . . . . . . . . . . . . . . . . . 4
+   Appendix A.  Examples . . . . . . . . . . . . . . . . . . . . . . . 4
+   Appendix B.  Contributors . . . . . . . . . . . . . . . . . . . . . 4
+   Appendix C.  Acknowledgements . . . . . . . . . . . . . . . . . . . 4
+   Appendix D.  Document History . . . . . . . . . . . . . . . . . . . 4
+   3.  Normative References  . . . . . . . . . . . . . . . . . . . . . 4
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . . . 5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Scholz & Maler          Expires December 23, 2010               [Page 2]
+
+Internet-Draft        OAuth Dynamic Client Binding0            June 2010
+
+
+1.  Introduction
+
+   In some scenarios it makes sense if anonymous OAuth clients can use
+   an OAuth authorization server without prior manually transferring
+   client credentials.  This protocol defines a way to automate this
+   step.
+
+1.1.  Notational Conventions
+
+   The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT',
+   'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'MAY', and 'OPTIONAL' in this
+   document are to be interpreted as described in [RFC2119].
+
+   This document uses the Augmented Backus-Naur Form (ABNF) notation of
+   [I-D.ietf-httpbis-p1-messaging].  Additionally, the realm and auth-
+   param rules are included from [RFC2617].
+
+   Unless otherwise noted, all the protocol parameter names and values
+   are case sensitive.
+
+1.2.  Terminology
+
+   resource server
+         A server capable of accepting and responding to protected
+         resource requests.
+
+   client
+         An application obtaining authorization and making protected
+         resource requests.
+
+   authorization server
+         A server capable of issuing tokens after successfully
+         authenticating the resource owner and obtaining authorization.
+         The authorization server may be the same server as the resource
+         server, or a separate entity.
+
+   end-user authorization endpoint
+         The authorization server's HTTP endpoint capable of
+         authenticating the end-user and obtaining authorization.
+
+   token endpoint
+         The authorization server's HTTP endpoint capable of issuing
+         tokens and refreshing expired tokens.
+
+   client identifier
+         An unique identifier issued to the client to identify itself to
+         the authorization server.  Client identifiers may have a
+         matching secret.
+
+
+
+Scholz & Maler          Expires December 23, 2010               [Page 3]
+
+Internet-Draft        OAuth Dynamic Client Binding0            June 2010
+
+
+1.3.  Overview
+
+   Here the overview
+
+
+2.  Security Considerations
+
+
+Appendix A.  Examples
+
+   [[ todo ]]
+
+
+Appendix B.  Contributors
+
+   The following people contributed to preliminary versions of this
+   document:
+
+   The User Managed Access Working Group has dozens of very active
+   contributors who proposed ideas and wording for this document,
+   including: [[ If your name is missing or you think someone should be
+   added here, please send Eran a note - don't be shy ]]
+
+   [[ todo ]]
+
+
+Appendix C.  Acknowledgements
+
+   [[ Add OAuth 2.0 authors + WG contributors ]]
+
+
+Appendix D.  Document History
+
+   [[ to be removed by RFC editor before publication as an RFC ]]
+
+   -01
+
+   o  started the spec.
+
+
+3.  Normative References
+
+   [I-D.ietf-httpbis-p1-messaging]
+              Fielding, R., Gettys, J., Mogul, J., Nielsen, H.,
+              Masinter, L., Leach, P., Berners-Lee, T., and J. Reschke,
+              "HTTP/1.1, part 1: URIs, Connections, and Message
+              Parsing", draft-ietf-httpbis-p1-messaging-09 (work in
+              progress), March 2010.
+
+
+
+Scholz & Maler          Expires December 23, 2010               [Page 4]
+
+Internet-Draft        OAuth Dynamic Client Binding0            June 2010
+
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC2617]  Franks, J., Hallam-Baker, P., Hostetler, J., Lawrence, S.,
+              Leach, P., Luotonen, A., and L. Stewart, "HTTP
+              Authentication: Basic and Digest Access Authentication",
+              RFC 2617, June 1999.
+
+
+Authors' Addresses
+
+   Christian Scholz (editor)
+   COM.lounge GmbH
+
+   Email: cs@comlounge.net
+   URI:   http://comlounge.net
+
+
+   Eve Maler
+   PayPal
+
+   Email: eve@xmlgrrl.com
+   URI:   http://www.paypal.com/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Scholz & Maler          Expires December 23, 2010               [Page 5]
+
