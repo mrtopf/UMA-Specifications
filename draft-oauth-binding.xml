@@ -1,15 +1,20 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE rfc SYSTEM 'rfc2629.dtd'>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+    <!ENTITY rfc2119 PUBLIC ''
+          'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
+]>
+
+<rfc category='std' ipr='trust200902' docName='draft-oauth-binding-v1-00.txt'>
+
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
-<rfc category='std' ipr='trust200902' docName='draft-oauth-binding-v1-00'>
-  <?rfc strict='yes' ?>
   <?rfc toc='yes' ?>
   <?rfc tocdepth='3' ?>
   <?rfc symrefs='yes' ?>
   <?rfc sortrefs='yes' ?>
   <?rfc compact='yes' ?>
   <?rfc subcompact='no' ?>
+  <?rfc strict='yes' ?>
 
   <front>
 
@@ -43,9 +48,19 @@
 
     <section title='Introduction'>
       <t>
-        In some scenarios it makes sense if anonymous OAuth clients can use an OAuth authorization server
-        without prior manually transferring client credentials. This protocol defines a way to automate
-        this step.
+        In some scenarios it is necessary to allow OAuth clients to use an authorization 
+        server without being known to the server before. Nevertheless for the authorization
+        server to work properly and be able to provide the user details about the client 
+        requesting authorization, a way of automatic registration is needed.
+        
+        The goal should be to provide the client with a client id and eventually a client 
+        secret from the server and the authorization server with information about the client
+        such at minimum with it's name. More likely though more information is necessary
+        such as the homepage, icon, description, company etc. 
+        
+        This informal draft tries to present different ways of achieving this exchange of 
+        information.
+        
       </t>
 
       <section title='Notational Conventions'>
@@ -84,30 +99,62 @@
             <t hangText='end-user authorization endpoint'>
               <vspace />
               The authorization server's HTTP endpoint capable of authenticating the end-user and
-              obtaining authorization. The end-user authorization endpoint is described in
-              <xref target='user_authorization' />.
+              obtaining authorization. 
             </t>
             <t hangText='token endpoint'>
               <vspace />
               The authorization server's HTTP endpoint capable of issuing tokens and refreshing
-              expired tokens. The token endpoint is described in <xref target='obtaining_token' />.
+              expired tokens. 
             </t>
             <t hangText='client identifier'>
               <vspace />
               An unique identifier issued to the client to identify itself to the authorization
-              server. Client identifiers may have a matching secret. The client identifier is
-              described in <xref target='client_authentication' />.
+              server. Client identifiers may have a matching secret. 
             </t>
           </list>
         </t>
       </section>
+      <section title='Requirements'>
+        <list style="numbers">
+          <t>
+            The client needs to be uniquely identifiable by the authorization server. 
+          </t>
+          <t>
+            The authorization server needs to know at least the client name
+          </t>
+          <t>
+            The authorization server should be able to request more data about a client than just the name.
+          </t>
+          <t>
+            client credentials must be used, e.g. to be able to sign requests.
+          </t>
+          <t>
+            What else?
+          </t>
+
+        </list>
+          
+      </section>
 
       <section title='Overview'>
         <t>
-            Here the overview
+          Different ways of exchanging this information.
+          <list style="numbers">
+            <t>Providing client information on every request and not using client credentials at all.
+            </t>
+            <t>The client pushes client information and to the authorization server which returns client credentials.
+            </t>
+            <t>The authorization server pulls information from the client and pushes client credentials.
+            </t>
+          </list>
         </t>
       </section>
       
+    </section>
+    
+    <section title='Security Considerations'>
+      <t>
+      </t>
     </section>
 
     <appendix title='Examples'>
@@ -157,12 +204,13 @@
   <back>
 
     <references title='Normative References'>
-
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2617.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p1-messaging-09.xml'?>
+<!--
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2045.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2104.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2617.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2818.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3023.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3447.xml' ?>
@@ -171,16 +219,7 @@
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p1-messaging-09.xml'?>
-
-
-    </references>
-
-    <references title='Informative References'>
-
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-hammer-oauth-10.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-hardt-oauth-01.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml2/reference.OASIS.saml-core-2.0-os.xml' ?>
+-->
 
     </references>
 
