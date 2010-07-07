@@ -115,41 +115,82 @@
         </t>
       </section>
       <section title='Requirements'>
-        <list style="numbers">
-          <t>
-            The client needs to be uniquely identifiable by the authorization server. 
-          </t>
-          <t>
-            The authorization server needs to know at least the client name
-          </t>
-          <t>
-            The authorization server should be able to request more data about a client than just the name.
-          </t>
-          <t>
-            client credentials must be used, e.g. to be able to sign requests.
-          </t>
-          <t>
-            What else?
-          </t>
+        <t>
+          <list style='hanging' hangIndent='6'>
+	    <t hangText='The client needs to be uniquely identifiable by the authorization server'>
+		<vspace />
+		In order for an authorization server to do proper user delegated authorization it must be able to identify clients in order to prevent
+		unauthorized access, e.g. if just a client name is given.
+		Like today the client credentials should thus be provided by the authorization server and not proposed by the client.
+	    </t>
+	    <t hangText='The authorization server must be able to retrieve metadata about a client for later user interaction'>
+		<vspace />
+		In order for the authorization server to describe a client to the user in the authorization step it needs information about the client. This
+		can be the client name at a minimum but today servers usually request at least a description, a homepage URL and an icon when doing manual
+		registration.
+	    </t>
+	    <t hangText='The authorization server must have the option of strongly authenticating the client and its metadata'>
+		<vspace />
+		In order to prevent spoofing of clients the authorization server should have the option to verify the provided information to check if it's valid.
+		This might be solved using certificates or in a simpler way by pulling from the client URL e.g. via hostmeta discovery.
+	    </t>
+	    <t hangText='Automatic client binding must also be possible from applications running on mobile devices'>
+		<vspace />
+		Information cannot be pushed to mobile devices, so the two solutions are providing information in a response to a push and doing polling. The latter
+		is not resource friendly though.
+	    </t>
+	    <t hangText='Data integrity must be ensured in large deployments where data propagation can be an issue'>
+		<vspace />
+		When e.g. pushing information from a client to a server endpoint it might take a certain amount of time for this data to propagate through
+		big installation over various data centers. Care needs to be taken that subsequent actions after the registration process like an authorization
+		request show the correct data. 
+		(how would a pull look like here as it's always the client which needs to start the process)
+	    </t>
+          </list>
+       </t>
 
-        </list>
           
       </section>
+      <section title="Binding Flows">
+	<t>
+	    There are different approaches one can take to exchange client information with client credentials. 
+	</t>
+	<section title="Providing client information on every request and not using client credentials at all.">
+	    <t>
+		In this approach all necessary client information like client_name or client_icon is passed on every request to the authorization
+		server to display it to the user if necessary. 
+	    </t>
+	    <t>
+		This violates the first requirement though. No client credentials are actually provided which also violates the OAuth 
+		specification as it is now.
+	    </t>
+	</section>
+	<section title="The client pushes client information to the authorization server which returns client credentials">
+	    <t>
+		The client discovers the registration endpoint of the authorization server and sends it's client information to that endpoint in JSON format.
+		The authorization server answers with client credentials in the response.
+	    </t>
+	    <t>
+		Authorization is possible here as the client information could be signed with the clients secret key and could contain a URL to the
+		client homepage which could contain a discoverable public key. This involves PKI though which is hard to implement. 
+	    </t>
+	    <t>
+		Moreover it might violate the propagation requirement as the information might be pushed to a server far away from the server
+		the user gets send to in the next step which migth not know the client credentials yet.
+	    </t>
+	</section>
 
-      <section title='Overview'>
-        <t>
-          Different ways of exchanging this information.
-          <list style="numbers">
-            <t>Providing client information on every request and not using client credentials at all.
-            </t>
-            <t>The client pushes client information and to the authorization server which returns client credentials.
-            </t>
-            <t>The authorization server pulls information from the client and pushes client credentials.
-            </t>
-          </list>
-        </t>
-      </section>
-      
+	<section title="The authorization server pulls information from the client and returns client credentials">
+	    <t>
+		In this version the client sends a URL to the authorization server which then uses that information to pull metadata about the client
+		e.g. via XRD. It then will create client credentials and return them in the response to the initial request.
+	    </t>	
+	    <t>
+	    This does not directly solve the propagation issue as it's still a push to some server of the authorization server cluster and not bound
+	    to the user interaction.
+	    </t>
+	</section>
+
     </section>
     
     <section title='Security Considerations'>
