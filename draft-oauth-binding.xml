@@ -114,43 +114,44 @@
           </list>
         </t>
       </section>
+    </section>
       <section title='Requirements'>
-        <t>
-          <list style='hanging' hangIndent='6'>
-	    <t hangText='The client needs to be uniquely identifiable by the authorization server'>
-		<vspace />
+	    <section title='The client needs to be uniquely identifiable by the authorization server'>
+	      <t>
 		In order for an authorization server to do proper user delegated authorization it must be able to identify clients in order to prevent
 		unauthorized access, e.g. if just a client name is given.
 		Like today the client credentials should thus be provided by the authorization server and not proposed by the client.
-	    </t>
-	    <t hangText='The authorization server must be able to retrieve metadata about a client for later user interaction'>
-		<vspace />
+	      </t>
+	    </section>
+	    <section title='The authorization server must be able to retrieve metadata about a client for later user interaction'>
+	      <t>
 		In order for the authorization server to describe a client to the user in the authorization step it needs information about the client. This
 		can be the client name at a minimum but today servers usually request at least a description, a homepage URL and an icon when doing manual
 		registration.
-	    </t>
-	    <t hangText='The authorization server must have the option of strongly authenticating the client and its metadata'>
-		<vspace />
+	      </t>
+	    </section>
+	    <section title='The authorization server must have the option of strongly authenticating the client and its metadata'>
+	      <t>
 		In order to prevent spoofing of clients the authorization server should have the option to verify the provided information to check if it's valid.
 		This might be solved using certificates or in a simpler way by pulling from the client URL e.g. via hostmeta discovery.
-	    </t>
-	    <t hangText='Automatic client binding must also be possible from applications running on mobile devices'>
-		<vspace />
+	      </t>
+	    </section>
+	    <section title='Automatic client binding must also be possible from applications running on mobile devices'>
+	      <t>
 		Information cannot be pushed to mobile devices, so the two solutions are providing information in a response to a push and doing polling. The latter
 		is not resource friendly though.
-	    </t>
-	    <t hangText='Data integrity must be ensured in large deployments where data propagation can be an issue'>
-		<vspace />
+	      </t>
+	    </section>
+	    <section title='Data integrity must be ensured in large deployments where data propagation can be an issue'>
+	      <t>
 		When e.g. pushing information from a client to a server endpoint it might take a certain amount of time for this data to propagate through
 		big installation over various data centers. Care needs to be taken that subsequent actions after the registration process like an authorization
 		request show the correct data. 
 		(how would a pull look like here as it's always the client which needs to start the process)
-	    </t>
-          </list>
-       </t>
-
-          
+	      </t>
+	    </section>
       </section>
+
       <section title="Binding Flows">
 	<t>
 	    There are different approaches one can take to exchange client information with client credentials. 
@@ -190,7 +191,6 @@
 	    to the user interaction.
 	    </t>
 	</section>
-
     </section>
     
     <section title='Security Considerations'>

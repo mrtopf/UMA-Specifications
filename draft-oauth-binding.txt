@@ -4,8 +4,8 @@
 Network Working Group                                     C. Scholz, Ed.
 Internet-Draft                                           COM.lounge GmbH
 Intended status: Standards Track                                E. Maler
-Expires: December 23, 2010                                        PayPal
-                                                           June 21, 2010
+Expires: January 9, 2011                                          PayPal
+                                                            July 8, 2010
 
 
                The OAuth Dynamic Client Binding Protocol
@@ -31,7 +31,7 @@ Status of this Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 23, 2010.
+   This Internet-Draft will expire on January 9, 2011.
 
 Copyright Notice
 
@@ -52,9 +52,9 @@ Copyright Notice
 
 
 
-Scholz & Maler          Expires December 23, 2010               [Page 1]
+Scholz & Maler           Expires January 9, 2011                [Page 1]
 
-Internet-Draft        OAuth Dynamic Client Binding0            June 2010
+Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
 
 Table of Contents
@@ -62,14 +62,31 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . . . 3
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . . . 3
      1.2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . 3
-     1.3.  Overview  . . . . . . . . . . . . . . . . . . . . . . . . . 4
-   2.  Security Considerations . . . . . . . . . . . . . . . . . . . . 4
-   Appendix A.  Examples . . . . . . . . . . . . . . . . . . . . . . . 4
-   Appendix B.  Contributors . . . . . . . . . . . . . . . . . . . . . 4
-   Appendix C.  Acknowledgements . . . . . . . . . . . . . . . . . . . 4
-   Appendix D.  Document History . . . . . . . . . . . . . . . . . . . 4
-   3.  Normative References  . . . . . . . . . . . . . . . . . . . . . 4
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . . . 5
+   2.  Requirements  . . . . . . . . . . . . . . . . . . . . . . . . . 4
+     2.1.  The client needs to be uniquely identifiable by the
+           authorization server  . . . . . . . . . . . . . . . . . . . 4
+     2.2.  The authorization server must be able to retrieve
+           metadata about a client for later user interaction  . . . . 4
+     2.3.  The authorization server must have the option of
+           strongly authenticating the client and its metadata . . . . 4
+     2.4.  Automatic client binding must also be possible from
+           applications running on mobile devices  . . . . . . . . . . 4
+     2.5.  Data integrity must be ensured in large deployments
+           where data propagation can be an issue  . . . . . . . . . . 5
+   3.  Binding Flows . . . . . . . . . . . . . . . . . . . . . . . . . 5
+     3.1.  Providing client information on every request and not
+           using client credentials at all.  . . . . . . . . . . . . . 5
+     3.2.  The client pushes client information to the
+           authorization server which returns client credentials . . . 5
+     3.3.  The authorization server pulls information from the
+           client and returns client credentials . . . . . . . . . . . 6
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . . . 6
+   Appendix A.  Examples . . . . . . . . . . . . . . . . . . . . . . . 6
+   Appendix B.  Contributors . . . . . . . . . . . . . . . . . . . . . 6
+   Appendix C.  Acknowledgements . . . . . . . . . . . . . . . . . . . 6
+   Appendix D.  Document History . . . . . . . . . . . . . . . . . . . 6
+   5.  Normative References  . . . . . . . . . . . . . . . . . . . . . 7
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . . . 7
 
 
 
@@ -91,34 +108,24 @@ Table of Contents
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Scholz & Maler          Expires December 23, 2010               [Page 2]
+Scholz & Maler           Expires January 9, 2011                [Page 2]
 
-Internet-Draft        OAuth Dynamic Client Binding0            June 2010
+Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
 
 1.  Introduction
 
-   In some scenarios it makes sense if anonymous OAuth clients can use
-   an OAuth authorization server without prior manually transferring
-   client credentials.  This protocol defines a way to automate this
-   step.
+   In some scenarios it is necessary to allow OAuth clients to use an
+   authorization server without being known to the server before.
+   Nevertheless for the authorization server to work properly and be
+   able to provide the user details about the client requesting
+   authorization, a way of automatic registration is needed.  The goal
+   should be to provide the client with a client id and eventually a
+   client secret from the server and the authorization server with
+   information about the client such at minimum with it's name.  More
+   likely though more information is necessary such as the homepage,
+   icon, description, company etc.  This informal draft tries to present
+   different ways of achieving this exchange of information.
 
 1.1.  Notational Conventions
 
@@ -153,6 +160,15 @@ Internet-Draft        OAuth Dynamic Client Binding0            June 2010
          The authorization server's HTTP endpoint capable of
          authenticating the end-user and obtaining authorization.
 
+
+
+
+
+Scholz & Maler           Expires January 9, 2011                [Page 3]
+
+Internet-Draft        OAuth Dynamic Client Binding0            July 2010
+
+
    token endpoint
          The authorization server's HTTP endpoint capable of issuing
          tokens and refreshing expired tokens.
@@ -163,18 +179,122 @@ Internet-Draft        OAuth Dynamic Client Binding0            June 2010
          matching secret.
 
 
+2.  Requirements
 
-Scholz & Maler          Expires December 23, 2010               [Page 3]
+2.1.  The client needs to be uniquely identifiable by the authorization
+      server
+
+   In order for an authorization server to do proper user delegated
+   authorization it must be able to identify clients in order to prevent
+   unauthorized access, e.g. if just a client name is given.  Like today
+   the client credentials should thus be provided by the authorization
+   server and not proposed by the client.
+
+2.2.  The authorization server must be able to retrieve metadata about a
+      client for later user interaction
+
+   In order for the authorization server to describe a client to the
+   user in the authorization step it needs information about the client.
+   This can be the client name at a minimum but today servers usually
+   request at least a description, a homepage URL and an icon when doing
+   manual registration.
+
+2.3.  The authorization server must have the option of strongly
+      authenticating the client and its metadata
+
+   In order to prevent spoofing of clients the authorization server
+   should have the option to verify the provided information to check if
+   it's valid.  This might be solved using certificates or in a simpler
+   way by pulling from the client URL e.g. via hostmeta discovery.
+
+2.4.  Automatic client binding must also be possible from applications
+      running on mobile devices
+
+   Information cannot be pushed to mobile devices, so the two solutions
+   are providing information in a response to a push and doing polling.
+   The latter is not resource friendly though.
+
+
+
+
+
+
+
+Scholz & Maler           Expires January 9, 2011                [Page 4]
 
-Internet-Draft        OAuth Dynamic Client Binding0            June 2010
+Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
 
-1.3.  Overview
+2.5.  Data integrity must be ensured in large deployments where data
+      propagation can be an issue
 
-   Here the overview
+   When e.g. pushing information from a client to a server endpoint it
+   might take a certain amount of time for this data to propagate
+   through big installation over various data centers.  Care needs to be
+   taken that subsequent actions after the registration process like an
+   authorization request show the correct data. (how would a pull look
+   like here as it's always the client which needs to start the process)
 
 
-2.  Security Considerations
+3.  Binding Flows
+
+   There are different approaches one can take to exchange client
+   information with client credentials.
+
+3.1.  Providing client information on every request and not using client
+      credentials at all.
+
+   In this approach all necessary client information like client_name or
+   client_icon is passed on every request to the authorization server to
+   display it to the user if necessary.
+
+   This violates the first requirement though.  No client credentials
+   are actually provided which also violates the OAuth specification as
+   it is now.
+
+3.2.  The client pushes client information to the authorization server
+      which returns client credentials
+
+   The client discovers the registration endpoint of the authorization
+   server and sends it's client information to that endpoint in JSON
+   format.  The authorization server answers with client credentials in
+   the response.
+
+   Authorization is possible here as the client information could be
+   signed with the clients secret key and could contain a URL to the
+   client homepage which could contain a discoverable public key.  This
+   involves PKI though which is hard to implement.
+
+   Moreover it might violate the propagation requirement as the
+   information might be pushed to a server far away from the server the
+   user gets send to in the next step which migth not know the client
+   credentials yet.
+
+
+
+
+
+
+
+Scholz & Maler           Expires January 9, 2011                [Page 5]
+
+Internet-Draft        OAuth Dynamic Client Binding0            July 2010
+
+
+3.3.  The authorization server pulls information from the client and
+      returns client credentials
+
+   In this version the client sends a URL to the authorization server
+   which then uses that information to pull metadata about the client
+   e.g. via XRD.  It then will create client credentials and return them
+   in the response to the initial request.
+
+   This does not directly solve the propagation issue as it's still a
+   push to some server of the authorization server cluster and not bound
+   to the user interaction.
+
+
+4.  Security Considerations
 
 
 Appendix A.  Examples
@@ -209,7 +329,15 @@ Appendix D.  Document History
    o  started the spec.
 
 
-3.  Normative References
+
+
+
+Scholz & Maler           Expires January 9, 2011                [Page 6]
+
+Internet-Draft        OAuth Dynamic Client Binding0            July 2010
+
+
+5.  Normative References
 
    [I-D.ietf-httpbis-p1-messaging]
               Fielding, R., Gettys, J., Mogul, J., Nielsen, H.,
@@ -217,13 +345,6 @@ Appendix D.  Document History
               "HTTP/1.1, part 1: URIs, Connections, and Message
               Parsing", draft-ietf-httpbis-p1-messaging-09 (work in
               progress), March 2010.
-
-
-
-Scholz & Maler          Expires December 23, 2010               [Page 4]
-
-Internet-Draft        OAuth Dynamic Client Binding0            June 2010
-
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119, March 1997.
@@ -267,14 +388,5 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-
-
-
-Scholz & Maler          Expires December 23, 2010               [Page 5]
+Scholz & Maler           Expires January 9, 2011                [Page 7]
 
