@@ -90,16 +90,16 @@ Table of Contents
      6.1.  Overview . . . . . . . . . . . . . . . . . . . . . . . . . 10
      6.2.  Client Registration Request  . . . . . . . . . . . . . . . 10
      6.3.  Client Discovery . . . . . . . . . . . . . . . . . . . . . 11
-   7.  Security Considerations  . . . . . . . . . . . . . . . . . . . 12
-   Appendix A.  Examples  . . . . . . . . . . . . . . . . . . . . . . 12
-   Appendix B.  Contributors  . . . . . . . . . . . . . . . . . . . . 12
-   Appendix C.  Acknowledgements  . . . . . . . . . . . . . . . . . . 13
-   Appendix D.  Document History  . . . . . . . . . . . . . . . . . . 13
-   8.  Normative References . . . . . . . . . . . . . . . . . . . . . 13
-   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 13
-
-
-
+     6.4.  Client Registration Response . . . . . . . . . . . . . . . 12
+     6.5.  Unsuccessful Client Discovery  . . . . . . . . . . . . . . 13
+     6.6.  Error Message  . . . . . . . . . . . . . . . . . . . . . . 14
+   7.  Security Considerations  . . . . . . . . . . . . . . . . . . . 14
+   Appendix A.  TODOs . . . . . . . . . . . . . . . . . . . . . . . . 14
+   Appendix B.  Contributors  . . . . . . . . . . . . . . . . . . . . 14
+   Appendix C.  Acknowledgements  . . . . . . . . . . . . . . . . . . 15
+   Appendix D.  Document History  . . . . . . . . . . . . . . . . . . 15
+   8.  Normative References . . . . . . . . . . . . . . . . . . . . . 15
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 16
 
 
 
@@ -308,7 +308,7 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
    For both models, push and pull, the client needs to discover the
    client registration endpoint.
 
-   The client MUST use the [sitemeta] and [hostmeta] discovery
+   The client MUST use the [RFC5785] and [I-D.hammer-hostmeta] discovery
    mechanisms to learn about the URI of the client registration endpoint
    at the authorization server at which the client wants to register.
    The authorization server MUST provide a host-meta document containing
@@ -511,11 +511,11 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
    1.  The client sends its URI to the client registration endpoint
 
-   2.  The authorization server uses the [sitemeta] and [hostmeta]
-       discovery mechanisms on this URI in order to retrieve the host-
-       meta document describing the client.  The host-meta document MUST
-       contain the client's name, description and redirection URI and
-       MAY contain a URI to the client's icon.
+   2.  The authorization server uses the [RFC5785] and
+       [I-D.hammer-hostmeta] discovery mechanisms on this URI in order
+       to retrieve the host-meta document describing the client.  The
+       host-meta document MUST contain the client's name, description
+       and redirection URI and MAY contain a URI to the client's icon.
 
 
 
@@ -584,8 +584,8 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 6.3.  Client Discovery
 
    The authorization server should evaluate this request and MAY perform
-   a [sitemeta] and [hostmeta] discovery mechanism on the provided URL
-   to the host-meta document for the client.
+   a [RFC5785] and [I-D.hammer-hostmeta] discovery mechanism on the
+   provided URL to the host-meta document for the client.
 
    For example:
 
@@ -649,22 +649,22 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
        </XRD>
 
 
+6.4.  Client Registration Response
 
-7.  Security Considerations
+   After receiving and verifying information retrieved from the client,
+   the authorization server issues the client identifier and an optional
+   client secret, and constructs the response by adding the following
+   parameters to the entity body of the HTTP response with a 200 status
+   code (OK):
 
+   o  "client_id" (REQUIRED)
 
-Appendix A.  Examples
+   o  "client_secret" (OPTIONAL)
 
-   [[ todo ]]
-
-
-Appendix B.  Contributors
-
-   The following people contributed to preliminary versions of this
-   document:
-
-   The User Managed Access Working Group has dozens of very active
-   contributors who proposed ideas and wording for this document,
+   The parameters are included in the entity body of the HTTP response
+   using the "application/json" media type as defined by [RFC4627].  The
+   parameters are serialized into a JSON structure by adding each
+   parameter at the highest structure level.  Parameter names and string
 
 
 
@@ -673,6 +673,119 @@ Scholz, et al.          Expires January 13, 2011               [Page 12]
 Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
 
+   values are included as JSON strings.
+
+   The authorization server MUST include the HTTP "Cache-Control"
+   response header field with a value of "no-store" in any response
+   containing the "client_secret".
+
+   For example the authorization server might return the following
+   response:
+
+
+       HTTP/1.1 200 OK
+       Content-Type: application/json
+       Cache-Control: no-store
+
+       {
+         "client_id":"5UO9XcL4TQTa",
+         "client_secret":"WdRKN3zeTc20"
+       }
+
+
+6.5.  Unsuccessful Client Discovery
+
+   If the host-meta discovery was not successful, the authorization
+   server constructs the response by adding the following parameters to
+   the entity body of the HTTP response with a 404 status code (Not
+   Found) using the "application/json" media type:
+
+   o  "error" (REQUIRED).  This parameter must be set to
+      "hostmeta_error"
+
+   o  "description" (OPTIONAL)
+
+   An example error response (with line breaks for readability)
+
+
+       HTTP/1.1 404 Not Found
+       Content-Type: application/json
+       Cache-Control: no-store
+
+       {
+       "error": "hostmeta_error",
+       "description": "The hostmeta document could
+           not have been retrieved from the URL."
+       }
+
+
+
+
+
+
+
+Scholz, et al.          Expires January 13, 2011               [Page 13]
+
+Internet-Draft        OAuth Dynamic Client Binding0            July 2010
+
+
+6.6.  Error Message
+
+   If the request for registration is invalid or unauthorized, the
+   authorization server constructs the response by adding the following
+   parameters to the entity body of the HTTP response with a 400 status
+   code (Bad Request) using the "application/json" media type:
+
+   o  "error" (REQUIRED)
+
+   o  "description" (OPTIONAL)
+
+   An example error response (with line breaks for readability)
+
+
+       HTTP/1.1 400 Bad Request
+       Content-Type: application/json
+       Cache-Control: no-store
+
+       {
+       "error": "unauthorized_client",
+       "description": "This client is not on the
+         white list of this Authorization Server"
+       }
+
+
+
+7.  Security Considerations
+
+
+Appendix A.  TODOs
+
+   o  How would signing work in push and pull cases?
+
+   o  How is the propagation requirement now solved?  Is this a problem
+      at all?
+
+   o  What are the advantages / disadvantages between push and pull?
+
+   o  Given pros and cons and requirements can we select only one
+      method?
+
+
+Appendix B.  Contributors
+
+   The following people contributed to preliminary versions of this
+   document:
+
+   The User Managed Access Working Group has dozens of very active
+
+
+
+Scholz, et al.          Expires January 13, 2011               [Page 14]
+
+Internet-Draft        OAuth Dynamic Client Binding0            July 2010
+
+
+   contributors who proposed ideas and wording for this document,
    including: [[ If your name is missing or you think someone should be
    added here, please send Eran a note - don't be shy ]]
 
@@ -681,7 +794,13 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
 Appendix C.  Acknowledgements
 
-   [[ Add OAuth 2.0 authors + WG contributors ]]
+   o  Thomas Hardjono
+
+   o  George Fletcher
+
+   o  Nat Sakimura
+
+   [[ Add further WG contributors ]]
 
 
 Appendix D.  Document History
@@ -694,6 +813,10 @@ Appendix D.  Document History
 
 
 8.  Normative References
+
+   [I-D.hammer-hostmeta]
+              Hammer-Lahav, E., "Web Host Metadata",
+              draft-hammer-hostmeta-13 (work in progress), June 2010.
 
    [I-D.ietf-httpbis-p1-messaging]
               Fielding, R., Gettys, J., Mogul, J., Nielsen, H.,
@@ -711,6 +834,18 @@ Appendix D.  Document History
               RFC 2617, June 1999.
 
 
+
+
+Scholz, et al.          Expires January 13, 2011               [Page 15]
+
+Internet-Draft        OAuth Dynamic Client Binding0            July 2010
+
+
+   [RFC5785]  Nottingham, M. and E. Hammer-Lahav, "Defining Well-Known
+              Uniform Resource Identifiers (URIs)", RFC 5785,
+              April 2010.
+
+
 Authors' Addresses
 
    Christian Scholz (editor)
@@ -718,15 +853,6 @@ Authors' Addresses
 
    Email: cs@comlounge.net
    URI:   http://comlounge.net
-
-
-
-
-
-
-Scholz, et al.          Expires January 13, 2011               [Page 13]
-
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
 
    Maciej Machulak
@@ -766,19 +892,5 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Scholz, et al.          Expires January 13, 2011               [Page 14]
+Scholz, et al.          Expires January 13, 2011               [Page 16]
 

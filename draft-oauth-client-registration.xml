@@ -242,7 +242,7 @@
          registration endpoint. 
       </t>
       <t>
-         The client MUST use the [sitemeta] and [hostmeta] discovery mechanisms to learn
+         The client MUST use the <xref target='RFC5785' /> and <xref target='I-D.hammer-hostmeta' /> discovery mechanisms to learn
          about the URI of the client registration endpoint at the authorization server at
          which the client wants to register. The authorization server MUST provide a
          host-meta document containing a Link element with a rel value of <spanx
@@ -461,7 +461,7 @@
               The client sends its URI to the client registration endpoint
             </t>
             <t>
-              The authorization server uses the [sitemeta] and [hostmeta] discovery
+              The authorization server uses the <xref target='RFC5785' /> and <xref target='I-D.hammer-hostmeta' /> discovery
               mechanisms on this URI in order to retrieve the host-meta document
               describing the client. The host-meta document MUST contain the client’s
               name, description and redirection URI and MAY contain a URI to the client’s
@@ -539,9 +539,9 @@
       </section>
       <section title="Client Discovery">
         <t>
-          The authorization server should evaluate this request and MAY perform a
-          [sitemeta] and [hostmeta] discovery mechanism on the provided URL to the
-          host-meta document for the client.
+          The authorization server should evaluate this request and MAY perform a <xref
+          target='RFC5785' /> and <xref target='I-D.hammer-hostmeta' /> discovery
+          mechanism on the provided URL to the host-meta document for the client.
         </t>
         
         <figure>
@@ -641,20 +641,157 @@
          </artwork>
         </figure>
       </section><!-- client discovery -->
+      <section title="Client Registration Response">
+
+        <t>
+          After receiving and verifying information retrieved from the client, the
+          authorization server issues the client identifier and an optional client secret,
+          and constructs the response by adding the following parameters to the entity
+          body of the HTTP response with a 200 status code (OK):
+        </t>
+        <t>
+          <list style="symbols">
+            <t>
+              <spanx style='verb'>client_id</spanx> (REQUIRED)
+            </t>
+            <t>
+              <spanx style='verb'>client_secret</spanx> (OPTIONAL)
+            </t>
+          </list>
+        </t>
+        <t>
+          The parameters are included in the entity body of the HTTP response using the
+          "application/json" media type as defined by [RFC4627]. The parameters are
+          serialized into a JSON structure by adding each parameter at the highest
+          structure level. Parameter names and string values are included as JSON strings.
+        </t>
+        
+        <t>
+          The authorization server MUST include the HTTP <spanx
+          style="verb">Cache-Control</spanx> response header field with a value of <spanx
+          style="verb">no-store</spanx> in any response containing the <spanx
+          style="verb">client_secret</spanx>.
+        </t>
+        <figure>
+         <preamble>
+           For example the authorization server might return the following response:
+         </preamble>
+         <artwork>
+        <![CDATA[
+    HTTP/1.1 200 OK
+    Content-Type: application/json
+    Cache-Control: no-store
+
+    {
+      "client_id":"5UO9XcL4TQTa",
+      "client_secret":”WdRKN3zeTc20”
+    }
+        ]]>
+         </artwork>
+        </figure>
+        
+      </section>
+      <section title="Unsuccessful Client Discovery">
+        <t>
+          If the host-meta discovery was not successful, the authorization server
+          constructs the response by adding the following parameters to the entity body of
+          the HTTP response with a 404 status code (Not Found) using the
+          <spanx style="verb">application/json</spanx> media type:
+        </t>
+        <t>
+          <list style="symbols">
+            <t>
+              <spanx style='verb'>error</spanx> (REQUIRED). This parameter must be set to 
+              <spanx style='verb'>hostmeta_error</spanx>
+            </t>
+            <t>
+              <spanx style='verb'>description</spanx> (OPTIONAL)
+            </t>
+          </list>
+        </t>
+        <figure>
+         <preamble>
+           An example error response (with line breaks for readability)
+         </preamble>
+         <artwork>
+        <![CDATA[
+    HTTP/1.1 404 Not Found
+    Content-Type: application/json
+    Cache-Control: no-store
+
+    {
+    "error": "hostmeta_error",
+    "description": "The hostmeta document could 
+        not have been retrieved from the URL."
+    }
+        ]]>
+         </artwork>
+        </figure>        
+        
+        
+      </section>
+      <section title="Error Message">
+        <t>
+            If the request for registration is invalid or unauthorized, the authorization
+            server constructs the response by adding the following parameters to the
+            entity body of the HTTP response with a 400 status code (Bad Request) using
+            the “application/json” media type:
+        </t>
+        <t>
+          <list style="symbols">
+            <t>
+              <spanx style='verb'>error</spanx> (REQUIRED)
+            </t>
+            <t>
+              <spanx style='verb'>description</spanx> (OPTIONAL)
+            </t>
+          </list>
+        </t>
+        <figure>
+         <preamble>
+           An example error response (with line breaks for readability)
+         </preamble>
+         <artwork>
+        <![CDATA[
+    HTTP/1.1 400 Bad Request
+    Content-Type: application/json
+    Cache-Control: no-store
+
+    {
+    "error": "unauthorized_client",
+    "description": "This client is not on the 
+      white list of this Authorization Server"
+    }
+        ]]>
+         </artwork>
+        </figure>        
+      </section><!-- error message -->
+      
     </section><!-- pull client registration -->
-    
     
     <section title='Security Considerations'>
       <t>
       </t>
     </section>
 
-    <appendix title='Examples'>
+    <appendix title='TODOs'>
       <t>
-        [[ todo ]]
+        <list style="symbols">
+          <t>
+            How would signing work in push and pull cases?
+          </t>
+          <t>
+            How is the propagation requirement now solved? Is this a problem at all?
+          </t>
+          <t>
+            What are the advantages / disadvantages between push and pull? 
+          </t>
+          <t>
+            Given pros and cons and requirements can we select only one method?
+          </t>
+        </list>
       </t>
     </appendix>
-
     <appendix title='Contributors'>
       <t>
         The following people contributed to preliminary versions of this document:
@@ -672,7 +809,18 @@
 
     <appendix title='Acknowledgements'>
       <t>
-        [[ Add OAuth 2.0 authors + WG contributors ]]
+        <list style="symbols">
+          <t>
+            Thomas Hardjono
+          </t>
+          <t>
+            George Fletcher
+          </t>
+          <t>
+            Nat Sakimura
+          </t>
+        </list>
+        [[ Add further WG contributors ]]
       </t>
     </appendix>
 
@@ -698,6 +846,10 @@
     <references title='Normative References'>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2617.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.5785.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-hammer-hostmeta-13.xml'?>
+      
+      
       <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p1-messaging-09.xml'?>
 <!--
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2045.xml' ?>

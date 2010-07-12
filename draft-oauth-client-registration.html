@@ -244,15 +244,21 @@ Overview<br />
 Client Registration Request<br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor23">6.3.</a>&nbsp;
 Client Discovery<br />
-<a href="#anchor24">7.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor24">6.4.</a>&nbsp;
+Client Registration Response<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor25">6.5.</a>&nbsp;
+Unsuccessful Client Discovery<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor26">6.6.</a>&nbsp;
+Error Message<br />
+<a href="#anchor27">7.</a>&nbsp;
 Security Considerations<br />
-<a href="#anchor25">Appendix&nbsp;A.</a>&nbsp;
-Examples<br />
-<a href="#anchor26">Appendix&nbsp;B.</a>&nbsp;
+<a href="#anchor28">Appendix&nbsp;A.</a>&nbsp;
+TODOs<br />
+<a href="#anchor29">Appendix&nbsp;B.</a>&nbsp;
 Contributors<br />
-<a href="#anchor27">Appendix&nbsp;C.</a>&nbsp;
+<a href="#anchor30">Appendix&nbsp;C.</a>&nbsp;
 Acknowledgements<br />
-<a href="#anchor28">Appendix&nbsp;D.</a>&nbsp;
+<a href="#anchor31">Appendix&nbsp;D.</a>&nbsp;
 Document History<br />
 <a href="#rfc.references1">8.</a>&nbsp;
 Normative References<br />
@@ -522,7 +528,7 @@ Discovery of client registration endpoint</h3>
       
 </p>
 <p>
-         The client MUST use the [sitemeta] and [hostmeta] discovery mechanisms to learn
+         The client MUST use the <a class='info' href='#RFC5785'>[RFC5785]<span> (</span><span class='info'>Nottingham, M. and E. Hammer-Lahav, &ldquo;Defining Well-Known Uniform Resource Identifiers (URIs),&rdquo; April&nbsp;2010.</span><span>)</span></a> and <a class='info' href='#I-D.hammer-hostmeta'>[I&#8209;D.hammer&#8209;hostmeta]<span> (</span><span class='info'>Hammer-Lahav, E., &ldquo;Web Host Metadata,&rdquo; June&nbsp;2010.</span><span>)</span></a> discovery mechanisms to learn
          about the URI of the client registration endpoint at the authorization server at
          which the client wants to register. The authorization server MUST provide a
          host-meta document containing a Link element with a rel value of <tt>http://oauth.net/as/registration</tt>
@@ -783,7 +789,7 @@ Overview</h3>
             
 </li>
 <li>
-              The authorization server uses the [sitemeta] and [hostmeta] discovery
+              The authorization server uses the <a class='info' href='#RFC5785'>[RFC5785]<span> (</span><span class='info'>Nottingham, M. and E. Hammer-Lahav, &ldquo;Defining Well-Known Uniform Resource Identifiers (URIs),&rdquo; April&nbsp;2010.</span><span>)</span></a> and <a class='info' href='#I-D.hammer-hostmeta'>[I&#8209;D.hammer&#8209;hostmeta]<span> (</span><span class='info'>Hammer-Lahav, E., &ldquo;Web Host Metadata,&rdquo; June&nbsp;2010.</span><span>)</span></a> discovery
               mechanisms on this URI in order to retrieve the host-meta document
               describing the client. The host-meta document MUST contain the client’s
               name, description and redirection URI and MAY contain a URI to the client’s
@@ -873,9 +879,8 @@ Client Registration Request</h3>
 Client Discovery</h3>
 
 <p>
-          The authorization server should evaluate this request and MAY perform a
-          [sitemeta] and [hostmeta] discovery mechanism on the provided URL to the
-          host-meta document for the client.
+          The authorization server should evaluate this request and MAY perform a <a class='info' href='#RFC5785'>[RFC5785]<span> (</span><span class='info'>Nottingham, M. and E. Hammer-Lahav, &ldquo;Defining Well-Known Uniform Resource Identifiers (URIs),&rdquo; April&nbsp;2010.</span><span>)</span></a> and <a class='info' href='#I-D.hammer-hostmeta'>[I&#8209;D.hammer&#8209;hostmeta]<span> (</span><span class='info'>Hammer-Lahav, E., &ldquo;Web Host Metadata,&rdquo; June&nbsp;2010.</span><span>)</span></a> discovery
+          mechanism on the provided URL to the host-meta document for the client.
         
 </p>
 <p>
@@ -979,22 +984,177 @@ Client Discovery</h3>
 </pre></div>
 <a name="anchor24"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6.4"></a><h3>6.4.&nbsp;
+Client Registration Response</h3>
+
+<p>
+          After receiving and verifying information retrieved from the client, the
+          authorization server issues the client identifier and an optional client secret,
+          and constructs the response by adding the following parameters to the entity
+          body of the HTTP response with a 200 status code (OK):
+        
+</p>
+<p>
+          </p>
+<ul class="text">
+<li>
+              <tt>client_id</tt> (REQUIRED)
+            
+</li>
+<li>
+              <tt>client_secret</tt> (OPTIONAL)
+            
+</li>
+</ul><p>
+        
+</p>
+<p>
+          The parameters are included in the entity body of the HTTP response using the
+          "application/json" media type as defined by [RFC4627]. The parameters are
+          serialized into a JSON structure by adding each parameter at the highest
+          structure level. Parameter names and string values are included as JSON strings.
+        
+</p>
+<p>
+          The authorization server MUST include the HTTP <tt>Cache-Control</tt> response header field with a value of <tt>no-store</tt> in any response containing the <tt>client_secret</tt>.
+        
+</p>
+<p>
+           For example the authorization server might return the following response:
+         
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+
+    HTTP/1.1 200 OK
+    Content-Type: application/json
+    Cache-Control: no-store
+
+    {
+      "client_id":"5UO9XcL4TQTa",
+      "client_secret":”WdRKN3zeTc20”
+    }
+
+</pre></div>
+<a name="anchor25"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6.5"></a><h3>6.5.&nbsp;
+Unsuccessful Client Discovery</h3>
+
+<p>
+          If the host-meta discovery was not successful, the authorization server
+          constructs the response by adding the following parameters to the entity body of
+          the HTTP response with a 404 status code (Not Found) using the
+          <tt>application/json</tt> media type:
+        
+</p>
+<p>
+          </p>
+<ul class="text">
+<li>
+              <tt>error</tt> (REQUIRED). This parameter must be set to 
+              <tt>hostmeta_error</tt>
+            
+</li>
+<li>
+              <tt>description</tt> (OPTIONAL)
+            
+</li>
+</ul><p>
+        
+</p>
+<p>
+           An example error response (with line breaks for readability)
+         
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+
+    HTTP/1.1 404 Not Found
+    Content-Type: application/json
+    Cache-Control: no-store
+
+    {
+    "error": "hostmeta_error",
+    "description": "The hostmeta document could
+        not have been retrieved from the URL."
+    }
+
+</pre></div>
+<a name="anchor26"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6.6"></a><h3>6.6.&nbsp;
+Error Message</h3>
+
+<p>
+            If the request for registration is invalid or unauthorized, the authorization
+            server constructs the response by adding the following parameters to the
+            entity body of the HTTP response with a 400 status code (Bad Request) using
+            the “application/json” media type:
+        
+</p>
+<p>
+          </p>
+<ul class="text">
+<li>
+              <tt>error</tt> (REQUIRED)
+            
+</li>
+<li>
+              <tt>description</tt> (OPTIONAL)
+            
+</li>
+</ul><p>
+        
+</p>
+<p>
+           An example error response (with line breaks for readability)
+         
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+
+    HTTP/1.1 400 Bad Request
+    Content-Type: application/json
+    Cache-Control: no-store
+
+    {
+    "error": "unauthorized_client",
+    "description": "This client is not on the
+      white list of this Authorization Server"
+    }
+
+</pre></div>
+<a name="anchor27"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.7"></a><h3>7.&nbsp;
 Security Considerations</h3>
 
 <p>
       
 </p>
-<a name="anchor25"></a><br /><hr />
+<a name="anchor28"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.A"></a><h3>Appendix A.&nbsp;
-Examples</h3>
+TODOs</h3>
 
 <p>
-        [[ todo ]]
+        </p>
+<ul class="text">
+<li>
+            How would signing work in push and pull cases?
+          
+</li>
+<li>
+            How is the propagation requirement now solved? Is this a problem at all?
+          
+</li>
+<li>
+            What are the advantages / disadvantages between push and pull? 
+          
+</li>
+<li>
+            Given pros and cons and requirements can we select only one method?
+          
+</li>
+</ul><p>
       
 </p>
-<a name="anchor26"></a><br /><hr />
+<a name="anchor29"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.B"></a><h3>Appendix B.&nbsp;
 Contributors</h3>
@@ -1014,16 +1174,31 @@ Contributors</h3>
         [[ todo ]]
       
 </p>
-<a name="anchor27"></a><br /><hr />
+<a name="anchor30"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.C"></a><h3>Appendix C.&nbsp;
 Acknowledgements</h3>
 
 <p>
-        [[ Add OAuth 2.0 authors + WG contributors ]]
+        </p>
+<ul class="text">
+<li>
+            Thomas Hardjono
+          
+</li>
+<li>
+            George Fletcher
+          
+</li>
+<li>
+            Nat Sakimura
+          
+</li>
+</ul><p>
+        [[ Add further WG contributors ]]
       
 </p>
-<a name="anchor28"></a><br /><hr />
+<a name="anchor31"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.D"></a><h3>Appendix D.&nbsp;
 Document History</h3>
@@ -1048,12 +1223,16 @@ Document History</h3>
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <h3>8.&nbsp;Normative References</h3>
 <table width="99%" border="0">
+<tr><td class="author-text" valign="top"><a name="I-D.hammer-hostmeta">[I-D.hammer-hostmeta]</a></td>
+<td class="author-text">Hammer-Lahav, E., &ldquo;<a href="http://www.ietf.org/internet-drafts/draft-hammer-hostmeta-13.txt">Web Host Metadata</a>,&rdquo; draft-hammer-hostmeta-13 (work in progress), June&nbsp;2010 (<a href="http://www.ietf.org/internet-drafts/draft-hammer-hostmeta-13.txt">TXT</a>).</td></tr>
 <tr><td class="author-text" valign="top"><a name="I-D.ietf-httpbis-p1-messaging">[I-D.ietf-httpbis-p1-messaging]</a></td>
 <td class="author-text">Fielding, R., Gettys, J., Mogul, J., Nielsen, H., Masinter, L., Leach, P., Berners-Lee, T., and J. Reschke, &ldquo;<a href="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p1-messaging-09.txt">HTTP/1.1, part 1: URIs, Connections, and Message Parsing</a>,&rdquo; draft-ietf-httpbis-p1-messaging-09 (work in progress), March&nbsp;2010 (<a href="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p1-messaging-09.txt">TXT</a>).</td></tr>
 <tr><td class="author-text" valign="top"><a name="RFC2119">[RFC2119]</a></td>
 <td class="author-text"><a href="mailto:sob@harvard.edu">Bradner, S.</a>, &ldquo;<a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>,&rdquo; BCP&nbsp;14, RFC&nbsp;2119, March&nbsp;1997 (<a href="http://www.rfc-editor.org/rfc/rfc2119.txt">TXT</a>, <a href="http://xml.resource.org/public/rfc/html/rfc2119.html">HTML</a>, <a href="http://xml.resource.org/public/rfc/xml/rfc2119.xml">XML</a>).</td></tr>
 <tr><td class="author-text" valign="top"><a name="RFC2617">[RFC2617]</a></td>
 <td class="author-text"><a href="mailto:john@math.nwu.edu">Franks, J.</a>, <a href="mailto:pbaker@verisign.com">Hallam-Baker, P.</a>, <a href="mailto:jeff@AbiSource.com">Hostetler, J.</a>, <a href="mailto:lawrence@agranat.com">Lawrence, S.</a>, <a href="mailto:paulle@microsoft.com">Leach, P.</a>, Luotonen, A., and <a href="mailto:stewart@OpenMarket.com">L. Stewart</a>, &ldquo;<a href="http://tools.ietf.org/html/rfc2617">HTTP Authentication: Basic and Digest Access Authentication</a>,&rdquo; RFC&nbsp;2617, June&nbsp;1999 (<a href="http://www.rfc-editor.org/rfc/rfc2617.txt">TXT</a>, <a href="http://xml.resource.org/public/rfc/html/rfc2617.html">HTML</a>, <a href="http://xml.resource.org/public/rfc/xml/rfc2617.xml">XML</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC5785">[RFC5785]</a></td>
+<td class="author-text">Nottingham, M. and E. Hammer-Lahav, &ldquo;<a href="http://tools.ietf.org/html/rfc5785">Defining Well-Known Uniform Resource Identifiers (URIs)</a>,&rdquo; RFC&nbsp;5785, April&nbsp;2010 (<a href="http://www.rfc-editor.org/rfc/rfc5785.txt">TXT</a>).</td></tr>
 </table>
 
 <a name="rfc.authors"></a><br /><hr />
