@@ -4,18 +4,18 @@
 Network Working Group                                     C. Scholz, Ed.
 Internet-Draft                                           COM.lounge GmbH
 Intended status: Standards Track                             M. Machulak
-Expires: January 13, 2011                           Newcastle University
+Expires: January 30, 2011                           Newcastle University
                                                                 E. Maler
                                                                   PayPal
-                                                           July 12, 2010
+                                                           July 29, 2010
 
 
-               The OAuth Dynamic Client Binding Protocol
-                     draft-oauth-binding-v1-00.txt
+               OAuth Dynamic Client Registration Protocol
+                     draft-oauth-dyn-reg-v1-00.txt
 
 Abstract
 
-   This specification describes the OAuth Dynamic Client Binding
+   This specification proposes an OAuth Dynamic Client Registration
    protocol.
 
 Status of this Memo
@@ -33,7 +33,7 @@ Status of this Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 13, 2011.
+   This Internet-Draft will expire on January 30, 2011.
 
 Copyright Notice
 
@@ -52,9 +52,9 @@ Copyright Notice
 
 
 
-Scholz, et al.          Expires January 13, 2011                [Page 1]
+Scholz, et al.          Expires January 30, 2011                [Page 1]
 
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
 
 
 Table of Contents
@@ -68,38 +68,31 @@ Table of Contents
      2.2.  The authorization server must be able to retrieve
            metadata about a client for later user interaction . . . .  4
      2.3.  The authorization server must have the option of
-           strongly authenticating the client and its metadata  . . .  4
-     2.4.  Automatic client binding must also be possible from
-           applications running on mobile devices . . . . . . . . . .  5
+           strongly authenticating the client and its metadata  . . .  5
+     2.4.  Dynamic client registration must be possible from both
+           web-server applications and native applications  . . . . .  5
      2.5.  Data integrity must be ensured in large deployments
            where data propagation can be an issue . . . . . . . . . .  5
-   3.  Registration Flows . . . . . . . . . . . . . . . . . . . . . .  5
-     3.1.  Providing client information on every request and not
-           using client credentials at all. . . . . . . . . . . . . .  5
-     3.2.  The client pushes client information to the
-           authorization server which returns client credentials  . .  5
-     3.3.  The authorization server pulls information from the
-           client and returns client credentials  . . . . . . . . . .  6
-   4.  Discovery of client registration endpoint  . . . . . . . . . .  6
-   5.  Push Client Registration . . . . . . . . . . . . . . . . . . .  7
+   3.  Analysis of Registration Flow Options  . . . . . . . . . . . .  6
+   4.  Discovery of client registration endpoint  . . . . . . . . . .  7
+   5.  Client Registration with Pushed Metadata . . . . . . . . . . .  7
      5.1.  Overview . . . . . . . . . . . . . . . . . . . . . . . . .  7
-     5.2.  Client Registration Request  . . . . . . . . . . . . . . .  7
-     5.3.  Client Registration Response . . . . . . . . . . . . . . .  8
-     5.4.  Error Message  . . . . . . . . . . . . . . . . . . . . . .  9
-   6.  Push Client Registration . . . . . . . . . . . . . . . . . . .  9
-     6.1.  Overview . . . . . . . . . . . . . . . . . . . . . . . . . 10
-     6.2.  Client Registration Request  . . . . . . . . . . . . . . . 10
-     6.3.  Client Discovery . . . . . . . . . . . . . . . . . . . . . 11
-     6.4.  Client Registration Response . . . . . . . . . . . . . . . 12
-     6.5.  Unsuccessful Client Discovery  . . . . . . . . . . . . . . 13
-     6.6.  Error Message  . . . . . . . . . . . . . . . . . . . . . . 14
-   7.  Security Considerations  . . . . . . . . . . . . . . . . . . . 14
-   Appendix A.  TODOs . . . . . . . . . . . . . . . . . . . . . . . . 14
-   Appendix B.  Contributors  . . . . . . . . . . . . . . . . . . . . 14
-   Appendix C.  Acknowledgements  . . . . . . . . . . . . . . . . . . 15
-   Appendix D.  Document History  . . . . . . . . . . . . . . . . . . 15
-   8.  Normative References . . . . . . . . . . . . . . . . . . . . . 15
-   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 16
+     5.2.  Client Registration Request  . . . . . . . . . . . . . . .  8
+     5.3.  Client Registration Response . . . . . . . . . . . . . . .  9
+     5.4.  Error Message  . . . . . . . . . . . . . . . . . . . . . . 10
+   6.  Client Registration with Pulled Metadata . . . . . . . . . . . 11
+     6.1.  Overview . . . . . . . . . . . . . . . . . . . . . . . . . 11
+     6.2.  Client Registration Request  . . . . . . . . . . . . . . . 11
+     6.3.  Client Discovery . . . . . . . . . . . . . . . . . . . . . 12
+     6.4.  Client Registration Response . . . . . . . . . . . . . . . 13
+     6.5.  Unsuccessful Client Discovery  . . . . . . . . . . . . . . 14
+     6.6.  Error Message  . . . . . . . . . . . . . . . . . . . . . . 15
+   7.  Security Considerations  . . . . . . . . . . . . . . . . . . . 15
+   Appendix A.  TODOs . . . . . . . . . . . . . . . . . . . . . . . . 16
+   Appendix B.  Acknowledgements  . . . . . . . . . . . . . . . . . . 16
+   Appendix C.  Document History  . . . . . . . . . . . . . . . . . . 16
+   8.  Normative References . . . . . . . . . . . . . . . . . . . . . 16
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 17
 
 
 
@@ -108,9 +101,16 @@ Table of Contents
 
 
 
-Scholz, et al.          Expires January 13, 2011                [Page 2]
+
+
+
+
+
+
+
+Scholz, et al.          Expires January 30, 2011                [Page 2]
 
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
 
 
 1.  Introduction
@@ -118,23 +118,24 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
    In some use-case scenarios it is desirable or necessary to allow
    OAuth clients to obtain authorization from an OAuth authorization
    server without the two parties having previously interacted.
-   Nevertheless, in order for the authorization server to function
-   correctly in delivering to the User the details regarding clients
-   seeking authorization (to access the end-user's resources), a method
-   for automatic registration of clients is needed.
+   Nevertheless, in order for the authorization server to accurately
+   represent to end-users which client is seeking authorization to
+   access the end-user's resources, a method for automatic and unique
+   registration of clients is needed.
 
-   The goal of this proposed registration protocol is to provide the
-   client with a client identifier and optionally by a client secret,
-   from the authorization server.  In-turn the authorization server must
-   also be provided with information about the client, with the client-
-   name being the minimal information provided.  However, in practice
-   additional information will need to be furnished to the Authorization
-   Server, including the homepage, icon, description, company and
-   others.
+   The goal of this proposed registration protocol is for an
+   authorization server to provide a client with a client identifier and
+   optionally a client secret in a dynamic fashion.  To accomplish this,
+   the authorization server must first be provided with information
+   about the client, with the client-name being the minimal information
+   provided.  In practice, additional information will need to be
+   furnished to the authorization server, such as the client's homepage,
+   icon, description, and so on.
 
-   This informal draft presents a number of approaches and options with
-   regards to the automatic registration of clients to the OAuth
-   authorization server.
+   This informal draft discusses a number of requirements for and
+   approaches to automatic registration of clients to the OAuth
+   authorization server, with special emphasis on the needs of the
+   OAuth-based User-Managed Access protocol [[provide citation]].
 
 1.1.  Notational Conventions
 
@@ -163,10 +164,9 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
 
 
-
-Scholz, et al.          Expires January 13, 2011                [Page 3]
+Scholz, et al.          Expires January 30, 2011                [Page 3]
 
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
 
 
    authorization server
@@ -195,124 +195,162 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
 2.  Requirements
 
+   In addition to the following general requirements for dynamic client
+   registration, the User-Managed Access (UMA) protocol seeks to
+   optimize for the design principles and requirements found in the UMA
+   Requirements document [[provide citation]], for example, principles
+   having to do with promoting simplicity and generativity (unexpected
+   reuse), avoiding undue cryptography burden, and pushing complexity to
+   the authorization server from other entities.
+
 2.1.  The client needs to be uniquely identifiable by the authorization
       server
 
-   In order for an authorization server to do proper user delegated
-   authorization it must be able to identify clients in order to prevent
-   unauthorized access, e.g. if just a client name is given.  Like today
-   the client credentials should thus be provided by the authorization
-   server and not proposed by the client.
+   In order for an authorization server to do proper user-delegated
+   authorization and prevent unauthorized access it must be able to
+   identify clients uniquely.  As is done today in OAuth, the client
+   credentials should thus be issued by the authorization server and not
+   simply accepted as proposed by the client.
 
 2.2.  The authorization server must be able to retrieve metadata about a
       client for later user interaction
 
    In order for the authorization server to describe a client to the
-   user in the authorization step it needs information about the client.
-   This can be the client name at a minimum but today servers usually
-   request at least a description, a homepage URL and an icon when doing
-   manual registration.
+   end-user in an authorization step it needs information about the
+
+
+
+Scholz, et al.          Expires January 30, 2011                [Page 4]
+
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
+
+
+   client.  This can be the client name at a minimum, but today servers
+   usually request at least a description, a homepage URL, and an icon
+   when doing manual registration.
 
 2.3.  The authorization server must have the option of strongly
       authenticating the client and its metadata
 
-   In order to prevent spoofing of clients the authorization server
+   In order to prevent spoofing of clients, the authorization server
+   should have the option to verify the provided information.  This
+   might be solved using signature verification; relatively weaker
+   authentication might be achieved in a simpler way by pulling metadata
+   from a trusted client URL.
 
+2.4.  Dynamic client registration must be possible from both web-server
+      applications and native applications
 
+   Native applications on (e.g.) mobile devices have special
+   limitations, so alternative solutions to meeting this set of
+   requirements must be sought.
 
-Scholz, et al.          Expires January 13, 2011                [Page 4]
-
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
-
-
-   should have the option to verify the provided information to check if
-   it's valid.  This might be solved using certificates or in a simpler
-   way by pulling from the client URL e.g. via hostmeta discovery.
-
-2.4.  Automatic client binding must also be possible from applications
-      running on mobile devices
-
-   Information cannot be pushed to mobile devices, so the two solutions
-   are providing information in a response to a push and doing polling.
-   The latter is not resource friendly though.
+   In the UMA context, one type of dynamic client registration may be in
+   a sub-process of a larger process where a requester (an enhanced type
+   of OAuth client) approaches an authorization manager (an enhanced
+   type of OAuth authorization server), without having interacted
+   before, seeking an access token.  The requester may be any kind of
+   OAuth client; we anticipate that web servers and native applications
+   are the most important kinds of client for which a dynamic
+   registration solution will be sought.
 
 2.5.  Data integrity must be ensured in large deployments where data
       propagation can be an issue
 
-   When e.g. pushing information from a client to a server endpoint it
-   might take a certain amount of time for this data to propagate
-   through big installation over various data centers.  Care needs to be
-   taken that subsequent actions after the registration process like an
-   authorization request show the correct data. (how would a pull look
-   like here as it's always the client which needs to start the process)
+   When a client sends information to a server endpoint, it might take
+   time for this data to propagate through big server installations that
+   spread across various data centers.  Care needs to be taken that
+   subsequent interactions with the user after the registration process,
+   such as an authorization request, show the correct data.
+
+   In the UMA context, one type of dynamic client registration may be in
+   a sub-process of a larger process where an authorizing user (an
+   enhanced role for an OAuth end-user) introduces a host (an enhanced
+   type of OAuth resource server) to an authorization manager (an
+   enhanced type of OAuth authorization server) as a client of it.  If
+   this host has never "met" this authorization manager before, it must
+   obtain unique credentials to use there.  Even though such credentials
+   are needed no matter which end-user caused the registration process
+   to take place, the end-user may need to wait for the sub-process to
+   finish in order to continue with the introduction and policy
 
 
-3.  Registration Flows
+
+Scholz, et al.          Expires January 30, 2011                [Page 5]
+
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
+
+
+   configuration process.
+
+
+3.  Analysis of Registration Flow Options
 
    There are different approaches one can take to exchange client
-   information with client credentials.
+   metadata for client credentials.
 
-3.1.  Providing client information on every request and not using client
-      credentials at all.
+   1.  Providing client metadata on every request and not using client
+       credentials at all: In this approach all necessary client
+       information like client_name or client_icon is passed on every
+       request to the authorization server to display it to the user if
+       necessary.  This option violates the first and second
+       requirements since different clients could theoretically
+       represent themselves to an authorization server with the same
+       metadata and the same client could represent itself on subsequent
+       visits with different metadata.  Also, today's OAuth protocol
+       requires the use of client credentials.  For these reasons, a
+       solution for this flow option is not provided in this document.
 
-   In this approach all necessary client information like client_name or
-   client_icon is passed on every request to the authorization server to
-   display it to the user if necessary.
+   2.  The client "pushes" its metadata to the authorization server,
+       which returns client credentials: In this approach the client
+       discovers the registration endpoint of the authorization server
+       and sends its metadata to that endpoint in (e.g.)  JSON format.
+       The authorization server answers with client credentials in the
+       response.  This approach may be necessary in cases where the
+       client is behind a firewall, but may have difficulty meeting the
+       propagation requirement, since the metadata might be sent to a
+       server far away from the server the end-user subsequently
+       interacts with.  Strong authentication of the client metadata is
+       more difficult with this approach than with the next one, though
+       not impossible.  Further, this approach is problematic in the
+       case of native applications that can't function as web servers.
 
-   This violates the first requirement though.  No client credentials
-   are actually provided which also violates the OAuth specification as
-   it is now.  For these reasons this specification does not include any
-   protocol description for this case.
+   3.  The authorization server "pulls" client metadata and returns
+       client credentials: In this approach the client sends only a URL
+       to the authorization server, which then uses that information to
+       pull metadata about the client e.g. via XRD and return client
+       credentials in the response to the initial request.  This
+       approach most easily allows for strong authentication of clients
+       but still does not entirely solve the propagation issue, as the
+       initial URL push may be made to a server different from the one
+       the end-user is interacting with.
 
-3.2.  The client pushes client information to the authorization server
-      which returns client credentials
-
-   The client discovers the registration endpoint of the authorization
-   server and sends it's client information to that endpoint in JSON
-   format.  The authorization server answers with client credentials in
-   the response.
-
-   Authorization is possible here as the client information could be
+   It seems impossible to specify a single registration flow that will
+   satisfy all requirements, deployment needs, and client types.  This
+   document, therefore, presents as small a variety of options as
+   possible, organized according to client capabilities much as OAuth's
 
 
 
-Scholz, et al.          Expires January 13, 2011                [Page 5]
+Scholz, et al.          Expires January 30, 2011                [Page 6]
 
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
 
 
-   signed with the clients secret key and could contain a URL to the
-   client homepage which could contain a discoverable public key.  This
-   involves PKI though which is hard to implement.
-
-   Moreover it might violate the propagation requirement as the
-   information might be pushed to a server far away from the server the
-   user gets send to in the next step which migth not know the client
-   credentials yet.
-
-3.3.  The authorization server pulls information from the client and
-      returns client credentials
-
-   In this version the client sends a URL to the authorization server
-   which then uses that information to pull metadata about the client
-   e.g. via XRD.  It then will create client credentials and return them
-   in the response to the initial request.
-
-   This does not directly solve the propagation issue as it's still a
-   push to some server of the authorization server cluster and not bound
-   to the user interaction.
+   client profiles are.
 
 
 4.  Discovery of client registration endpoint
 
-   For both models, push and pull, the client needs to discover the
-   client registration endpoint.
+   Regardless of flow option, the client needs to discover the
+   authorization server's client registration endpoint.
 
    The client MUST use the [RFC5785] and [I-D.hammer-hostmeta] discovery
    mechanisms to learn about the URI of the client registration endpoint
    at the authorization server at which the client wants to register.
    The authorization server MUST provide a host-meta document containing
-   a Link element with a rel value of "http://oauth.net/as/registration"
+   a Link element with a rel value of:
+   "http://oauth.net/as/registration"
 
    For example:
 
@@ -320,47 +358,51 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
          <XRD>
            <Host>http://server.example.com</Host>
            <Link rel="http://oauth.net/as/registration"
-                 href="http://server.example.com/register">
+                 href="https://server.example.com/register">
                <Title>Client Registration Endpoint</Title>
            </Link>
          </XRD>
 
 
 
-
-
-
-
-
-Scholz, et al.          Expires January 13, 2011                [Page 6]
-
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
-
-
-5.  Push Client Registration
+5.  Client Registration with Pushed Metadata
 
 5.1.  Overview
 
-   The Push Client Registration Flow works as following:
+   This registration flow is intended only for clients that do not
+   support having an authorization server pull metadata from them, for
+   example, web-server clients behind a firewall.  It works as follows:
 
-   1.  The client sends required parameters to the client registration
-       endpoint.  The client MUST send its name, description and
-       redirection URI and MAY send a URI to its icon.
+   1.  The client sends metadata to the client registration endpoint.
+       The client MUST send its name, description, and redirection URI
+       and MAY send a URI to its icon.  The client MAY sign the
+       metadata.
 
-   2.  The authorization server checks the data and returns a client
-       identifier and an optional client secret.
+   2.  The authorization server checks the data (verifying the signature
+       as necessary) and returns a client identifier and an optional
+       client secret.
 
+
+
+
+
+
+
+Scholz, et al.          Expires January 30, 2011                [Page 7]
+
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
 
 
      +--------+                                  +---------------+
      | Client |--(A)--- Registration Request --->| Authorization |
-     |        |                                  |     Server    |
-     |        |<-(B)----Registration Response ---|               |
+     |        |         with Metadata            |     Server    |
      |        |                                  |               |
+     |        |<-(B)----Registration Response ---|               |
+     |        |         with Client Credentials  |               |
      +--------+                                  +---------------+
 
 
-                  Figure 1: Client Pull Registration Flow
+          Figure 1: Client Registration Flow with Pushed Metadata
 
 5.2.  Client Registration Request
 
@@ -371,37 +413,43 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
    type
          REQUIRED.  This parameter must be set to "push".
 
-   name
-         REQUIRED.  This field must contain the human readable name of
+   client_name
+         REQUIRED.  This field must contain the human-readable name of
          the client.
 
-   url
+   client_url
          REQUIRED.  This field contains the URL of the homepage of the
          client.
 
-   description
+   client_desc
          REQUIRED.  This field must contain the description of the
          client.
 
-
-
-
-
-
-Scholz, et al.          Expires January 13, 2011                [Page 7]
-
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
-
-
-   icon
+   client_icon
          OPTIONAL.  If given, this field contains a URL to an icon for
          the client.
 
-   The client MAY include additional information in the request and the
-   authorization server MAY ignore this information. [[ this sounds like
-   confusion in the end, how would this match?  Remove this sentence?]]
+   redirect_url
+         REQUIRED.  This field contains the URL to which the
+         authorization server should send its response.  [[Must it use
+         https?]]
 
-   For example the client might send the following request:
+   The client MAY include additional metadata in the request and the
+   authorization server MAY ignore this additional information.
+
+   [[Say something about how to sign the metadata, and how it can be
+   verified.]]
+
+
+
+
+
+Scholz, et al.          Expires January 30, 2011                [Page 8]
+
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
+
+
+   For example, the client might send the following request:
 
 
     POST /register HTTP/1.1
@@ -410,10 +458,11 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
     {
       type: "push",
-      name: "Online Photo Gallery",
-      url:  "http://onlinephotogallery.com",
-      description: "Not only uploading, but also editing capabilities!",
-      icon: http://onlinephotogallery.com/icon.png
+      client_name: "Online Photo Gallery",
+      client_url:  "http://onlinephotogallery.com",
+      client_desc: "Not only uploading, but also editing capabilities!",
+      client_icon: "http://onlinephotogallery.com/icon.png",
+      redirect_url: "https://onlinephotogallery.com/client_reg"
     }
 
 
@@ -432,9 +481,29 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
    parameters to the entity body of the HTTP response with a 200 status
    code (OK):
 
-   o  "client_id" (REQUIRED)
+   client_id
+         REQUIRED.
 
-   o  "client_secret" (OPTIONAL)
+   client_secret
+         OPTIONAL.
+
+   issued_at
+         OPTIONAL.  Specifies the timestamp when the credentials were
+         issued.  The timestamp value MUST be a positive integer.  The
+         value is expressed in the number of seconds since January 1,
+         1970 00:00:00 GMT.
+
+   expires_in
+         OPTIONAL; if supplied, the "issued_at" parameter is REQUIRED.
+         Specifies the valid lifetime, in seconds, of the credentials.
+         The value is represented in base 10 ASCII.
+
+
+
+Scholz, et al.          Expires January 30, 2011                [Page 9]
+
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
+
 
    The parameters are included in the entity body of the HTTP response
    using the "application/json" media type as defined by [RFC4627].  The
@@ -442,18 +511,11 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
    parameter at the highest structure level.  Parameter names and string
    values are included as JSON strings.
 
-
-
-Scholz, et al.          Expires January 13, 2011                [Page 8]
-
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
-
-
    The authorization server MUST include the HTTP "Cache-Control"
    response header field with a value of "no-store" in any response
    containing "client_secret".
 
-   For example the authorization server might return the following
+   For example, the authorization server might return the following
    response:
 
 
@@ -462,8 +524,8 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
        Cache-Control: no-store
 
        {
-         "client_id":"5UO9XcL4TQTa",
-         "client_secret":"WdRKN3zeTc20"
+         client_id: "5UO9XcL4TQTa",
+         client_secret: "WdRKN3zeTc20"
        }
 
 
@@ -493,45 +555,48 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
 
 
-6.  Push Client Registration
 
-
-
-
-
-
-Scholz, et al.          Expires January 13, 2011                [Page 9]
+Scholz, et al.          Expires January 30, 2011               [Page 10]
 
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
 
+
+6.  Client Registration with Pulled Metadata
 
 6.1.  Overview
 
-   The Pull Client Registration Flow works as following:
+   This registration flow is intended generally for most clients, which
+   are expected to support having an authorization server pull metadata
+   from them, for example, web-server clients that are not behind a
+   firewall, and instances of native-app clients that have a server-side
+   application that functions as a "registration proxy" for them.  It
+   works as follows:
 
-   1.  The client sends its URI to the client registration endpoint
+   1.  The client sends its metadata URI to the client registration
+       endpoint
 
    2.  The authorization server uses the [RFC5785] and
-       [I-D.hammer-hostmeta] discovery mechanisms on this URI in order
-       to retrieve the host-meta document describing the client.  The
-       host-meta document MUST contain the client's name, description
-       and redirection URI and MAY contain a URI to the client's icon.
+       [I-D.hammer-hostmeta] discovery mechanisms on this URI to
+       retrieve the host-meta document describing the client.  The host-
+       meta document MUST contain the client's name, description, and
+       redirection URI, and MAY contain a URI to the client's icon.
 
 
 
      +--------+                                  +---------------+
      | Client |--(A)--- Registration Request --->| Authorization |
-     |        |                                  |     Server    |
+     |        |         with URL                 |     Server    |
+     |        |                                  |               |
      |        |<-(B)--- Client Discovery --------|               |
      |        |                                  |               |
-     |        |--(C)---- Host Meta Document ---->|               |
+     |        |--(C)---- Host-Meta Document ---->|               |
      |        |                                  |               |
      |        |<-(D)--- Registration Response ---|               |
-     |        |                                  |               |
+     |        |         with Client Credentials  |               |
      +--------+                                  +---------------+
 
 
-                  Figure 2: Client Pull Registration Flow
+          Figure 2: Client Registration Flow with Pulled Metadata
 
 6.2.  Client Registration Request
 
@@ -542,26 +607,25 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
    type
          REQUIRED.  This parameter must be set to "pull".
 
-   url
+
+
+
+
+
+Scholz, et al.          Expires January 30, 2011               [Page 11]
+
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
+
+
+   client_url
          REQUIRED.  This field contains the URL of the homepage of the
          client.
 
-   The client MAY include additional information in the request and the
-   authorization server MAY ignore this information. [[ again: This
-   might get confusing if there is no definition of schema etc. ]]
+   The client MUST NOT include other metadata parameters, such as those
+   defined in the pushed-metadata scenario.  [[Correct?  Need error
+   condition for this?]]
 
-
-
-
-
-
-
-Scholz, et al.          Expires January 13, 2011               [Page 10]
-
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
-
-
-   For example the client might send the following request:
+   For example, the client might send the following request:
 
 
        POST /register HTTP/1.1
@@ -570,7 +634,7 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
        {
          type: "pull",
-         url:  "http://onlinephotogallery.com",
+         url: "http://onlinephotogallery.com"
        }
 
 
@@ -583,8 +647,8 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
 6.3.  Client Discovery
 
-   The authorization server should evaluate this request and MAY perform
-   a [RFC5785] and [I-D.hammer-hostmeta] discovery mechanism on the
+   The authorization server evaluates this request and MAY perform a
+   [RFC5785] and [I-D.hammer-hostmeta] discovery mechanism on the
    provided URL to the host-meta document for the client.
 
    For example:
@@ -594,34 +658,34 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
        Host: server.example.com
 
 
-   The authorization server retrieves the host-meta document which MUST
+   The authorization server retrieves the host-meta document, which MUST
    contain:
 
    o  A "Property" element with a "type" value of
-      "http://oauth.net/client/name" containing the human readable
+      "http://oauth.net/client/name" containing the human-readable
       client name.  (REQUIRED)
+
+
+
+
+Scholz, et al.          Expires January 30, 2011               [Page 12]
+
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
+
 
    o  A "Property" element with a "type" value of
       "http://oauth.net/client/description" containing the human
-      readable description of the client (REQUIRED)
+      readable description of the client.  (REQUIRED)
 
    o  A "Link" element with a "rel" value of
-      "http://oauth.net/client/redirect_uri" (REQUIRED)
-
-
-
-
-
-Scholz, et al.          Expires January 13, 2011               [Page 11]
-
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
-
+      "http://oauth.net/client/redirect_uri" (REQUIRED).
 
    o  A "Link" element with a "rel" value of
-      "http://oauth.net/client/uri" (REQUIRED)
+      "http://oauth.net/client/uri" (REQUIRED).
 
    o  A "Link" element with a "rel" value of
-      "http://oauth.net/client/icon" (REQUIRED)
+      "http://oauth.net/client/icon" (REQUIRED).  [[Make OPTIONAL, as in
+      the push case?]]
 
    For example:
 
@@ -639,7 +703,7 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
            <Title>Client URI</Title>
          </Link>
          <Link rel="http://oauth.net/client/redirect_uri"
-               href="http://onlinephotogallery.com/cb">
+               href="https://onlinephotogallery.com/client_reg">
            <Title>Client Redirect URI</Title>
          </Link>
          <Link rel="http://oauth.net/client/icon"
@@ -657,6 +721,14 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
    parameters to the entity body of the HTTP response with a 200 status
    code (OK):
 
+
+
+
+Scholz, et al.          Expires January 30, 2011               [Page 13]
+
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
+
+
    o  "client_id" (REQUIRED)
 
    o  "client_secret" (OPTIONAL)
@@ -665,14 +737,6 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
    using the "application/json" media type as defined by [RFC4627].  The
    parameters are serialized into a JSON structure by adding each
    parameter at the highest structure level.  Parameter names and string
-
-
-
-Scholz, et al.          Expires January 13, 2011               [Page 12]
-
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
-
-
    values are included as JSON strings.
 
    The authorization server MUST include the HTTP "Cache-Control"
@@ -705,6 +769,22 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
    o  "description" (OPTIONAL)
 
+
+
+
+
+
+
+
+
+
+
+
+Scholz, et al.          Expires January 30, 2011               [Page 14]
+
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
+
+
    An example error response (with line breaks for readability)
 
 
@@ -717,16 +797,6 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
        "description": "The hostmeta document could
            not have been retrieved from the URL."
        }
-
-
-
-
-
-
-
-Scholz, et al.          Expires January 13, 2011               [Page 13]
-
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
 
 6.6.  Error Message
@@ -757,6 +827,19 @@ Internet-Draft        OAuth Dynamic Client Binding0            July 2010
 
 7.  Security Considerations
 
+   [[TBS: Thomas has suggested we include the merits of pull over push
+   and the vulnerabilities in the native-app scenario here.]]
+
+
+
+
+
+
+
+Scholz, et al.          Expires January 30, 2011               [Page 15]
+
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
+
 
 Appendix A.  TODOs
 
@@ -765,34 +848,14 @@ Appendix A.  TODOs
    o  How is the propagation requirement now solved?  Is this a problem
       at all?
 
-   o  What are the advantages / disadvantages between push and pull?
+   o  Add a type of "proxy_pull" for the native-app-initiated use case?
 
-   o  Given pros and cons and requirements can we select only one
-      method?
-
-
-Appendix B.  Contributors
-
-   The following people contributed to preliminary versions of this
-   document:
-
-   The User Managed Access Working Group has dozens of very active
+   o  Need to mention that in the push and pull cases the URL/metadata
+      is being POSTed.  Also require that the registration endpoint uses
+      HTTPS?
 
 
-
-Scholz, et al.          Expires January 13, 2011               [Page 14]
-
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
-
-
-   contributors who proposed ideas and wording for this document,
-   including: [[ If your name is missing or you think someone should be
-   added here, please send Eran a note - don't be shy ]]
-
-   [[ todo ]]
-
-
-Appendix C.  Acknowledgements
+Appendix B.  Acknowledgements
 
    o  Thomas Hardjono
 
@@ -803,13 +866,9 @@ Appendix C.  Acknowledgements
    [[ Add further WG contributors ]]
 
 
-Appendix D.  Document History
+Appendix C.  Document History
 
    [[ to be removed by RFC editor before publication as an RFC ]]
-
-   -01
-
-   o  started the spec.
 
 
 8.  Normative References
@@ -830,16 +889,16 @@ Appendix D.  Document History
 
    [RFC2617]  Franks, J., Hallam-Baker, P., Hostetler, J., Lawrence, S.,
               Leach, P., Luotonen, A., and L. Stewart, "HTTP
+
+
+
+Scholz, et al.          Expires January 30, 2011               [Page 16]
+
+Internet-Draft      OAuth Dynamic Client Registration          July 2010
+
+
               Authentication: Basic and Digest Access Authentication",
               RFC 2617, June 1999.
-
-
-
-
-Scholz, et al.          Expires January 13, 2011               [Page 15]
-
-Internet-Draft        OAuth Dynamic Client Binding0            July 2010
-
 
    [RFC5785]  Nottingham, M. and E. Hammer-Lahav, "Defining Well-Known
               Uniform Resource Identifiers (URIs)", RFC 5785,
@@ -889,8 +948,5 @@ Authors' Addresses
 
 
 
-
-
-
-Scholz, et al.          Expires January 13, 2011               [Page 16]
+Scholz, et al.          Expires January 30, 2011               [Page 17]
 

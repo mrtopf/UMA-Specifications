@@ -1,10 +1,15 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
+                "http://xml.resource.org/authoring/rfc2629.dtd" [
     <!ENTITY rfc2119 PUBLIC ''
           'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
+    <!ENTITY UMA PUBLIC ''
+          'http://kantarainitiative.org/confluence/display/uma/Home'>
+    <!ENTITY UMAreqs PUBLIC ''
+          'http://kantarainitiative.org/confluence/display/uma/UMA+Requirements'>
 ]>
 
-<rfc category='std' ipr='trust200902' docName='draft-oauth-binding-v1-00.txt'>
+<rfc category='std' ipr='trust200902' docName='draft-oauth-dyn-reg-v1-00.txt'>
 
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
@@ -18,7 +23,7 @@
 
   <front>
 
-    <title abbrev='OAuth Dynamic Client Binding0'>The OAuth Dynamic Client Binding Protocol</title>
+    <title abbrev='OAuth Dynamic Client Registration'>OAuth Dynamic Client Registration Protocol</title>
 
     <author fullname='Christian Scholz' surname='Scholz' initials='C' role='editor'>
       <organization>COM.lounge GmbH</organization>
@@ -46,7 +51,7 @@
 
     <abstract>
       <t>
-        This specification describes the OAuth Dynamic Client Binding protocol.
+        This specification proposes an OAuth Dynamic Client Registration protocol.
       </t>
     </abstract>
   </front>
@@ -58,22 +63,23 @@
         In some use-case scenarios it is desirable or necessary to allow OAuth clients to
         obtain authorization from an OAuth authorization server without the two parties
         having previously interacted. Nevertheless, in order for the authorization server
-        to function correctly in delivering to the User the details regarding clients
-        seeking authorization (to access the end-user's resources), a method for automatic
-        registration of clients is needed.
+        to accurately represent to end-users which client is
+        seeking authorization to access the end-user's resources, a method for automatic
+        and unique registration of clients is needed.
       </t>
       <t>
-        The goal of this proposed registration protocol is to provide the client with a
-        client identifier and optionally by a client secret, from the
-        authorization server. In-turn the authorization server must also be provided with
+        The goal of this proposed registration protocol is for an authorization server to provide a client with a
+        client identifier and optionally a client secret in a dynamic fashion. To accomplish this,
+        the authorization server must first be provided with
         information about the client, with the client-name being the minimal information
-        provided. However, in practice additional information will need to be furnished to
-        the Authorization Server, including the homepage, icon, description, company and
-        others.
+        provided. In practice, additional information will need to be furnished to
+        the authorization server, such as the client's homepage, icon, description, and
+        so on.
       </t>
       <t>
-        This informal draft presents a number of approaches and options with regards to
-        the automatic registration of clients to the OAuth authorization server.
+        This informal draft discusses a number of requirements for and approaches to
+        automatic registration of clients to the OAuth authorization server, with special
+        emphasis on the needs of the OAuth-based User-Managed Access protocol [[provide citation]].
       </t>
 
       <section title='Notational Conventions'>
@@ -133,119 +139,129 @@
       </section>
     </section>
     <section title='Requirements'>
+    <t>
+        In addition to the following general requirements for dynamic client registration, the
+        User-Managed Access (UMA) protocol seeks to optimize for the design principles and requirements
+        found in the UMA Requirements document [[provide citation]], for example, principles having to do with
+        promoting simplicity and generativity (unexpected reuse), avoiding undue cryptography burden,
+        and pushing complexity to the authorization server from other entities.
+    </t>
     	    <section title='The client needs to be uniquely identifiable by the authorization server'>
     	      <t>
-          		In order for an authorization server to do proper user delegated authorization
-              it must be able to identify clients in order to prevent unauthorized access,
-              e.g. if just a client name is given. Like today the client credentials should
-              thus be provided by the authorization server and not proposed by the client.
+          		In order for an authorization server to do proper user-delegated authorization
+              and prevent unauthorized access it must be able to identify clients uniquely.
+              As is done today in OAuth, the client credentials should
+              thus be issued by the authorization server and not simply accepted as proposed by the client.
     	      </t>
     	    </section>
 
     	    <section title='The authorization server must be able to retrieve metadata about
           a client for later user interaction'>
     	      <t>
-          		In order for the authorization server to describe a client to the user in the
+          		In order for the authorization server to describe a client to the end-user in an
               authorization step it needs information about the client. This can be the client
-              name at a minimum but today servers usually request at least a description, a
-              homepage URL and an icon when doing manual registration.
+              name at a minimum, but today servers usually request at least a description, a
+              homepage URL, and an icon when doing manual registration.
     	      </t>
     	    </section>
     	    <section title='The authorization server must have the option of strongly
           authenticating the client and its metadata'>
     	      <t>
-          		In order to prevent spoofing of clients the authorization server should have the
-              option to verify the provided information to check if it's valid. This might be
-              solved using certificates or in a simpler way by pulling from the client URL
-              e.g. via hostmeta discovery.
+          		In order to prevent spoofing of clients, the authorization server should have the
+              option to verify the provided information. This might be
+              solved using signature verification; relatively weaker authentication might be achieved in a
+              simpler way by pulling metadata from a trusted client URL.
     	      </t>
     	    </section>
-    	    <section title='Automatic client binding must also be possible from applications
-          running on mobile devices'>
+    	    <section title='Dynamic client registration must be possible from both web-server applications
+          and native applications'>
     	      <t>
-          		Information cannot be pushed to mobile devices, so the two solutions are
-              providing information in a response to a push and doing polling. The latter is
-              not resource friendly though.
+          		Native applications on (e.g.) mobile devices have special limitations, so alternative solutions
+          		to meeting this set of requirements must be sought.
+    	      </t>
+    	      <t>
+    	      In the UMA context, one type of dynamic client registration may be in a sub-process of a larger
+    	      process where a requester (an enhanced type of OAuth client) approaches an authorization
+    	      manager (an enhanced type of OAuth authorization server), without having interacted before, seeking an access
+    	      token. The requester may be any kind of OAuth client; we anticipate that web servers and native
+    	      applications are the most important kinds of client for which a dynamic registration solution
+    	      will be sought.
     	      </t>
     	    </section>
     	    <section title='Data integrity must be ensured in large deployments where data
           propagation can be an issue'>
     	      <t>
-          		When e.g. pushing information from a client to a server endpoint it might take a
-              certain amount of time for this data to propagate through big installation over
-              various data centers. Care needs to be taken that subsequent actions after the
-              registration process like an authorization request show the correct data. (how
-              would a pull look like here as it's always the client which needs to start the
-              process)
+          	  When a client sends information to a server endpoint, it might take time for this data 
+          	  to propagate through big server installations that
+              spread across various data centers. Care needs to be taken that subsequent interactions with the user after the
+              registration process, such as an authorization request, show the correct data.
+              </t>
+              <t>
+              In the UMA context, one type of dynamic client registration may be in a sub-process of a larger
+              process where an authorizing user (an enhanced role for an OAuth end-user) introduces a host
+              (an enhanced type of OAuth resource server)
+              to an authorization manager (an enhanced type of OAuth authorization server) as a client
+              of it. If this host has never "met" this authorization manager before, it must obtain unique
+              credentials to use there. Even though such credentials are needed no matter which end-user
+              caused the registration process to take place, the end-user may need to wait for the sub-process
+              to finish in order to continue with the introduction and policy configuration process.
     	      </t>
     	    </section>
       </section>
 
-    <section title="Registration Flows">
+    <section title='Analysis of Registration Flow Options'>
     	<t>
-    	    There are different approaches one can take to exchange client information
-          with client credentials.
+    	There are different approaches one can take to exchange client metadata
+        for client credentials.
+    	<list style='numbers'>
+        <t>Providing client metadata on every request and not using client credentials at all:
+        In this approach all necessary client information like client_name or
+        client_icon is passed on every request to the authorization server to display it to
+        the user if necessary.  This option violates the first and second requirements since different
+        clients could theoretically represent themselves to an authorization server with the same metadata
+        and the same client could represent itself on subsequent visits with different metadata.
+        Also, today's OAuth protocol requires the use of client credentials. For these reasons,
+        a solution for this flow option is not provided in this document.
+        </t>
+        <t>
+        The client "pushes" its metadata to the authorization server, which returns
+        client credentials: In this approach the client discovers the registration endpoint of
+        the authorization server and sends its metadata to that endpoint in (e.g.) JSON format. The
+        authorization server answers with client credentials in the response.  This approach may be
+        necessary in cases where the client is behind a firewall, but may have difficulty meeting
+        the propagation requirement, since the metadata might be sent to a server far away from
+        the server the end-user subsequently interacts with.
+        Strong authentication of the client metadata is more difficult with this approach
+        than with the next one, though not impossible. Further, this approach is problematic in
+        the case of native applications that can't function as web servers.
     	</t>
-    	<section title="Providing client information on every request and not using client
-      credentials at all.">
-    	    <t>
-          		In this approach all necessary client information like client_name or
-              client_icon is passed on every request to the authorization server to
-              display it to the user if necessary.
-    	    </t>
-    	    <t>
-          		This violates the first requirement though. No client credentials are
-              actually provided which also violates the OAuth specification as it is now.
-              For these reasons this specification does not include any protocol
-              description for this case.
-    	    </t>
-    	</section>
-    	<section title="The client pushes client information to the authorization server
-      which returns client credentials">
-    	    <t>
-          		The client discovers the registration endpoint of the authorization server
-              and sends it's client information to that endpoint in JSON format. The
-              authorization server answers with client credentials in the response.
-    	    </t>
-    	    <t>
-          		Authorization is possible here as the client information could be signed
-              with the clients secret key and could contain a URL to the client homepage
-              which could contain a discoverable public key. This involves PKI though
-              which is hard to implement.
-    	    </t>
-    	    <t>
-          		Moreover it might violate the propagation requirement as the information
-              might be pushed to a server far away from the server the user gets send to
-              in the next step which migth not know the client credentials yet.
-    	    </t>
-    	</section>
-    	<section title="The authorization server pulls information from the client and
-      returns client credentials">
-    	    <t>
-          		In this version the client sends a URL to the authorization server which
-              then uses that information to pull metadata about the client e.g. via XRD.
-              It then will create client credentials and return them in the response to
-              the initial request.
-    	    </t>	
-    	    <t>
-        	    This does not directly solve the propagation issue as it's still a push to
-              some server of the authorization server cluster and not bound to the user
-              interaction.
-    	    </t>
-    	</section>
-    	
-    </section><!-- registration flows -->
+    	<t>The authorization server "pulls" client metadata and returns client credentials: In this
+    	approach the client sends only a URL to the authorization server, which then uses that
+    	information to pull metadata about the client e.g. via XRD and return client credentials
+    	in the response to the initial request. This approach most easily allows for strong
+    	authentication of clients but still does not entirely solve the propagation issue, as the initial
+    	URL push may be made to a server different from the one the end-user is interacting with.
+    	</t>
+    	</list>
+    	</t>
+
+    	<t>It seems impossible to specify a single registration flow that will satisfy all
+    	requirements, deployment needs, and client types.  This document, therefore, presents as
+    	small a variety of options as possible, organized according to client capabilities much as
+    	OAuth's client profiles are.
+    	</t>
+    </section>
     
     <section title='Discovery of client registration endpoint'>
       <t>
-         For both models, push and pull, the client needs to  discover the client
-         registration endpoint. 
+         Regardless of flow option, the client needs to  discover the authorization server's client
+         registration endpoint.
       </t>
       <t>
          The client MUST use the <xref target='RFC5785' /> and <xref target='I-D.hammer-hostmeta' /> discovery mechanisms to learn
          about the URI of the client registration endpoint at the authorization server at
          which the client wants to register. The authorization server MUST provide a
-         host-meta document containing a Link element with a rel value of <spanx
+         host-meta document containing a Link element with a rel value of: <spanx
          style='verb'>http://oauth.net/as/registration</spanx>
       </t>
       <figure>
@@ -257,7 +273,7 @@
       <XRD>
         <Host>http://server.example.com</Host>
         <Link rel="http://oauth.net/as/registration" 
-              href="http://server.example.com/register">
+              href="https://server.example.com/register">
             <Title>Client Registration Endpoint</Title>
         </Link>
       </XRD>
@@ -266,39 +282,42 @@
       </figure>
     </section>
     
-    <section title='Push Client Registration'>
+    <section title='Client Registration with Pushed Metadata'>
       <section title="Overview">
         <t>
-          The Push Client Registration Flow works as following:
+          This registration flow is intended only for clients that do not support having an
+          authorization server pull metadata from them, for example, web-server clients behind a firewall.
+          It works as follows:
         </t>
         <t>
           <list style="numbers">
             <t>
-                The client sends required parameters to the client registration endpoint. The
-                client MUST send its name, description and redirection URI and MAY send a URI
-                to its icon.
+                The client sends metadata to the client registration endpoint. The
+                client MUST send its name, description, and redirection URI and MAY send a URI
+                to its icon. The client MAY sign the metadata.
             </t>
             <t>
-                The authorization server checks the data and returns a client identifier and
-                an optional client secret.
+                The authorization server checks the data (verifying the signature as necessary) and
+                returns a client identifier and an optional client secret.
             </t>
           </list>
         </t>
         
-        <figure title='Client Pull Registration Flow' anchor='Figure 1'>
+        <figure title='Client Registration Flow with Pushed Metadata' anchor='Figure-1'>
           <artwork>
             <![CDATA[
   +--------+                                  +---------------+
   | Client |--(A)--- Registration Request --->| Authorization |
-  |        |                                  |     Server    |
-  |        |<-(B)----Registration Response ---|               |
+  |        |         with Metadata            |     Server    |
   |        |                                  |               |
+  |        |<-(B)----Registration Response ---|               |
+  |        |         with Client Credentials  |               |
   +--------+                                  +---------------+
 ]]>
           </artwork>
         </figure>
         
-      </section><!-- overview pull-->
+      </section><!-- overview push-->
       
       <section title="Client Registration Request">
         <t>
@@ -311,34 +330,39 @@
                 <vspace />
                 REQUIRED. This parameter must be set to "push". 
             </t>
-            <t hangText="name">
+            <t hangText="client_name">
                 <vspace />
-                REQUIRED. This field must contain the human readable name of the client.
+                REQUIRED. This field must contain the human-readable name of the client.
             </t>
-            <t hangText="url">
+            <t hangText="client_url">
                 <vspace />
                 REQUIRED. This field contains the URL of the homepage of the client.
             </t>
-            <t hangText="description">
+            <t hangText="client_desc">
                 <vspace />
                 REQUIRED. This field must contain the description of the client. 
             </t>            
-            <t hangText="icon">
+            <t hangText="client_icon">
                 <vspace />
                 OPTIONAL. If given, this field contains a URL to an icon for the client.
             </t>
-          </list>
+             <t hangText="redirect_url">
+                <vspace />
+                REQUIRED. This field contains the URL to which the authorization server should send its response.
+                [[Must it use https?]]
+            </t>
+         </list>
         </t>
         <t>
-          The client MAY include additional information in the request and the
-          authorization server MAY ignore this information.
-          
-          [[ this sounds like confusion in the end, how would this match? Remove this
-          sentence?]]
+          The client MAY include additional metadata in the request and the
+          authorization server MAY ignore this additional information.
+        </t>
+        <t>
+        [[Say something about how to sign the metadata, and how it can be verified.]]
         </t>
         <figure>
          <preamble>
-           For example the client might send the following request:
+           For example, the client might send the following request:
          </preamble>
          <artwork>
         <![CDATA[
@@ -348,10 +372,11 @@
 
     {
       type: "push",
-      name: "Online Photo Gallery",
-      url:  "http://onlinephotogallery.com",
-      description: "Not only uploading, but also editing capabilities!",
-      icon: http://onlinephotogallery.com/icon.png
+      client_name: "Online Photo Gallery",
+      client_url:  "http://onlinephotogallery.com",
+      client_desc: "Not only uploading, but also editing capabilities!",
+      client_icon: "http://onlinephotogallery.com/icon.png",
+      redirect_url: "https://onlinephotogallery.com/client_reg"
     }
         
         ]]>
@@ -370,18 +395,29 @@
           authorization server issues the client identifier and an optional client secret,
           and constructs the response by adding the following parameters to the entity
           body of the HTTP response with a 200 status code (OK):
-        </t>
-        <t>
-          <list style="symbols">
-            <t>
-              <spanx style='verb'>client_id</spanx> (REQUIRED)
+        <list style="hanging" hangIndent="6">
+            <t hangText="client_id">
+                <vspace />
+                REQUIRED.
             </t>
-            <t>
-              <spanx style='verb'>client_secret</spanx> (OPTIONAL)
+             <t hangText="client_secret">
+                <vspace />
+                OPTIONAL.
             </t>
-          </list>
+            <t hangText="issued_at">
+                <vspace />
+                OPTIONAL. Specifies the timestamp when the credentials were issued.
+                The timestamp value MUST be a positive integer.  The value is expressed
+                in the number of seconds since January 1, 1970 00:00:00 GMT.
+            </t>
+            <t hangText="expires_in">
+                <vspace />
+                OPTIONAL; if supplied, the <spanx style='verb'>issued_at</spanx> parameter
+                is REQUIRED. Specifies the valid
+                lifetime, in seconds, of the credentials. The value is represented in base 10 ASCII.
+            </t>
+       </list>
         </t>
-        
         <t>
           The parameters are included in the entity body of the HTTP response using the
           "application/json" media type as defined by [RFC4627]. The parameters are
@@ -396,7 +432,7 @@
         </t>
             <figure>
              <preamble>
-               For example the authorization server might return the following response:
+               For example, the authorization server might return the following response:
              </preamble>
              <artwork>
             <![CDATA[
@@ -405,14 +441,14 @@
     Cache-Control: no-store
 
     {
-      "client_id":"5UO9XcL4TQTa",
-      "client_secret":”WdRKN3zeTc20”
+      client_id: "5UO9XcL4TQTa",
+      client_secret: ”WdRKN3zeTc20”
     }
             ]]>
              </artwork>
             </figure>
         
-      </section><!-- client registration response -->
+      </section> <!-- client registration response -->
       <section title="Error Message">
         <t>
             If the request for registration is invalid or unauthorized, the authorization
@@ -450,37 +486,41 @@
         </figure>        
       </section><!-- error message -->
     </section><!-- push client registration -->
-    <section title="Push Client Registration">
+    <section title="Client Registration with Pulled Metadata">
       <section title="Overview">
         <t>
-          The Pull Client Registration Flow works as following:
+          This registration flow is intended generally for most clients, which are expected to support
+          having an authorization server pull metadata from them, for example, web-server clients that are
+          not behind a firewall, and instances of native-app clients that have a server-side application that
+          functions as a "registration proxy" for them.  It works as follows:
         </t>
         <t>
           <list style="numbers">
             <t>
-              The client sends its URI to the client registration endpoint
+              The client sends its metadata URI to the client registration endpoint
             </t>
             <t>
               The authorization server uses the <xref target='RFC5785' /> and <xref target='I-D.hammer-hostmeta' /> discovery
-              mechanisms on this URI in order to retrieve the host-meta document
+              mechanisms on this URI to retrieve the host-meta document
               describing the client. The host-meta document MUST contain the client’s
-              name, description and redirection URI and MAY contain a URI to the client’s
+              name, description, and redirection URI, and MAY contain a URI to the client’s
               icon.
             </t>
           </list>
         </t>
-        <figure title='Client Pull Registration Flow' anchor='Figure 2'>
+        <figure title='Client Registration Flow with Pulled Metadata' anchor='Figure-2'>
           <artwork>
 <![CDATA[
   +--------+                                  +---------------+
   | Client |--(A)--- Registration Request --->| Authorization |
-  |        |                                  |     Server    |
+  |        |         with URL                 |     Server    |
+  |        |                                  |               |
   |        |<-(B)--- Client Discovery --------|               |
   |        |                                  |               |
-  |        |--(C)---- Host Meta Document ---->|               |
+  |        |--(C)---- Host-Meta Document ---->|               |
   |        |                                  |               |
   |        |<-(D)--- Registration Response ---|               |
-  |        |                                  |               |
+  |        |         with Client Credentials  |               |
   +--------+                                  +---------------+
 ]]>
           </artwork>
@@ -498,7 +538,7 @@
                 <vspace />
                 REQUIRED. This parameter must be set to "pull". 
             </t>
-            <t hangText="url">
+            <t hangText="client_url">
                 <vspace />
                 REQUIRED. This field contains the URL of the homepage of the client. 
             </t>
@@ -506,15 +546,13 @@
         </t>
         
         <t>
-          The client MAY include additional information in the request and the
-          authorization server MAY ignore this information.
-          
-          [[ again: This might get confusing if there is no definition of schema etc. ]]
+          The client MUST NOT include other metadata parameters, such as those defined in the pushed-metadata scenario.
+          [[Correct?  Need error condition for this?]]
         </t>
         
         <figure>
          <preamble>
-           For example the client might send the following request:
+           For example, the client might send the following request:
          </preamble>
          <artwork>
         <![CDATA[
@@ -524,7 +562,7 @@
 
     {
       type: "pull",
-      url:  "http://onlinephotogallery.com",
+      url: "http://onlinephotogallery.com"
     }
 
         ]]>
@@ -539,7 +577,7 @@
       </section>
       <section title="Client Discovery">
         <t>
-          The authorization server should evaluate this request and MAY perform a <xref
+          The authorization server evaluates this request and MAY perform a <xref
           target='RFC5785' /> and <xref target='I-D.hammer-hostmeta' /> discovery
           mechanism on the provided URL to the host-meta document for the client.
         </t>
@@ -557,7 +595,7 @@
         </figure>
         
         <t>
-          The authorization server retrieves the host-meta document which MUST contain:
+          The authorization server retrieves the host-meta document, which MUST contain:
         </t>
         <t>
           <list style="symbols">
@@ -568,7 +606,7 @@
               <spanx style="verb">type</spanx>
               value of
               <spanx style="verb">http://oauth.net/client/name</spanx>
-              containing the human readable client name.
+              containing the human-readable client name.
               (REQUIRED)
             </t>
             <t>
@@ -578,7 +616,7 @@
               <spanx style="verb">type</spanx>
               value of
               <spanx style="verb">http://oauth.net/client/description</spanx>
-              containing the human readable description of the client
+              containing the human readable description of the client.
               (REQUIRED)
             </t>
             <t>
@@ -588,7 +626,7 @@
               <spanx style="verb">rel</spanx>
               value of
               <spanx style="verb">http://oauth.net/client/redirect_uri</spanx>
-              (REQUIRED)
+              (REQUIRED).
             </t>
             <t>
               A 
@@ -597,7 +635,7 @@
               <spanx style="verb">rel</spanx>
               value of
               <spanx style="verb">http://oauth.net/client/uri</spanx>
-              (REQUIRED)
+              (REQUIRED).
             </t>            
             <t>
               A 
@@ -606,7 +644,7 @@
               <spanx style="verb">rel</spanx>
               value of
               <spanx style="verb">http://oauth.net/client/icon</spanx>
-              (REQUIRED)
+              (REQUIRED). [[Make OPTIONAL, as in the push case?]]
             </t>
           </list>
         </t>
@@ -629,7 +667,7 @@
         <Title>Client URI</Title>
       </Link>
       <Link rel="http://oauth.net/client/redirect_uri" 
-            href="http://onlinephotogallery.com/cb">
+            href="https://onlinephotogallery.com/client_reg">
         <Title>Client Redirect URI</Title>
       </Link>
       <Link rel="http://oauth.net/client/icon" 
@@ -771,6 +809,7 @@
     
     <section title='Security Considerations'>
       <t>
+      [[TBS: Thomas has suggested we include the merits of pull over push and the vulnerabilities in the native-app scenario here.]]
       </t>
     </section>
 
@@ -783,30 +822,17 @@
           <t>
             How is the propagation requirement now solved? Is this a problem at all?
           </t>
-          <t>
-            What are the advantages / disadvantages between push and pull? 
+           <t>
+            Add a type of "proxy_pull" for the native-app-initiated use case?
           </t>
           <t>
-            Given pros and cons and requirements can we select only one method?
+            Need to mention that in the push and pull cases the URL/metadata is being POSTed.
+            Also require that the registration endpoint uses HTTPS?
           </t>
-        </list>
-      </t>
-    </appendix>
-    <appendix title='Contributors'>
-      <t>
-        The following people contributed to preliminary versions of this document:
-      </t>
-      <t>
-        The User Managed Access Working Group has dozens of very active contributors who
-        proposed ideas and wording for this document, including: [[ If your name is
-        missing or you think someone should be added here, please send Eran a note - don't
-        be shy ]]
-      </t>
-      <t>
-        [[ todo ]]
-      </t>
-    </appendix>
 
+       </list>
+      </t>
+    </appendix>
     <appendix title='Acknowledgements'>
       <t>
         <list style="symbols">
@@ -828,15 +854,6 @@
       <t>
         [[ to be removed by RFC editor before publication as an RFC ]]
       </t>
-      <t>
-        -01
-        
-        <list style='symbols'>
-          <t>
-            started the spec.
-          </t>
-        </list>
-      </t>
     </appendix>
 
   </middle>
@@ -844,14 +861,16 @@
   <back>
 
     <references title='Normative References'>
+    
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2617.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.5785.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-hammer-hostmeta-13.xml'?>
       
-      
       <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p1-messaging-09.xml'?>
+
 <!--
+
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2045.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2104.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616.xml' ?>
@@ -864,7 +883,6 @@
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml' ?>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
 -->
-
     </references>
 
   </back>
