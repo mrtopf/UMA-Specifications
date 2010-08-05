@@ -334,8 +334,12 @@
        <artwork>
       <![CDATA[
 <!-- Applies to both hosts and requesters --> 
-<Property type="http://kantarainitiative.org/confluence/display/uma/token_formats">saml</Property>
-<Property type="http://kantarainitiative.org/confluence/display/uma/claim_formats">json</Property>
+<Property type="http://kantarainitiative.org/confluence/display/uma/token_formats">
+saml
+</Property>
+<Property type="http://kantarainitiative.org/confluence/display/uma/claim_formats">
+json
+</Property>
 
 <!-- Host "authorization API" --> 
 <Link rel="http://kantarainitiative.org/confluence/display/uma/host_token_uri"

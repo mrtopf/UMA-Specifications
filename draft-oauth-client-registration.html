@@ -144,10 +144,10 @@
 <tr><td class="header">Network Working Group</td><td class="header">C. Scholz, Ed.</td></tr>
 <tr><td class="header">Internet-Draft</td><td class="header">COM.lounge GmbH</td></tr>
 <tr><td class="header">Intended status: Standards Track</td><td class="header">M. Machulak</td></tr>
-<tr><td class="header">Expires: January 30, 2011</td><td class="header">Newcastle University</td></tr>
+<tr><td class="header">Expires: February 6, 2011</td><td class="header">Newcastle University</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">E. Maler</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">PayPal</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">July 29, 2010</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">August 5, 2010</td></tr>
 </table></td></tr></table>
 <h1><br />OAuth Dynamic Client Registration Protocol<br />draft-oauth-dyn-reg-v1-00.txt</h1>
 
@@ -172,7 +172,7 @@ and may be updated, replaced, or obsoleted by other documents at any time.
 It is inappropriate to use Internet-Drafts as reference material or to cite
 them other than as &ldquo;work in progress.&rdquo;</p>
 <p>
-This Internet-Draft will expire on January 30, 2011.</p>
+This Internet-Draft will expire on February 6, 2011.</p>
 
 <h3>Copyright Notice</h3>
 <p>
@@ -211,7 +211,7 @@ The authorization server must have the option of strongly
 Dynamic client registration must be possible from both web-server applications
           and native applications<br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor9">2.5.</a>&nbsp;
-Data integrity must be ensured in large deployments where data
+Transaction integrity must be ensured in large deployments where data
           propagation can be an issue<br />
 <a href="#anchor10">3.</a>&nbsp;
 Analysis of Registration Flow Options<br />
@@ -281,6 +281,15 @@ Introduction</h3>
       
 </p>
 <p>
+      The dynamic registration protocol proposed here is envisioned to be an additional
+      task to be performed by the OAuth authorization server, namely registration of a new
+      client identifier and optional secret, and the issuance of this information to
+      the client. This task would occur prior to the point at which the client
+      wields its identifier and secret at the authorization server in order to obtain an access
+      token in normal OAuth fashion.
+      
+</p>
+<p>
         This informal draft discusses a number of requirements for and approaches to
         automatic registration of clients to the OAuth authorization server, with special
         emphasis on the needs of the OAuth-based User-Managed Access protocol [[provide citation]].
@@ -321,6 +330,12 @@ Terminology</h3>
               A server capable of accepting and responding to protected resource requests.
             
 </dd>
+<dt>resource owner</dt>
+<dd>
+              
+              An entity capable of granting access to a protected resource.
+            
+</dd>
 <dt>client</dt>
 <dd>
               
@@ -333,6 +348,13 @@ Terminology</h3>
               A server capable of issuing tokens after successfully authenticating the resource
               owner and obtaining authorization. The authorization server may be the same server as
               the resource server, or a separate entity.
+            
+</dd>
+<dt>authorization manager</dt>
+<dd>
+              
+              An UMA-defined variant of an authorization server that carries out an authorizing
+              user's policies governing access to a protected resource.
             
 </dd>
 <dt>end-user authorization endpoint</dt>
@@ -372,9 +394,26 @@ Requirements</h3>
 <p>
         In addition to the following general requirements for dynamic client registration, the
         User-Managed Access (UMA) protocol seeks to optimize for the design principles and requirements
-        found in the UMA Requirements document [[provide citation]], for example, principles having to do with
-        promoting simplicity and generativity (unexpected reuse), avoiding undue cryptography burden,
-        and pushing complexity to the authorization server from other entities.
+        found in the UMA Requirements document [[provide citation]], for example:
+</p>
+<blockquote class="text">
+<p>
+DP1: Simple to understand, implement in an interoperable fashion, and deploy on an Internet-wide scale
+
+</p>
+<p>
+DP6: Able to be combined and extended to support a variety of use cases and emerging application functionality.
+
+</p>
+<p>
+DP8: Avoid adding crypto requirements beyond what existing web app implementations do today.
+
+</p>
+<p>
+DP10: Complexity should be borne by the authorization endpoint vs. other endpoints.
+
+</p>
+</blockquote><p>
     
 </p>
 <a name="anchor5"></a><br /><hr />
@@ -385,7 +424,7 @@ The client needs to be uniquely identifiable by the authorization server</h3>
 <p>
           		In order for an authorization server to do proper user-delegated authorization
               and prevent unauthorized access it must be able to identify clients uniquely.
-              As is done today in OAuth, the client credentials should
+              As is done today in OAuth, the client identifier (and optional secret) should
               thus be issued by the authorization server and not simply accepted as proposed by the client.
     	      
 </p>
@@ -438,7 +477,7 @@ Dynamic client registration must be possible from both web-server applications
 <a name="anchor9"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.2.5"></a><h3>2.5.&nbsp;
-Data integrity must be ensured in large deployments where data
+Transaction integrity must be ensured in large deployments where data
           propagation can be an issue</h3>
 
 <p>
@@ -453,8 +492,8 @@ Data integrity must be ensured in large deployments where data
               process where an authorizing user (an enhanced role for an OAuth end-user) introduces a host
               (an enhanced type of OAuth resource server)
               to an authorization manager (an enhanced type of OAuth authorization server) as a client
-              of it. If this host has never "met" this authorization manager before, it must obtain unique
-              credentials to use there. Even though such credentials are needed no matter which end-user
+              of it. If this host has never "met" this authorization manager before, it must obtain a unique
+              identifier to use there. Even though such an identifier is needed no matter which end-user
               caused the registration process to take place, the end-user may need to wait for the sub-process
               to finish in order to continue with the introduction and policy configuration process.
     	      
@@ -466,24 +505,26 @@ Analysis of Registration Flow Options</h3>
 
 <p>
     	There are different approaches one can take to exchange client metadata
-        for client credentials.
+        for a client identifier and optional secret.
     	</p>
 <ol class="text">
-<li>Providing client metadata on every request and not using client credentials at all:
+<li>Providing client metadata on every request and not using a client identifier at all:
         In this approach all necessary client information like client_name or
         client_icon is passed on every request to the authorization server to display it to
-        the user if necessary.  This option violates the first and second requirements since different
+        the user if necessary.  This option makes it more difficult to meet the first and second requirements
+        since different
         clients could theoretically represent themselves to an authorization server with the same metadata
         and the same client could represent itself on subsequent visits with different metadata.
-        Also, today's OAuth protocol requires the use of client credentials. For these reasons,
-        a solution for this flow option is not provided in this document.
+        Also, today's OAuth protocol requires the use of a client identifier. Because of the UMA
+        simplicity principle we do not recommend this flow option and
+        and have not provided a candidate solution.
         
 </li>
 <li>
         The client "pushes" its metadata to the authorization server, which returns
-        client credentials: In this approach the client discovers the registration endpoint of
+        the client identification information: In this approach the client discovers the registration endpoint of
         the authorization server and sends its metadata to that endpoint in (e.g.) JSON format. The
-        authorization server answers with client credentials in the response.  This approach may be
+        authorization server answers with a client identifier and optional secret in the response.  This approach may be
         necessary in cases where the client is behind a firewall, but may have difficulty meeting
         the propagation requirement, since the metadata might be sent to a server far away from
         the server the end-user subsequently interacts with.
@@ -492,9 +533,9 @@ Analysis of Registration Flow Options</h3>
         the case of native applications that can't function as web servers.
     	
 </li>
-<li>The authorization server "pulls" client metadata and returns client credentials: In this
+<li>The authorization server "pulls" client metadata and returns client identification information: In this
     	approach the client sends only a URL to the authorization server, which then uses that
-    	information to pull metadata about the client e.g. via XRD and return client credentials
+    	information to pull metadata about the client, e.g. via XRD, and returns identification information
     	in the response to the initial request. This approach most easily allows for strong
     	authentication of clients but still does not entirely solve the propagation issue, as the initial
     	URL push may be made to a server different from the one the end-user is interacting with.
@@ -581,7 +622,7 @@ Overview</h3>
   |        |         with Metadata            |     Server    |
   |        |                                  |               |
   |        |&lt;-(B)----Registration Response ---|               |
-  |        |         with Client Credentials  |               |
+  |        |         with Client ID Info      |               |
   +--------+                                  +---------------+
 
 </pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;1: Client Registration Flow with Pushed Metadata&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
@@ -702,7 +743,7 @@ Client Registration Response</h3>
 <dt>issued_at</dt>
 <dd>
                 
-                OPTIONAL. Specifies the timestamp when the credentials were issued.
+                OPTIONAL. Specifies the timestamp when the identifier was issued.
                 The timestamp value MUST be a positive integer.  The value is expressed
                 in the number of seconds since January 1, 1970 00:00:00 GMT.
             
@@ -712,7 +753,7 @@ Client Registration Response</h3>
                 
                 OPTIONAL; if supplied, the <tt>issued_at</tt> parameter
                 is REQUIRED. Specifies the valid
-                lifetime, in seconds, of the credentials. The value is represented in base 10 ASCII.
+                lifetime, in seconds, of the identifier. The value is represented in base 10 ASCII.
             
 </dd>
 </dl></blockquote><p>
@@ -835,7 +876,7 @@ Overview</h3>
   |        |--(C)---- Host-Meta Document ----&gt;|               |
   |        |                                  |               |
   |        |&lt;-(D)--- Registration Response ---|               |
-  |        |         with Client Credentials  |               |
+  |        |         with Client ID Info      |               |
   +--------+                                  +---------------+
 
 </pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;2: Client Registration Flow with Pulled Metadata&nbsp;</b></font><br /></td></tr></table><hr class="insert" />

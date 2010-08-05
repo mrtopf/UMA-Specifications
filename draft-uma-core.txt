@@ -1,0 +1,417 @@
+
+
+
+Network Working Group                                     C. Scholz, Ed.
+Internet-Draft                                           COM.lounge GmbH
+Intended status: Standards Track                                P. Bryan
+Expires: February 6, 2011                                              ?
+                                                             M. Machulak
+                                                    Newcastle University
+                                                                E. Maler
+                                                                  PayPal
+                                                          August 5, 2010
+
+
+                User-Managed Access (UMA) Core Protocol
+                        draft-uma-core-v1-00.txt
+
+Abstract
+
+   This specification defines the User-Managed Access (UMA) core
+   protocol.  This protocol provides a method for users to control
+   access to their protected resources, residing on any number of host
+   sites, through an authorization manager that makes access decisions
+   based on user policy.
+
+   This document is a product of the User-Managed Access Work Group of
+   the Kantara Initiative.  It is currently under active development.
+   It has not yet been submitted to the IETF.  The User-Managed Access
+   Work Group operates under Kantara IPR Policy - Option Patent and
+   Copyright: Reciprocal Royalty Free with Opt-Out to Reasonable And Non
+   discriminatory (RAND) and the publication of this document is
+   governed by the policies outlined in this option.
+
+Status of this Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on February 6, 2011.
+
+Copyright Notice
+
+
+
+Scholz, et al.          Expires February 6, 2011                [Page 1]
+
+Internet-Draft              UMA Core Protocol                August 2010
+
+
+   Copyright (c) 2010 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . ancho
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . ancho
+     1.2.  Terminology . . . . . . . . . . . . . . . . . . . . . . ancho
+   2.  Step 1: Authorizing user introduces host to AM  . . . . . . ancho
+     2.1.  Host looks up AM metadata . . . . . . . . . . . . . . . ancho
+     2.2.  Host dynamically registers with AM  . . . . . . . . . . ancho
+     2.3.  Host obtains host access token  . . . . . . . . . . . . ancho
+     2.4.  Host registers resources to be protected  . . . . . . . ancho
+   3.  Step 2: Requester gets access token from AM . . . . . . . . ancho
+   4.  Step 3: Requester wields access token at host to gain
+       access  . . . . . . . . . . . . . . . . . . . . . . . . . . ancho
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . ancho
+   Appendix A.  TODOs  . . . . . . . . . . . . . . . . . . . . . . ancho
+   Appendix B.  Acknowledgements . . . . . . . . . . . . . . . . . ancho
+   Appendix C.  Document History . . . . . . . . . . . . . . . . . ancho
+   6.  Normative References  . . . . . . . . . . . . . . . . . . . ancho
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . .     0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Scholz, et al.          Expires February 6, 2011                [Page 2]
+
+Internet-Draft              UMA Core Protocol                August 2010
+
+
+1.  Introduction
+
+   The User-Managed Access (UMA) core protocol provides a method, based
+   on [[OAuth20]], for users to control access to their protected
+   resources, residing on any number of host sites, through an
+   authorization manager that makes access decisions based on user
+   policy.
+
+   For example, a web user (authorizing user) can authorize a web app
+   (requester) to gain one-time or ongoing access to a resource
+   containing his home address stored at a "personal data store" service
+   (host), by telling the host to act on access decisions made by his
+   authorization decision-making service (authorization manager or AM).
+   The requesting party might be an e-commerce company whose site is
+   acting on behalf of the user himself to assist him in arranging for
+   shipping a purchased item, or it might be his friend who is using an
+   online address book service to collect addresses, or it might be a
+   survey company that uses an online service to compile population
+   demographics.
+
+   In enterprise settings, application access management often involves
+   letting back-office applications serve only as policy enforcement
+   points (PEPs), depending entirely on access decisions coming from a
+   central policy decision point (PDP) to govern the access they give to
+   requesters.  This separation eases auditing and allows policy
+   administration to scale in several dimensions.  UMA makes use of this
+   separation, letting the authorizing user serve as a policy
+   administrator crafting authorization strategies on his or her own
+   behalf.
+
+   This informal draft discusses a number of requirements for and
+   approaches to automatic registration of clients to the OAuth
+   authorization server, with special emphasis on the needs of the
+   OAuth-based User-Managed Access protocol [[provide citation]].
+
+   The UMA protocol profiles and extends [[OAuth20]], applying two
+   instances of OAuth flow patterns among the entities.
+
+   First, UMA allows a host to trust an AM to which it has been
+   introduced dynamically.  To accomplish this, the host acquires a host
+   access token that it can subsequently use in interacting with a set
+   of host-specific protected resources at the AM.  These resources can
+   be considered an OAuth-protected API.  Thus, when the host accesses
+   these resources, it acts in the role of an OAuth client while the AM
+   acts in the dual roles of an OAuth resource server and authorization
+   server.
+
+   Subsequently, when a requester interacts with the AM and the host in
+
+
+
+Scholz, et al.          Expires February 6, 2011                [Page 3]
+
+Internet-Draft              UMA Core Protocol                August 2010
+
+
+   the course of getting access to some protected resource on the host,
+   the requester acts in the role of an OAuth client to get and use a
+   requester access token; the host acts in the role of an OAuth
+   resource server; and the AM acts in the role of an OAuth
+   authorization server.
+
+   UMA has the following major steps:
+
+   1.  The authorizing user introduces a host to an AM
+
+   2.  The requester gets an access token from the AM
+
+   3.  The requester wields the access token at the host to gain access
+
+1.1.  Notational Conventions
+
+   The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT',
+   'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'MAY', and 'OPTIONAL' in this
+   document are to be interpreted as described in [RFC2119].
+
+   This document uses the Augmented Backus-Naur Form (ABNF) notation of
+   [I-D.ietf-httpbis-p1-messaging].  Additionally, the realm and auth-
+   param rules are included from [RFC2617].
+
+   Unless otherwise noted, all the protocol parameter names and values
+   are case sensitive.
+
+1.2.  Terminology
+
+   authorizing user
+         An UMA-defined variant of an [[OAuth20]] resource owner; a web
+         user who configures an authorization manager with policies that
+         control how it makes access decisions when a requester attempts
+         to access a protected resource at a host.
+
+   authorization manager
+         An UMA-defined variant of an [[OAuth20]] authorization server
+         that carries out an authorizing user's policies governing
+         access to a protected resource.
+
+   protected resource
+         An access-restricted resource at a host.
+
+   host
+         An UMA-defined variant of an [[OAuth20]] resource server that
+         enforces access to the protected resources it hosts, as decided
+         by an authorization manager.
+
+
+
+
+Scholz, et al.          Expires February 6, 2011                [Page 4]
+
+Internet-Draft              UMA Core Protocol                August 2010
+
+
+   host access token
+         An access token symbolizing the authorizing user's consent for
+         a host to trust a particular authorization manager for access
+         decisions about resources hosted there.
+
+   claim
+         A statement (in the sense of [[IDCclaim]]).  Claims are
+         conveyed by a requester on behalf of a requesting party to an
+         authorization manager in an attempt to satisfy an authorizing
+         user's policy.
+
+   requester
+         An UMA-defined variant of [[OAuth20]] client that seeks access
+         to a protected resource.
+
+   requester access token
+         An access token symbolizing the authorizing user's consent for
+         a requester's access to particular resources at a host.
+
+   requesting party
+         A web user, or a corporation (or other legal person), that uses
+         a requester to seek access to a protected resource.
+
+
+2.  Step 1: Authorizing user introduces host to AM
+
+   In order for a host to be able to delegate authorization to an AM,
+   the authorizing user must introduce the host to the AM.  The result
+   is as follows:
+
+      The host has received metadata about the AM, such as [[OAuth20]]
+      endpoints.
+
+      The host has received an OAuth access token (known as the host
+      access token) that represents the authorizing user's approval for
+      the host to work with this AM in protecting resources.  This token
+      is used when the host makes requests at host-specific AM
+      endpoints.
+
+      The AM has optionally acquired information about resources on the
+      host it is supposed to protect on behalf of the user.
+
+   The following substeps are performed in order to achieve these
+   results:
+
+   1.  The host looks up the AM metadata and learns about API endpoints
+       and supported formats.
+
+
+
+
+Scholz, et al.          Expires February 6, 2011                [Page 5]
+
+Internet-Draft              UMA Core Protocol                August 2010
+
+
+   2.  If the host has not yet obtained an OAuth client identifier and
+       optional secret from the AM, it registers with and binds to the
+       AM dynamically, for example via [[draft-oauth-dynamic-reg]].
+
+   3.  The host obtains an access token from the AM with the authorizing
+       user's consent, by following the OAuth 2.0 web server profile.
+
+   4.  The host optionally registers resources with the AM that are
+       intended to be protected, via [[draft-uma-resource-reg]].
+
+2.1.  Host looks up AM metadata
+
+   The host needs to learn the OAuth- and UMA-related endpoints of the
+   AM before they can begin interacting.  The authorizing user might
+   provide the AM's location to get the host started in this process,
+   for example typing a URL into a web form field or clicking a button,
+   or the host might have been configured to work with a single AM
+   without requiring any user input.  The exact process is beyond the
+   scope of this specification, and it is up to the host to choose a
+   method.
+
+   From the data provided, discovered, or configured, the host MUST
+   retrieve the hostmeta document as described in section 2 of
+   [[hostmeta]].  For example, if the user supplied "am.example.com" as
+   the authorization manager's domain, the host creates the URL
+   "https://am.example.com/.well-known/host-meta" and performs a GET
+   request on it.
+
+   The AM MUST provide a XRD 1.0 formatted document at the hostmeta
+   location, documenting the following:
+
+      One set of OAuth 2.0 end-user authorization and token endpoints
+      for the host to use
+
+      One set of OAuth 2.0 end-user authorization and token endpoints
+      for requesters to use, which the host will need to provide to
+      unauthorized requesters
+
+      Optionally, the location of an UMA token validation endpoint for
+      the host to use in validating access tokens received from a
+      requester in step 3
+
+      At least one access token format the AM produces
+
+      Any claims formats the AM supports
+
+   (Note that the method of endpoint discovery defined here is intended
+   to be compatible with the ultimate dynamic discovery, registration,
+
+
+
+Scholz, et al.          Expires February 6, 2011                [Page 6]
+
+Internet-Draft              UMA Core Protocol                August 2010
+
+
+   and binding solution proposed by the OAuth group.  The UMA group has
+   proposed a generic solution at [[draft-uma-dynamic-reg]], with which
+   this discovery step is compatible.)
+
+   Property type values for access token and claim format information:
+
+   http://kantarainitiative.org/confluence/display/uma/token_formats
+         REQUIRED (one or more).  Access token format produced by this
+         AM.  Options are (@@TBS).
+
+   http://kantarainitiative.org/confluence/display/uma/claim_formats
+         OPTIONAL (zero or more).  Claim format supported by this AM.
+         Options are (@@TBS).
+
+   Link relationship rel values for the endpoint URLs for the host:
+
+   http://kantarainitiative.org/confluence/display/uma/host_user_uri
+         REQUIRED.  Available HTTP methods are as defined by [[OAuth20]]
+         for an end-user authorization endpoint.  Supplies the endpoint
+         hosts should use to gather the consent of the authorizing user
+         for a host-AM relationship.
+
+   http://kantarainitiative.org/confluence/display/uma/host_token_uri
+         REQUIRED.  Available HTTP methods are as defined by [[OAuth20]]
+         for a token issuance endpoint.  Supplies the endpoint hosts
+         should use to ask for a host access token.
+
+   http://kantarainitiative.org/confluence/display/uma/
+   host_resource_details_uri
+         REQUIRED.  Supports the POST HTTP method, accompanied by a host
+         access token.  Supplies the endpoint hosts should use to
+         provide resource information documents (as defined in
+         [[draft-uma-resource-reg]]).  This endpoint SHOULD require the
+         use of a transport-layer security mechanism such as TLS.
+
+   http://kantarainitiative.org/confluence/display/uma/
+   host_token_validation_uri
+         OPTIONAL.  Supports the POST HTTP method, accompanied by a host
+         access token.  Supplies the endpoint hosts should use to
+         request validation of access tokens presented to them by
+         requesters in Step 3.  This endpoint SHOULD require the use of
+         a transport-layer security mechanism such as TLS.
+
+   Link relationship rel values for the endpoint URLs for the requester:
+
+
+
+
+
+
+
+Scholz, et al.          Expires February 6, 2011                [Page 7]
+
+Internet-Draft              UMA Core Protocol                August 2010
+
+
+   http://kantarainitiative.org/confluence/display/uma/req_user_uri
+         REQUIRED.  Available HTTP methods are as defined by [[OAuth20]]
+         for a user authorization URL.  Supplies the user authorization
+         URL requesters should use to gather the consent of the
+         authorizing user for user delegation flows in synchronous
+         person-to-service sharing scenarios.  (See Section @@TODO for
+         the definition of this UMA-specific client profile.)  This
+         endpoint SHOULD require the use of a transport-layer security
+         mechanism such as TLS.
+
+   http://kantarainitiative.org/confluence/display/uma/req_token_uri
+         REQUIRED.  Available HTTP methods are as defined by [[OAuth20]]
+         for a token issuance URL.  Supplies the token URL requesters
+         should use to ask for an access token in step 2.  This endpoint
+         SHOULD require the use of a transport-layer security mechanism
+         such as TLS.
+
+   For example:
+
+
+<!-- Applies to both hosts and requesters -->
+<Property type="http://kantarainitiative.org/confluence/display/uma/token_formats">
