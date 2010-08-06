@@ -1,0 +1,458 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
+                "http://xml.resource.org/authoring/rfc2629.dtd" [
+    <!ENTITY rfc2119 PUBLIC ''
+          'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
+    <!ENTITY UMA PUBLIC ''
+          'http://kantarainitiative.org/confluence/display/uma/Home'>
+    <!ENTITY UMAreqs PUBLIC ''
+          'http://kantarainitiative.org/confluence/display/uma/UMA+Requirements'>
+]>
+
+<rfc category='std' ipr='trust200902' docName='draft-uma-resource-reg-v1-00.txt'>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+
+  <?rfc toc='yes' ?>
+  <?rfc tocdepth='3' ?>
+  <?rfc symrefs='yes' ?>
+  <?rfc sortrefs='yes' ?>
+  <?rfc compact='yes' ?>
+  <?rfc subcompact='no' ?>
+  <?rfc strict='yes' ?>
+
+  <front>
+
+    <title abbrev='UMA Resource Registration'>UMA Resource Registration</title>
+   <author fullname='Christian Scholz' surname='Scholz' initials='C' role='editor'>
+      <organization>COM.lounge GmbH</organization>
+      <address>
+        <email>cs@comlounge.net</email>
+        <uri>http://comlounge.net</uri>
+      </address>
+    </author>
+    <author fullname='Maciej Machulak' surname='Machulak' initials='M'>
+      <organization>Newcastle University</organization>
+      <address>
+        <email>m.p.machulak@ncl.ac.uk</email>
+        <uri>http://ncl.ac.uk/</uri>
+      </address>
+    </author>    
+    <author fullname='Eve Maler' surname='Maler' initials='E'>
+      <organization>PayPal</organization>
+      <address>
+        <email>eve@xmlgrrl.com</email>
+        <uri>http://www.paypal.com/</uri>
+      </address>
+    </author> 
+    <date year='2010' />
+
+    <abstract>
+      <t> 
+        This specification defines how an UMA host and authorization manager can exchange information
+        about the resources being protected on behalf of an authorizing user in order to support the
+        authorization manager's evaluation of requests for access to those resources.
+      </t>
+    </abstract>
+  </front>
+
+  <middle>
+
+    <section title='Introduction'>
+      <t>
+        The User-Managed Access (UMA) protocol involves an authorizing user introducing a host of that
+        user's resources to an authorization manager (AM) that will provide
+        access protection over some set of those resources.
+      </t>
+      <t>
+        The authorization manager will be expected to evaluate requests for access to protected resources.
+        The relationship between the host and AM might be forged dynamically; the set of protected
+        resources might constitute a subset of all resources managed on behalf of this user; and the user
+        might want to configure access policies that refer to specific resources and possible
+        actions on them. Thus, a formal means of communication about those resources is needed between
+        the host and AM.
+      </t>
+      <t>
+        This specification defines this means of communication.
+        Resources can be registered anytime after the point at which
+        the host has obtained a host access token from the AM during the UMA protocol's step 1.
+        Typically, resources are registered as soon as the host-AM introduction is completed,
+        in additon to whenever resources are modified at the host and whenever the user enters into
+        a policy configuration session at the AM. Two resource registration flows, push and pull,
+        are defined; each flow is suitable for different circumstances.
+      </t>
+
+      <section title='Notational Conventions'>
+        <t>
+          The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT', 'SHOULD', 'SHOULD
+          NOT', 'RECOMMENDED', 'MAY', and 'OPTIONAL' in this document are to be interpreted as
+          described in <xref target='RFC2119' />.
+        </t>
+        <t>
+          This document uses the Augmented Backus-Naur Form (ABNF) notation of
+          <xref target='I-D.ietf-httpbis-p1-messaging' />. Additionally, the realm and auth-param
+          rules are included from <xref target='RFC2617' />.
+        </t>
+        <t>
+          Unless otherwise noted, all the protocol parameter names and values are case sensitive.
+        </t>
+      </section>
+
+      <section title='Terminology'>
+        <t>
+          See the core UMA protocol spec [[citation needed]] for additional term definitions.
+        </t>
+        <t>
+          <list style='hanging' hangIndent='6'>
+            <t hangText='resource registration URL'>
+              <vspace />
+              A protected endpoint at the AM capable of receiving resource information from a host.
+              [[Say it must be HTTPS?]]
+            </t>
+            <t hangText='resource information URL'>
+              <vspace />
+              An endpoint at the host capable of receiving requests from AMs
+              and replying with resource information.
+              [[Say it must be HTTPS?]] [[Say it must be protected, using the bilateral trick?]]
+            </t>            
+          </list>
+        </t>
+      </section>
+    </section>
+    
+    <section title='Push Resource Registration'>
+    	<t>
+        The push resource registration flow is suitable when resources at the host have been modified,
+        often in cases where the user has made an online visit to the host to manage and modify resources. 
+        This flow requires that the AM advertise its resource registration URL in its host-meta document.
+    	</t><t>
+    	This flow works as follows:
+        <list style='numbers'>
+        <t>The host learns the AM's resource registration URL.</t>
+        <t>
+          The host HTTP POSTs a resource information document to the AM's resource
+          registration URL, wielding its host access token obtained in UMA step 1.
+        </t>
+        <t>
+          The AM responds with a resource confirmation document listing the resources that are now protected, which
+          MAY be a subset of the resources appearing in the resource information document based on user
+          instructions.
+.
+    	</t>
+    	</list>
+    	</t>
+        <t>
+        The host uses the [[cite to site-meta]] and [[cite to host-meta]] 
+        discovery mechanisms to learn the
+        resource registration URL, as defined in [[citation to UMA core protocol]].
+        The AM's host-meta document MUST provide a <spanx style="verb">Link</spanx>
+        element with a <spanx style="verb">rel</spanx> value of:
+        <spanx style="verb">http://kantarainitiative.org/uma/am/resource_reg</spanx>
+        </t>
+        
+        <figure>
+        <preamble>
+        For example:
+        </preamble>
+         <artwork>
+        &lt;XRD>
+          &lt;Host>http://server.example.com&lt;/Host>
+          &lt;Link
+            rel="http://kantarainitiative.org/uma/am/resource_reg"
+            href="https://server.example.com/resource_reg">
+          &lt;/Link>
+          &lt;Title>Resource Registration URL&lt;/Title>
+          &lt;/Link>
+          &lt;!-- other content omitted -->
+        &lt;/XRD>
+         </artwork>
+        </figure>
+        <figure>
+        <preamble>
+        A POST to the resource registration URL might look as follows:
+        </preamble>
+         <artwork>
+         POST /resource_registration HTTP/1.1
+         Host: server.example.com
+         Content-Type: application/json
+         Authorization: Token token="EQ1GAWxWcKUU"
+         
+         [body containing resource information document]
+         </artwork>
+        </figure>
+    </section>
+
+    <section title='Pull Resource Registration'>
+    	<t>
+        The pull resource registration flow is suitable when the user makes an online visit to the AM to
+        configure resource protection and access policies. 
+        It requires the host either to have informed the AM in an out-of-band method of its resource information URL
+        during static client registration, or to have advertised its resource registration URL in a client registration
+        metadata document during dynamic registration, as defined in [[add citation to dynamic-reg proposal]].
+    	</t><t>
+    	This flow works as follows:
+        <list style='numbers'>
+        <t>The AM learns the host's resource information URL.</t>
+        <t>
+          The AM HTTP POSTs a request for a resource information document from the host's
+          resource information URL. [[wielding its AM access token? how did it get that token? or can it
+          wield the same host access token that it gave the host in the first place?]]
+        </t>
+        <t>
+          The host responds with a resource information document that describes the resources
+          this user manages at this host.
+    	</t>
+        <t>
+          The AM HTTP POSTs a resource confirmation document listing the resources that are now protected, which
+          MAY be a subset of the resources appearing in the resource information document based on user
+          instructions.
+    	</t>
+    	<t>The host responds with a successful confirmation of receipt of the POSTed message.</t>
+    	</list>
+    	</t>
+        <t>
+        If the AM used the [[cite to site-meta]] and [[cite to host-meta]]
+        discovery mechanisms to learn the host's client registration metadata, then this metadata
+        MUST provide a <spanx style="verb">Link</spanx>
+        element with a <spanx style="verb">rel</spanx> value of:
+        <spanx style="verb">http://kantarainitiative.org/uma/host/resource_info</spanx>
+        </t>
+        <figure>
+        <preamble>
+        For example:
+        </preamble>
+         <artwork>
+        <![CDATA[
+        <XRD>
+          <Host>http://server.example.com</Host>
+          <Link
+            rel="http://kantarainitiative.org/uma/host/resource_info"
+            href="https://server.example.com/resource_info">
+            <Title>Resource Information URL</Title>
+          </Link>
+          <!-- other content omitted -->
+        </XRD>
+        ]]>
+         </artwork>
+        </figure>
+    </section>
+    
+    <section title="Resource Information">
+    <t>Resource information appears in two constructs: a resource information document
+    and a resource confirmation document.</t>
+      <section title="Resource Information Document">
+    <t>
+      A resource information document is produced by the host in both the push flow and the pull flow. 
+      The document is encoded in JSON <xref target='RFC4627' /> and has the following parameters:
+          <list style="hanging" hangIndent="6">
+            <t hangText="host_url">
+                <vspace />
+                REQUIRED. The host's URL. [[Need rules around this value matching the host's client_url? Should
+                the parameter name match?]]
+            </t>
+            <t hangText="expires">
+                <vspace />
+                REQUIRED. MUST be a positive integer. Specifies when this resource information is no longer valid.
+                The value is expressed in the number of seconds since January 1, 1970 00:00:00 GMT.
+                [[Should this use issued_at and expires_in, a la the client registration metadata expiration parameters?]]
+            </t>
+            <t hangText="scopes">OPTIONAL. A list of space-delimited strings indicating the possible
+                scopes of access on all resources described in this document (unless overridden
+                by resource-specific scopes), which governs the creation of access policies that can utilize these
+                scope strings. If this parameter is not provided, the value is deployment-specific.</t>
+
+            <t hangText="resources">
+                <vspace />
+                REQUIRED. An array of objects, each describing a resource or group of resources to be protected.
+            </t>
+         </list>
+</t>
+<t>Each resource object is described as follows:
+                <list style="hanging" hangIndent="6">
+                <t hangText="href">REQUIRED. The URL of either a single resource or of the path component
+                of a resource group. [[Say more about resource groups and paths. E.g., does the "directory"
+                get protected the same as the "files" underneath?]]</t>
+                <t hangText="title">OPTIONAL. A human-readable display title for the resource or group.</t>
+                <t hangText="scopes">OPTIONAL. A list of space-delimited strings indicating the possible
+                scopes of access on the resource. If this parameter is not provided, the default is
+                the document-wide scope.</t>
+                </list>
+</t>
+      <figure>
+       <preamble>
+         For example:
+       </preamble>
+       <artwork>
+      {
+        "host_url":"http://onlinephotogallery.com",
+        "expires":"2011-01-30T09:30:00Z",
+        "scopes":"read write delete add"
+        "resources":
+          [
+            {
+              "href":"http://onlinephotogallery.com/bob/Newcastle",
+              "title":"Newcastle Photos"
+            },
+            {
+              "href":"http://onlinephotogallery.com/bob/California",
+              "title":"California Photos"
+            }
+            {
+              "href":"http://onlinephotogallery.com/bob/portrait.jpg",
+              "title":"Bob's self-portrait",
+              "scopes":"read write delete"
+            }
+          ]
+       }
+       </artwork>
+      </figure>
+      <t>
+      In the push flow, the host includes the JSON parameters in the entity body of the HTTP POST request using the
+      <spanx style="verb">application/json</spanx> media type as defined by <xref target="RFC4627" />. The
+      parameters are serialized into a JSON structure by adding each parameter (other than the individual resource
+      objects) at the highest structure level.  Parameter names and string values are included as JSON strings.
+      </t>
+      <t>
+      In the pull flow, the host includes the JSON parameters in the body of the HTTP response [[what else to
+      say here?]].
+      </t>
+    </section>
+    <section title="Resource Confirmation Document">
+        <t>
+      A resource confirmation document is produced by the AM in both the push flow and the pull flow. 
+      The document is encoded in JSON <xref target='RFC4627' /> and has the following parameters:
+          <list style="hanging" hangIndent="6">
+            <t hangText="resources_confirmed">
+                <vspace />
+                REQUIRED. An array of objects, each describing the resource or group of resources agreed
+                to be protected.
+            </t>
+         </list>
+       </t>
+     <figure>
+       <preamble>
+         For example:
+       </preamble>
+       <artwork>
+      {
+        "resources_confirmed":
+          [
+            {
+              "href":"http://onlinephotogallery.com/bob/Newcastle"
+            },
+            {
+              "href":"http://onlinephotogallery.com/bob/California"
+            }
+            {
+              "href":"http://onlinephotogallery.com/bob/portrait.jpg"
+            }
+          ]
+       }
+       </artwork>
+      </figure>
+            <t>
+      In the push flow, the AM includes the JSON parameter in the body of the HTTP response [[what else to
+      say here?]] with a 200 status code (OK).
+      </t>
+            <t>
+      In the pull flow, the AM includes the JSON parameter in the entity body of the HTTP POST request using the
+      <spanx style="verb">application/json</spanx> media type as defined by <xref target="RFC4627" />. The
+      parameter is serialized into a JSON structure by adding the parameter at the highest structure level.
+      Parameter names and string values are included as JSON strings. [[Need a JSON-formatted response code here since
+      the confirmation comes in a POST request?]]
+      </t>
+    </section>
+    <section title="Unsuccessful Resource Registration">
+    <t>TBS: need proper error flows for both push and pull</t></section>
+    </section>
+    
+    <section title='Security Considerations'>
+      <t>
+      [[TBS]]
+      </t>
+    </section>
+
+    <section title='TODOs'>
+      <t>
+        <list style="symbols">
+          <t>
+            Incorporate a reference to this spec in the core protocol spec, and state whether it is optional
+            and what should happen if it's optional and not done. E.g., do all resource URLs rooted at the
+            client_url (from dyn reg) become eligible for some kind of resource protection?
+          </t>
+          <t>
+            Need to flesh out citations to UMA core protocol spec, dynamic registration proposal, site-meta,
+            and host-meta.
+          </t>
+          <t>
+            Require HTTPS for AM's resource registration URL and host's resource information URL?
+          </t>
+          <t>
+            How to protect host's resource information URL?
+          </t>
+          <t>
+            Match host_url and client_url parameter names and values?
+          </t>
+          <t>
+            Change from expires parameter to issued_at and expires_in parameters?
+          </t>
+          <t>
+            How to manage resource groups vs. resources?
+          </t>
+          <t>
+            Ensure that the request/response/push/pull matrix is adequately explained.
+          </t>
+          <t>
+            Figure out push/pull versions of error flows.
+          </t>
+       </list>
+      </t>
+    </section>
+    <section title='Acknowledgements'>
+      <t>
+        <list style="symbols">
+          <t>
+            TBS
+          </t>
+        </list>
+        [[ Add further WG contributors ]]
+      </t>
+    </section>
+
+    <section title='Document History'>
+      <t>
+        [[ to be removed by RFC editor before publication as an RFC ]]
+      </t>
+    </section>
+
+  </middle>
+
+  <back>
+
+    <references title='Normative References'>
+    
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2617.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-hammer-hostmeta-13.xml'?>
+      
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p1-messaging-09.xml'?>
+
+<!--
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.5785.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2045.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2104.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2818.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3023.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3447.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3629.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
+-->
+    </references>
+
+  </back>
+
+</rfc>
