@@ -16,6 +16,9 @@
   <?rfc compact='yes' ?>
   <?rfc subcompact='no' ?>
   <?rfc strict='yes' ?>
+  <?rfc notedraftinprogress='yes' ?>
+  
+
 
   <front>
 
@@ -174,7 +177,7 @@
         In addition to the following subsections proposing general requirements for dynamic client registration, 
         UMA seeks to optimize for the design principles and requirements
         found in the UMA Requirements document <xref target="UMA-Reqs"/>, most particularly:
-<list>
+<list style="symbols">
 <t>
 DP1: Simple to understand, implement in an interoperable fashion, and deploy on an Internet-wide scale
 </t>
@@ -257,9 +260,11 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
     	small a variety of options as possible. If it is possible to construct a single unified flow in the ultimate 
     	design, all other things being equal this would be preferred.
     	</t>
-		<section title="Client provides metadata on every request">
-		<t>
-        In this approach, the client passes all necessary metadata such as its name and
+    	        <t>
+          <list style='hanging' hangIndent='6'>
+            <t hangText='Client provides metadata on every request'>
+              <vspace /> 
+              In this approach, the client passes all necessary metadata such as its name and
         icon on every request to the authorization server, and the client doesn't wield a client identifier as such.
         This option makes it more difficult (though not impossible) to meet the first and second requirements since different
         clients could theoretically represent themselves to an authorization server with the same metadata
@@ -267,23 +272,20 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
         Also, today's OAuth protocol requires the use of a client identifier. Because of the UMA
         simplicity principle we do not recommend this flow option and
         and have not provided a candidate solution.
-        </t>
-		</section>
-		<section title="Client pushes metadata">
-		<t>
-	    In this approach, the client discovers the registration endpoint of
+            </t>
+             <t hangText='Client pushes metadata'>
+              <vspace />
+              	    In this approach, the client discovers the registration endpoint of
         the authorization server and sends its metadata directly to that endpoint in a standard format. The
         authorization server answers with a client identifier and optional secret in the response.  This approach may be
         necessary in cases where the client is behind a firewall, but strong authentication
         of the client metadata may be more difficult or costly with this approach than with a "pull" approach.
         Further, this approach is problematic in the case of applications that can't function as POST-capable web servers.
-    	</t>
-    	<t>
     	A "push" proposal is presented below.
-    	</t>
-		</section>
-		<section title="Client pushes URL, server pulls metadata from it">
-    	<t>In this approach, the client sends only a URL to the authorization server, which then uses that
+            </t>
+            <t hangText='Client pushes URL, server pulls metadata from it'>
+              <vspace />
+              In this approach, the client sends only a URL to the authorization server, which then uses that
     	URL to pull metadata about the client in some standard format, returning identification information
     	in the response to the initial request. This approach more easily allows for strong
     	authentication of clients because the metadata can be statically signed. (The message containing the
@@ -291,23 +293,20 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
     	URL push is made to a server different from the one the end-user is interacting with. Further,
     	this approach is problematic in the case of applications that cannot themselves serve as "pull-able" 
     	metadata repositories.
-    	</t>
-    	<t>
     	A "push-pull" proposal is presented below.
-    	</t>
-		</section>
-		<section title="Native-app client collaborates with web-server component to provide metadata">
-    	<t>
-    	An instance of a native application (for example, on a mobile device) may have difficulty POSTing metadata
-    	but may also have difficulty providing third-party source from which a server can pull trustworthy metadata.
-    	</t>
-    	<t>
-    	We explore some options for achieving the necessary effect below, but do not present a full-fledged proposal.
-    	</t>
-		</section>
+            </t>
+             <t hangText='Native-app client collaborates with home-base web app to provide metadata'>
+	              <vspace />
+        An instance of a native application (for example, on a mobile device) may have difficulty directly conveying 
+        trustworthy metadata
+    	but may also have difficulty providing a trustworthy third-party source from which a server can pull metadata.
+    	We explore one option for meeting the requirements below, but do not present a full-fledged proposal.
+            </t>
+        </list>
+        </t>
    </section>
     
-    <section title='Discovery of client registration endpoint'>
+    <section title='Discovery of Client Registration Endpoint'>
       <t>
          Regardless of flow option, the client needs to discover the authorization server's client registration endpoint.
       </t>
@@ -336,7 +335,6 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
     </section>
     
     <section title='Client Pushes Metadata'>
-      <section title="Overview">
         <t>
           This registration flow works as follows:
         </t>
@@ -369,8 +367,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
           </artwork>
         </figure>
         
-      </section><!-- overview push-->
-      
+     
       <section title="Client Registration Request">
         <t>
           The client sends a JSON formatted document to the client registration endpoint.
@@ -504,7 +501,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
             the “application/json” media type:
         </t>
         <t>
-          <list>
+          <list style="symbols">
             <t>
               <spanx style='verb'>error</spanx> (REQUIRED)
             </t>
@@ -534,7 +531,6 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
       </section><!-- error message -->
     </section><!-- push client registration -->
     <section title="Client Registration with Pushed URL and Pulled Metadata">
-      <section title="Overview">
         <t>
           This registration flow works as follows:
         </t>
@@ -548,8 +544,8 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
               The authorization server verifies the signature as necessary, and uses the 
               <xref target='RFC5785' /> and <xref target='hostmeta' /> discovery
               mechanisms on this URI to retrieve the host-meta document
-              describing the client. The host-meta document MUST contain the client’s
-              name, description, and redirection URI, and MAY contain a URI to the client’s
+              describing the client. The host-meta document MUST contain the client
+              name, description, and redirection URI, and MAY contain a URI for the client
               icon.
             </t>
           </list>
@@ -571,8 +567,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
 ]]>
           </artwork>
         </figure>
-      </section><!-- overview -->
-      
+     
       <section title="Client Registration Request">
         <t>
           The client sends a JSON formatted document to the client registration endpoint.
@@ -643,7 +638,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
           The authorization server retrieves the host-meta document, which MUST contain:
         </t>
         <t>
-          <list>
+          <list style="symbols">
             <t>
               A 
               <spanx style="verb">Property</spanx> 
@@ -733,7 +728,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
           body of the HTTP response with a 200 status code (OK):
         </t>
         <t>
-          <list>
+          <list style="symbols">
             <t>
               <spanx style='verb'>client_id</spanx> (REQUIRED)
             </t>
@@ -853,32 +848,53 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
     </section><!-- pull client registration -->
     
     <section title="Native Application Considerations">
-    <t>For a native app serving as an UMA host, we anticipate that the need for dynamic client registration to introduce this app
-    to an UMA authorization manager may typically happen only once or at least very infrequently, and it could usefully take place 
-    at the time the app is
-    provisioned onto a device. By contrast, for a native app serving as an UMA requester, it may need to register at multiple
-    authorization managers over time, at moments much later than the original provisioning of the app onto the device.</t>
-    <t>When a native application is provisioned on a device, such as through an app store model, often it has an associated
-    "home base" web server application component with which it registers. This pairwise relationship can be exploited in a number of ways
-    to allow metadata specific to this instance of the native app to be conveyed to an OAuth server and for this instance to
-    receive a client identifier and optional secret. Two high-level pattern options could be described as 
-    "device-initiated" and "home base-initiated".</t>
-    <t>The following sections explore options within these two patterns. As already noted above, we prefer as small a set of options as possible.</t>
-      <section title="Device-Initiated Client Registration">
+    <t>
+      For a native application serving as an UMA host, we anticipate that the need for dynamic client registration to introduce this app
+      to an UMA authorization manager may typically happen only once (or very infrequently), likely to a single authorization manager,
+      and registration could usefully take place at the time the app is
+      provisioned onto a device. By contrast, for a native app serving as an UMA requester, it may need to register at multiple
+      authorization managers over time when seeking access tokens, at moments much later than the original provisioning of the app 
+      onto the device.
+    </t>
+    <t>
+      When a native application is provisioned on a device, such as through an app store model, often it has an associated
+      "home base" web server application component with which it registers (outside of any UMA-related or OAuth-related interactions). 
+      This pairwise relationship can be exploited in a number of ways
+      to allow trustable, unique metadata to be conveyed to an OAuth server and for this instance of the app to
+      receive a client identifier and optional secret. We have discussed "device-initiated" and "home base-initiated" pattern options 
+      for OAuth dynamic client registration in these circumstances. Device-initiated flows seem more generically applicable (for example,
+      for both UMA host and UMA requester needs).
+    </t>
       <t>
-        @@asdf
-      </t>
-      </section>
-      <section title="Home Base-Initiated Client Registration">
-      <t>
-        @@asdf
-      </t>
-      </section>
+      Following is one option for a device-initiated flow:
+      <list style="numbers">
+      <t>User provisions native app on device and registers with and authenticates to app's home-base web application.</t>
+      <t>Home base provisions native app with home base-signed metadata.</t>
+      <t>Whenever user tries to use native app to access a protected resource, native app provides home base-provided 
+      metadata to server.</t>
+      <t>Server verifies home base signature by pulling public key from home base URL and generates client identifier and 
+      secret for native app.</t>
+      <t>Server returns client identifier and secret to native app.</t>
+     </list>
+    </t>
     </section>
     
     <section title='Security Considerations'>
       <t>
-      [[TBS: Thomas has suggested we include the merits of pull over push and the vulnerabilities in the native-app scenario here.]]
+      Following are some security considerations:
+      <list style="symbols">
+      <t>
+        No client authentication: The server should treat unsigned pushed client metadata as self-asserted.
+      </t>
+      <t>
+        Weak client authentication: The server should treat unsigned pulled client metadata as self-asserted 
+        unless the the domain of the client matches the client metadata URL and the URL is well-known and trusted.
+      </t>
+      <t>
+        Strong client authentication: The server should treat signed client metadata (pushed or pulled) and a signed
+        metadata URL as self-asserted unless it can verify the signature as being from a trusted source.
+      </t>
+      </list>
       </t>
     </section>
 
@@ -886,12 +902,15 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
       <t>
         The authors thank the User-Managed Access Work Group participants, particularly the following, for their input to this
         document:
-        <list>
+        <list style="symbols">
           <t>
-            Thomas Hardjono
+            Domenico Catalano
           </t>
           <t>
             George Fletcher
+          </t>
+          <t>
+            Thomas Hardjono
           </t>
           <t>
             Nat Sakimura
@@ -960,7 +979,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
          <date year="2010" />
        </front>
      </reference>
-    </references>
+
   <reference anchor="UMA-UC"
        target="http://kantarainitiative.org/confluence/display/uma/UMA+Scenarios+and+Use+Cases">
        <front>
@@ -981,6 +1000,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
          <date year="2010" />
        </front>
      </reference>
+         </references>
   </back>
 
 </rfc>
