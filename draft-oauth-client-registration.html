@@ -144,10 +144,10 @@
 <tr><td class="header">Network Working Group</td><td class="header">C. Scholz, Ed.</td></tr>
 <tr><td class="header">Internet-Draft</td><td class="header">COM.lounge GmbH</td></tr>
 <tr><td class="header">Intended status: Standards Track</td><td class="header">M. Machulak</td></tr>
-<tr><td class="header">Expires: February 9, 2011</td><td class="header">Newcastle University</td></tr>
+<tr><td class="header">Expires: February 10, 2011</td><td class="header">Newcastle University</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">E. Maler</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">PayPal</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">August 8, 2010</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">August 9, 2010</td></tr>
 </table></td></tr></table>
 <h1><br />OAuth Dynamic Client Registration Protocol<br />draft-oauth-dyn-reg-v1-00.txt</h1>
 
@@ -172,7 +172,7 @@ and may be updated, replaced, or obsoleted by other documents at any time.
 It is inappropriate to use Internet-Drafts as reference material or to cite
 them other than as &ldquo;work in progress.&rdquo;</p>
 <p>
-This Internet-Draft will expire on February 9, 2011.</p>
+This Internet-Draft will expire on February 10, 2011.</p>
 
 <h3>Copyright Notice</h3>
 <p>
@@ -214,32 +214,32 @@ Dynamic client registration must be possible from both web-server applications
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor10">3.5.</a>&nbsp;
 Transaction integrity must be ensured in large deployments where data
           propagation can be an issue<br />
-<a href="#anchor11">4.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor11">3.6.</a>&nbsp;
+UMA design principles and requirements<br />
+<a href="#anchor12">4.</a>&nbsp;
 Analysis of Registration Flow Options<br />
-<a href="#anchor12">5.</a>&nbsp;
-Discovery of Client Registration Endpoint<br />
-<a href="#anchor13">6.</a>&nbsp;
-Client Pushes Metadata<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor14">6.1.</a>&nbsp;
+<a href="#anchor13">5.</a>&nbsp;
+Discovery of Server&#039;s Client Registration Endpoint<br />
+<a href="#anchor14">6.</a>&nbsp;
+Client Registration with Pushed Metadata<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor15">6.1.</a>&nbsp;
 Client Registration Request<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor15">6.2.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor16">6.2.</a>&nbsp;
 Client Registration Response<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor16">6.3.</a>&nbsp;
-Error Message<br />
-<a href="#anchor17">7.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor17">6.3.</a>&nbsp;
+Error Response<br />
+<a href="#anchor18">7.</a>&nbsp;
 Client Registration with Pushed URL and Pulled Metadata<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor18">7.1.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor19">7.1.</a>&nbsp;
 Client Registration Request<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor19">7.2.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor20">7.2.</a>&nbsp;
 Client Discovery<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor20">7.3.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor21">7.3.</a>&nbsp;
 Client Registration Response<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor21">7.4.</a>&nbsp;
-Unsuccessful Client Discovery<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor22">7.5.</a>&nbsp;
-Error Message<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor22">7.4.</a>&nbsp;
+Error Response<br />
 <a href="#anchor23">8.</a>&nbsp;
-Native Application Considerations<br />
+Native Application Client Registration<br />
 <a href="#anchor24">9.</a>&nbsp;
 Security Considerations<br />
 <a href="#anchor25">Appendix&nbsp;A.</a>&nbsp;
@@ -390,10 +390,10 @@ Use Cases</h3>
 <p>
     The UMA protocol involves two instances of OAuth flows. In the first, an end-user introduces 
     a host (essentially an enhanced OAuth resource server) to an authorization manager (an enhanced OAuth authorization
-    server) as a client of it, possibly without that host having obtained client information from that server
+    server) as a client of it, possibly without that host having obtained client identification information from that server
     previously. In the second, a requester (an enhanced OAuth client) approaches a host and 
     authorization manager to get and use an access token in approximately the normal OAuth fashion, again possibly without
-    that client having obtained client information from that server previously. 
+    that client having obtained client identification information from that server previously. 
     Both the host-as-client and the requester-as-client thus
     may need dynamic client registration in order for the UMA protocol flow to proceed.
     
@@ -416,29 +416,8 @@ Use Cases</h3>
 Requirements</h3>
 
 <p>
-        In addition to the following subsections proposing general requirements for dynamic client registration, 
-        UMA seeks to optimize for the design principles and requirements
-        found in the UMA Requirements document <a class='info' href='#UMA-Reqs'>[UMA&#8209;Reqs]<span> (</span><span class='info'>Maler, E., &ldquo;UMA Requirements,&rdquo; 2010.</span><span>)</span></a>, most particularly:
-</p>
-<ul class="text">
-<li>
-DP1: Simple to understand, implement in an interoperable fashion, and deploy on an Internet-wide scale
-
-</li>
-<li>
-DP6: Able to be combined and extended to support a variety of use cases and emerging application functionality
-
-</li>
-<li>
-DP8: Avoid adding crypto requirements beyond what existing web app implementations do today
-
-</li>
-<li>
-DP10: Complexity should be borne by the authorization endpoint vs. other endpoints
-
-</li>
-</ul><p>
-    
+			Following are proposed requirements for dynamic client registration.
+			
 </p>
 <a name="anchor6"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
@@ -486,12 +465,12 @@ Dynamic client registration must be possible from both web-server applications
 <p>
     	      In the UMA context, alternative types of applications might serve as both hosts (for example, as a device-based
     	      personal data store) and requesters (for example, to subscribe to a calendar or view a photo).
-              Alternative types of applications, particularly native applicaitons, may have special limitations, so new solutions
+              Such applications, particularly native applications, may have special limitations, so new solutions
           	  to meeting the set of requirements presented here may be needed. We anticipate that each instance of a
-          	  native application (that is, the specific instance running on each device on which it is installed) 
-          	  installed and run by the same user may need the option of getting a unique client identifier. In this case, 
-          	  there are implications to gathering enough information to show an end-user to ensure that they are delegating 
-          	  authorization to the "right" application.
+          	  native application (that is, the specific instance running on each device) 
+          	  that is installed and run by the same user may need the option of getting a unique client identifier. In this case, 
+          	  there are implications around gathering and displaying enough information to ensure that the end-user is delegating 
+          	  authorization to the intended application.
     	      
 </p>
 <a name="anchor10"></a><br /><hr />
@@ -509,14 +488,44 @@ Transaction integrity must be ensured in large deployments where data
 </p>
 <p>
               In the UMA context, dynamic registration of a host at an AM is almost certain to take place in the middle of
-              an end-user authorization process; even though the host needs a client identifier 
+              an introduction and authorization process mediated by the end-user; even though the host needs a client identifier 
               from the AM no matter which end-user
               caused the registration process to take place, the end-user may need to wait for the registration sub-process
-              to finish in order to continue with the introduction process. It may be
+              to finish in order to continue with the overall process. It may be
               necessary to ensure that the host interacts with the same AM server throughout.
     	      
 </p>
 <a name="anchor11"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.6"></a><h3>3.6.&nbsp;
+UMA design principles and requirements</h3>
+
+<p>
+              In addition to general requirements for dynamic client registration, UMA seeks to optimize 
+              for the design principles and requirements found in the UMA Requirements document 
+              <a class='info' href='#UMA-Reqs'>[UMA&#8209;Reqs]<span> (</span><span class='info'>Maler, E., &ldquo;UMA Requirements,&rdquo; 2010.</span><span>)</span></a>, most particularly:
+			</p>
+<ul class="text">
+<li>
+DP1: Simple to understand, implement in an interoperable fashion, and deploy on an Internet-wide scale
+
+</li>
+<li>
+DP6: Able to be combined and extended to support a variety of use cases and emerging application functionality
+
+</li>
+<li>
+DP8: Avoid adding crypto requirements beyond what existing web app implementations do today
+
+</li>
+<li>
+DP10: Complexity should be borne by the authorization endpoint vs. other endpoints
+
+</li>
+</ul><p>
+
+</p>
+<a name="anchor12"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.4"></a><h3>4.&nbsp;
 Analysis of Registration Flow Options</h3>
@@ -555,9 +564,10 @@ Analysis of Registration Flow Options</h3>
         the authorization server and sends its metadata directly to that endpoint in a standard format. The
         authorization server answers with a client identifier and optional secret in the response.  This approach may be
         necessary in cases where the client is behind a firewall, but strong authentication
-        of the client metadata may be more difficult or costly with this approach than with a "pull" approach.
+        of the client metadata may be more difficult or costly with this approach than with a "pull" approach, discussed
+        just below.
         Further, this approach is problematic in the case of applications that can't function as POST-capable web servers.
-    	A "push" proposal is presented below.
+        A proposal for "push" is presented in this document.
             
 </dd>
 <dt>Client pushes URL, server pulls metadata from it</dt>
@@ -571,7 +581,7 @@ Analysis of Registration Flow Options</h3>
     	URL push is made to a server different from the one the end-user is interacting with. Further,
     	this approach is problematic in the case of applications that cannot themselves serve as "pull-able" 
     	metadata repositories.
-    	A "push-pull" proposal is presented below.
+    	A proposal for "pull" is presented in this document.
             
 </dd>
 <dt>Native-app client collaborates with home-base web app to provide metadata</dt>
@@ -580,16 +590,16 @@ Analysis of Registration Flow Options</h3>
         An instance of a native application (for example, on a mobile device) may have difficulty directly conveying 
         trustworthy metadata
     	but may also have difficulty providing a trustworthy third-party source from which a server can pull metadata.
-    	We explore one option for meeting the requirements below, but do not present a full-fledged proposal.
+    	This document explores one option for meeting the requirements, but does not present a full-fledged proposal.
             
 </dd>
 </dl></blockquote><p>
         
 </p>
-<a name="anchor12"></a><br /><hr />
+<a name="anchor13"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.5"></a><h3>5.&nbsp;
-Discovery of Client Registration Endpoint</h3>
+Discovery of Server&#039;s Client Registration Endpoint</h3>
 
 <p>
          Regardless of flow option, the client needs to discover the authorization server's client registration endpoint.
@@ -615,10 +625,10 @@ Discovery of Client Registration Endpoint</h3>
       &lt;/XRD&gt;
 
 </pre></div>
-<a name="anchor13"></a><br /><hr />
+<a name="anchor14"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.6"></a><h3>6.&nbsp;
-Client Pushes Metadata</h3>
+Client Registration with Pushed Metadata</h3>
 
 <p>
           This registration flow works as follows:
@@ -628,7 +638,7 @@ Client Pushes Metadata</h3>
           </p>
 <ol class="text">
 <li>
-                The client sends metadata in JSON form to the client registration endpoint. The
+                The client sends its metadata in JSON form to the client registration endpoint. The
                 client MUST send its name, description, and redirection URI and MAY send a URI
                 for its icon. The client MAY sign the metadata as a JSON Token issuer, using the
                 mechanisms defined in <a class='info' href='#OAuth-Sig'>[OAuth&#8209;Sig]<span> (</span><span class='info'>Balfanz, D., &ldquo;OAuth Signature proposals,&rdquo; 2010.</span><span>)</span></a>.
@@ -655,7 +665,7 @@ Client Pushes Metadata</h3>
 
 </pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;1: Client Registration Flow with Pushed Metadata&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
 
-<a name="anchor14"></a><br /><hr />
+<a name="anchor15"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.6.1"></a><h3>6.1.&nbsp;
 Client Registration Request</h3>
@@ -686,7 +696,7 @@ Client Registration Request</h3>
                 REQUIRED. This field contains the URL of the homepage of the client.
             
 </dd>
-<dt>client_desc</dt>
+<dt>client_description</dt>
 <dd>
                 
                 REQUIRED. This field contains a text description of the client. 
@@ -725,7 +735,7 @@ Client Registration Request</h3>
       type: "push",
       client_name: "Online Photo Gallery",
       client_url:  "http://onlinephotogallery.com",
-      client_desc: "Not only uploading, but also editing capabilities!",
+      client_description: "Uploading and also editing capabilities!",
       client_icon: "http://onlinephotogallery.com/icon.png",
       redirect_url: "https://onlinephotogallery.com/client_reg"
     }
@@ -738,7 +748,7 @@ Client Registration Request</h3>
           structure level. Parameter names and string values are included as JSON strings.
         
 </p>
-<a name="anchor15"></a><br /><hr />
+<a name="anchor16"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.6.2"></a><h3>6.2.&nbsp;
 Client Registration Response</h3>
@@ -805,31 +815,36 @@ Client Registration Response</h3>
 
     {
       client_id: "5UO9XcL4TQTa",
-      client_secret: ”WdRKN3zeTc20”
+      client_secret: "WdRKN3zeTc20"
     }
 
 </pre></div>
-<a name="anchor16"></a><br /><hr />
+<a name="anchor17"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.6.3"></a><h3>6.3.&nbsp;
-Error Message</h3>
+Error Response</h3>
 
 <p>
             If the request for registration is invalid or unauthorized, the authorization
             server constructs the response by adding the following parameters to the
             entity body of the HTTP response with a 400 status code (Bad Request) using
             the “application/json” media type:
-        
-</p>
-<p>
           </p>
 <ul class="text">
 <li>
-              <tt>error</tt> (REQUIRED)
+              <tt>error</tt> (REQUIRED).
             
 </li>
 <li>
-              <tt>description</tt> (OPTIONAL)
+              <tt>error_description</tt> (OPTIONAL). Human-readable text providing
+         additional information, used to assist in the understanding and
+         resolution of the error occurred.
+            
+</li>
+<li>
+              <tt>error_uri</tt> (OPTIONAL). A URI identifying a human-readable web page
+         with information about the error, used to provide the end-user
+         with additional information about the error.
             
 </li>
 </ul><p>
@@ -847,11 +862,11 @@ Error Message</h3>
     {
     "error": "unauthorized_client",
     "description": "This client is not on the
-      white list of this Authorization Server"
+      white list of this Authorization Server."
     }
 
 </pre></div>
-<a name="anchor17"></a><br /><hr />
+<a name="anchor18"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.7"></a><h3>7.&nbsp;
 Client Registration with Pushed URL and Pulled Metadata</h3>
@@ -897,7 +912,7 @@ Client Registration with Pushed URL and Pulled Metadata</h3>
 
 </pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Figure&nbsp;2: Client Registration Flow with Pushed URL and Pulled Metadata&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
 
-<a name="anchor18"></a><br /><hr />
+<a name="anchor19"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.7.1"></a><h3>7.1.&nbsp;
 Client Registration Request</h3>
@@ -952,7 +967,7 @@ Client Registration Request</h3>
           structure level. Parameter names and string values are included as JSON strings.
         
 </p>
-<a name="anchor19"></a><br /><hr />
+<a name="anchor20"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.7.2"></a><h3>7.2.&nbsp;
 Client Discovery</h3>
@@ -967,9 +982,8 @@ Client Discovery</h3>
          
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
 
-    GET /.well-known/host-meta HTTP/1.1
-    Host: server.example.com
-
+GET /.well-known/host-meta HTTP/1.1
+Host: onlinephotogallery.com
 </pre></div>
 <p>
           The authorization server retrieves the host-meta document, which MUST contain:
@@ -1044,7 +1058,7 @@ Client Discovery</h3>
         Online Photo Gallery
       &lt;/Property&gt;
       &lt;Property type="http://oauth.net/client/description"&gt;
-        Not only uploading, but also editing capabilities!
+        Really nice Online Photo Gallery!
       &lt;/Property&gt;
       &lt;Link rel="http://oauth.net/client/uri"
             href="http://onlinephotogallery.com"&gt;
@@ -1061,7 +1075,7 @@ Client Discovery</h3>
     &lt;/XRD&gt;
 
 </pre></div>
-<a name="anchor20"></a><br /><hr />
+<a name="anchor21"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.7.3"></a><h3>7.3.&nbsp;
 Client Registration Response</h3>
@@ -1113,53 +1127,10 @@ Client Registration Response</h3>
     }
 
 </pre></div>
-<a name="anchor21"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.7.4"></a><h3>7.4.&nbsp;
-Unsuccessful Client Discovery</h3>
-
-<p>
-          If the host-meta discovery was not successful, the authorization server
-          constructs the response by adding the following parameters to the entity body of
-          the HTTP response with a 404 status code (Not Found) using the
-          <tt>application/json</tt> media type:
-        
-</p>
-<p>
-          </p>
-<ul class="text">
-<li>
-              <tt>error</tt> (REQUIRED). This parameter must be set to 
-              <tt>hostmeta_error</tt>
-            
-</li>
-<li>
-              <tt>description</tt> (OPTIONAL)
-            
-</li>
-</ul><p>
-        
-</p>
-<p>
-           An example error response (with line breaks for readability)
-         
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
-
-    HTTP/1.1 404 Not Found
-    Content-Type: application/json
-    Cache-Control: no-store
-
-    {
-    "error": "hostmeta_error",
-    "description": "The hostmeta document could
-        not have been retrieved from the URL."
-    }
-
-</pre></div>
 <a name="anchor22"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.7.5"></a><h3>7.5.&nbsp;
-Error Message</h3>
+<a name="rfc.section.7.4"></a><h3>7.4.&nbsp;
+Error Response</h3>
 
 <p>
             If the request for registration is invalid or unauthorized, the authorization
@@ -1172,18 +1143,26 @@ Error Message</h3>
           </p>
 <ul class="text">
 <li>
-              <tt>error</tt> (REQUIRED)
+              <tt>error</tt> (REQUIRED).  A single error code.
             
 </li>
 <li>
-              <tt>description</tt> (OPTIONAL)
+              <tt>error_description</tt> (OPTIONAL). Human-readable text providing
+         additional information, used to assist in the understanding and
+         resolution of the error occurred.
+            
+</li>
+<li>
+              <tt>error_uri</tt> (OPTIONAL). A URI identifying a human-readable web page
+         with information about the error, used to provide the end-user
+         with additional information about the error.
             
 </li>
 </ul><p>
         
 </p>
 <p>
-           An example error response (with line breaks for readability)
+           An example error response (with line breaks for readability):
          
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
 
@@ -1194,14 +1173,35 @@ Error Message</h3>
     {
     "error": "unauthorized_client",
     "description": "This client is not on the
-      white list of this Authorization Server"
+      white list of this Authorization Server."
+    }
+
+</pre></div>
+<p>
+          If the host-meta discovery was not successful, the authorization server MUST
+          use the error code <tt>hostmeta_error</tt>.
+        
+</p>
+<p>
+           An example error response (with line breaks for readability):
+         
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+
+    HTTP/1.1 404 Not Found
+    Content-Type: application/json
+    Cache-Control: no-store
+
+    {
+    "error": "hostmeta_error",
+    "description": "The hostmeta document could
+      not be retrieved from the URL."
     }
 
 </pre></div>
 <a name="anchor23"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.8"></a><h3>8.&nbsp;
-Native Application Considerations</h3>
+Native Application Client Registration</h3>
 
 <p>
       For a native application serving as an UMA host, we anticipate that the need for dynamic client registration to introduce this app
