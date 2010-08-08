@@ -154,10 +154,10 @@
     <t>
     The UMA protocol involves two instances of OAuth flows. In the first, an end-user introduces 
     a host (essentially an enhanced OAuth resource server) to an authorization manager (an enhanced OAuth authorization
-    server) as a client of it, possibly without that host having obtained client information from that server
+    server) as a client of it, possibly without that host having obtained client identification information from that server
     previously. In the second, a requester (an enhanced OAuth client) approaches a host and 
     authorization manager to get and use an access token in approximately the normal OAuth fashion, again possibly without
-    that client having obtained client information from that server previously. 
+    that client having obtained client identification information from that server previously. 
     Both the host-as-client and the requester-as-client thus
     may need dynamic client registration in order for the UMA protocol flow to proceed.
     </t>
@@ -173,25 +173,10 @@
     </t>
     </section>
     <section title='Requirements'>
-    <t>
-        In addition to the following subsections proposing general requirements for dynamic client registration, 
-        UMA seeks to optimize for the design principles and requirements
-        found in the UMA Requirements document <xref target="UMA-Reqs"/>, most particularly:
-<list style="symbols">
-<t>
-DP1: Simple to understand, implement in an interoperable fashion, and deploy on an Internet-wide scale
-</t>
-<t>
-DP6: Able to be combined and extended to support a variety of use cases and emerging application functionality
-</t>
-<t>
-DP8: Avoid adding crypto requirements beyond what existing web app implementations do today
-</t>
-<t>
-DP10: Complexity should be borne by the authorization endpoint vs. other endpoints
-</t>
-</list>
-    </t>
+			<t>
+			Following are proposed requirements for dynamic client registration.
+			</t>
+
     	    <section title='The client needs to be uniquely identifiable by the authorization server'>
     	      <t>
           	  In order for an authorization server to do proper user-delegated authorization
@@ -223,12 +208,12 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
     	      <t>
     	      In the UMA context, alternative types of applications might serve as both hosts (for example, as a device-based
     	      personal data store) and requesters (for example, to subscribe to a calendar or view a photo).
-              Alternative types of applications, particularly native applicaitons, may have special limitations, so new solutions
+              Such applications, particularly native applications, may have special limitations, so new solutions
           	  to meeting the set of requirements presented here may be needed. We anticipate that each instance of a
-          	  native application (that is, the specific instance running on each device on which it is installed) 
-          	  installed and run by the same user may need the option of getting a unique client identifier. In this case, 
-          	  there are implications to gathering enough information to show an end-user to ensure that they are delegating 
-          	  authorization to the "right" application.
+          	  native application (that is, the specific instance running on each device) 
+          	  that is installed and run by the same user may need the option of getting a unique client identifier. In this case, 
+          	  there are implications around gathering and displaying enough information to ensure that the end-user is delegating 
+          	  authorization to the intended application.
     	      </t>
     	    </section>
     	    <section title='Transaction integrity must be ensured in large deployments where data
@@ -241,12 +226,33 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
               </t>
               <t>
               In the UMA context, dynamic registration of a host at an AM is almost certain to take place in the middle of
-              an end-user authorization process; even though the host needs a client identifier 
+              an introduction and authorization process mediated by the end-user; even though the host needs a client identifier 
               from the AM no matter which end-user
               caused the registration process to take place, the end-user may need to wait for the registration sub-process
-              to finish in order to continue with the introduction process. It may be
+              to finish in order to continue with the overall process. It may be
               necessary to ensure that the host interacts with the same AM server throughout.
     	      </t>
+    	    </section>
+    	    <section title="UMA design principles and requirements">
+    	    <t>
+              In addition to general requirements for dynamic client registration, UMA seeks to optimize 
+              for the design principles and requirements found in the UMA Requirements document 
+              <xref target="UMA-Reqs"/>, most particularly:
+			<list style="symbols">
+<t>
+DP1: Simple to understand, implement in an interoperable fashion, and deploy on an Internet-wide scale
+</t>
+<t>
+DP6: Able to be combined and extended to support a variety of use cases and emerging application functionality
+</t>
+<t>
+DP8: Avoid adding crypto requirements beyond what existing web app implementations do today
+</t>
+<t>
+DP10: Complexity should be borne by the authorization endpoint vs. other endpoints
+</t>
+</list>
+</t>
     	    </section>
       </section>
 
@@ -279,9 +285,10 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
         the authorization server and sends its metadata directly to that endpoint in a standard format. The
         authorization server answers with a client identifier and optional secret in the response.  This approach may be
         necessary in cases where the client is behind a firewall, but strong authentication
-        of the client metadata may be more difficult or costly with this approach than with a "pull" approach.
+        of the client metadata may be more difficult or costly with this approach than with a "pull" approach, discussed
+        just below.
         Further, this approach is problematic in the case of applications that can't function as POST-capable web servers.
-    	A "push" proposal is presented below.
+        A proposal for "push" is presented in this document.
             </t>
             <t hangText='Client pushes URL, server pulls metadata from it'>
               <vspace />
@@ -293,20 +300,20 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
     	URL push is made to a server different from the one the end-user is interacting with. Further,
     	this approach is problematic in the case of applications that cannot themselves serve as "pull-able" 
     	metadata repositories.
-    	A "push-pull" proposal is presented below.
+    	A proposal for "pull" is presented in this document.
             </t>
              <t hangText='Native-app client collaborates with home-base web app to provide metadata'>
 	              <vspace />
         An instance of a native application (for example, on a mobile device) may have difficulty directly conveying 
         trustworthy metadata
     	but may also have difficulty providing a trustworthy third-party source from which a server can pull metadata.
-    	We explore one option for meeting the requirements below, but do not present a full-fledged proposal.
+    	This document explores one option for meeting the requirements, but does not present a full-fledged proposal.
             </t>
         </list>
         </t>
    </section>
     
-    <section title='Discovery of Client Registration Endpoint'>
+    <section title='Discovery of Server&apos;s Client Registration Endpoint'>
       <t>
          Regardless of flow option, the client needs to discover the authorization server's client registration endpoint.
       </t>
@@ -334,14 +341,14 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
       </figure>
     </section>
     
-    <section title='Client Pushes Metadata'>
+    <section title='Client Registration with Pushed Metadata'>
         <t>
           This registration flow works as follows:
         </t>
         <t>
           <list style="numbers">
             <t>
-                The client sends metadata in JSON form to the client registration endpoint. The
+                The client sends its metadata in JSON form to the client registration endpoint. The
                 client MUST send its name, description, and redirection URI and MAY send a URI
                 for its icon. The client MAY sign the metadata as a JSON Token issuer, using the
                 mechanisms defined in <xref target="OAuth-Sig"/>.
@@ -387,7 +394,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
                 <vspace />
                 REQUIRED. This field contains the URL of the homepage of the client.
             </t>
-            <t hangText="client_desc">
+            <t hangText="client_description">
                 <vspace />
                 REQUIRED. This field contains a text description of the client. 
             </t>            
@@ -419,7 +426,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
       type: "push",
       client_name: "Online Photo Gallery",
       client_url:  "http://onlinephotogallery.com",
-      client_desc: "Not only uploading, but also editing capabilities!",
+      client_description: "Not only uploading, but also editing capabilities!",
       client_icon: "http://onlinephotogallery.com/icon.png",
       redirect_url: "https://onlinephotogallery.com/client_reg"
     }
@@ -486,29 +493,34 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
 
     {
       client_id: "5UO9XcL4TQTa",
-      client_secret: ”WdRKN3zeTc20”
+      client_secret: "WdRKN3zeTc20"
     }
 ]]>
              </artwork>
             </figure>
         
       </section> <!-- client registration response -->
-      <section title="Error Message">
+      <section title="Error Response">
         <t>
             If the request for registration is invalid or unauthorized, the authorization
             server constructs the response by adding the following parameters to the
             entity body of the HTTP response with a 400 status code (Bad Request) using
             the “application/json” media type:
-        </t>
-        <t>
           <list style="symbols">
             <t>
-              <spanx style='verb'>error</spanx> (REQUIRED)
+              <spanx style='verb'>error</spanx> (REQUIRED).
             </t>
             <t>
-              <spanx style='verb'>description</spanx> (OPTIONAL)
+              <spanx style='verb'>error_description</spanx> (OPTIONAL). Human-readable text providing
+         additional information, used to assist in the understanding and
+         resolution of the error occurred.
             </t>
-          </list>
+             <t>
+              <spanx style='verb'>error_uri</spanx> (OPTIONAL). A URI identifying a human-readable web page
+         with information about the error, used to provide the end-user
+         with additional information about the error.
+            </t>
+         </list>
         </t>
         <figure>
          <preamble>
@@ -523,7 +535,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
     {
     "error": "unauthorized_client",
     "description": "This client is not on the 
-      white list of this Authorization Server"
+      white list of this Authorization Server."
     }
         ]]>
          </artwork>
@@ -628,9 +640,8 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
          </preamble>
          <artwork>
         <![CDATA[
-    GET /.well-known/host-meta HTTP/1.1
-    Host: server.example.com
-        ]]>
+GET /.well-known/host-meta HTTP/1.1
+Host: onlinephotogallery.com        ]]>
          </artwork>
         </figure>
         
@@ -700,7 +711,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
         Online Photo Gallery
       </Property>
       <Property type="http://oauth.net/client/description">
-        Not only uploading, but also editing capabilities!
+        Really nice Online Photo Gallery!
       </Property>
       <Link rel="http://oauth.net/client/uri" 
             href="http://onlinephotogallery.com">
@@ -769,46 +780,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
         </figure>
         
       </section>
-      <section title="Unsuccessful Client Discovery">
-        <t>
-          If the host-meta discovery was not successful, the authorization server
-          constructs the response by adding the following parameters to the entity body of
-          the HTTP response with a 404 status code (Not Found) using the
-          <spanx style="verb">application/json</spanx> media type:
-        </t>
-        <t>
-          <list style="symbols">
-            <t>
-              <spanx style='verb'>error</spanx> (REQUIRED). This parameter must be set to 
-              <spanx style='verb'>hostmeta_error</spanx>
-            </t>
-            <t>
-              <spanx style='verb'>description</spanx> (OPTIONAL)
-            </t>
-          </list>
-        </t>
-        <figure>
-         <preamble>
-           An example error response (with line breaks for readability)
-         </preamble>
-         <artwork>
-        <![CDATA[
-    HTTP/1.1 404 Not Found
-    Content-Type: application/json
-    Cache-Control: no-store
-
-    {
-    "error": "hostmeta_error",
-    "description": "The hostmeta document could 
-        not have been retrieved from the URL."
-    }
-        ]]>
-         </artwork>
-        </figure>        
-        
-        
-      </section>
-      <section title="Error Message">
+      <section title="Error Response">
         <t>
             If the request for registration is invalid or unauthorized, the authorization
             server constructs the response by adding the following parameters to the
@@ -818,16 +790,23 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
         <t>
           <list style="symbols">
             <t>
-              <spanx style='verb'>error</spanx> (REQUIRED)
+              <spanx style='verb'>error</spanx> (REQUIRED).  A single error code.
             </t>
             <t>
-              <spanx style='verb'>description</spanx> (OPTIONAL)
+              <spanx style='verb'>error_description</spanx> (OPTIONAL). Human-readable text providing
+         additional information, used to assist in the understanding and
+         resolution of the error occurred.
+            </t>
+             <t>
+              <spanx style='verb'>error_uri</spanx> (OPTIONAL). A URI identifying a human-readable web page
+         with information about the error, used to provide the end-user
+         with additional information about the error.
             </t>
           </list>
         </t>
         <figure>
          <preamble>
-           An example error response (with line breaks for readability)
+           An example error response (with line breaks for readability):
          </preamble>
          <artwork>
         <![CDATA[
@@ -838,16 +817,40 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
     {
     "error": "unauthorized_client",
     "description": "This client is not on the 
-      white list of this Authorization Server"
+      white list of this Authorization Server."
+    }
+        ]]>
+         </artwork>
+        </figure>     
+      
+        <t>
+          If the host-meta discovery was not successful, the authorization server MUST
+          use the error code <spanx style='verb'>hostmeta_error</spanx>.
+        </t>
+                <figure>
+         <preamble>
+           An example error response (with line breaks for readability):
+         </preamble>
+         <artwork>
+        <![CDATA[
+    HTTP/1.1 404 Not Found
+    Content-Type: application/json
+    Cache-Control: no-store
+
+    {
+    "error": "hostmeta_error",
+    "description": "The hostmeta document could 
+      not be retrieved from the URL."
     }
         ]]>
          </artwork>
         </figure>        
+
       </section><!-- error message -->
       
     </section><!-- pull client registration -->
     
-    <section title="Native Application Considerations">
+    <section title="Native Application Client Registration">
     <t>
       For a native application serving as an UMA host, we anticipate that the need for dynamic client registration to introduce this app
       to an UMA authorization manager may typically happen only once (or very infrequently), likely to a single authorization manager,
