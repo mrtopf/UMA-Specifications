@@ -426,7 +426,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
       type: "push",
       client_name: "Online Photo Gallery",
       client_url:  "http://onlinephotogallery.com",
-      client_description: "Not only uploading, but also editing capabilities!",
+      client_description: "Uploading and also editing capabilities!",
       client_icon: "http://onlinephotogallery.com/icon.png",
       redirect_url: "https://onlinephotogallery.com/client_reg"
     }
