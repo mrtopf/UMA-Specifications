@@ -1,0 +1,296 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
+                "http://xml.resource.org/authoring/rfc2629.dtd" [
+    <!ENTITY rfc2119 PUBLIC ''
+          'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
+    <!ENTITY UMA PUBLIC ''
+          'http://kantarainitiative.org/confluence/display/uma/Home'>
+    <!ENTITY UMAreqs PUBLIC ''
+          'http://kantarainitiative.org/confluence/display/uma/UMA+Requirements'>
+]>
+
+<rfc category='std' ipr='trust200902' docName='draft-uma-core-v1-00.txt'>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+
+  <?rfc toc='yes' ?>
+  <?rfc tocdepth='3' ?>
+  <?rfc symrefs='yes' ?>
+  <?rfc sortrefs='yes' ?>
+  <?rfc compact='yes' ?>
+  <?rfc subcompact='no' ?>
+  <?rfc strict='yes' ?>
+
+  <front>
+
+    <title abbrev='UMA Scope Registration'>User-Managed Access (UMA) Scope Registration Protocol</title>
+
+   <author fullname='Christian Scholz' surname='Scholz' initials='C' role='editor'>
+      <organization>COM.lounge GmbH</organization>
+      <address>
+        <email>cs@comlounge.net</email>
+        <uri>http://comlounge.net</uri>
+      </address>
+    </author>
+    <author fullname='Maciej Machulak' surname='Machulak' initials='M'>
+      <organization>Newcastle University</organization>
+      <address>
+        <email>m.p.machulak@ncl.ac.uk</email>
+        <uri>http://ncl.ac.uk/</uri>
+      </address>
+    </author>    
+    <author fullname='Eve Maler' surname='Maler' initials='E'>
+      <organization>PayPal</organization>
+      <address>
+        <email>eve@xmlgrrl.com</email>
+        <uri>http://www.paypal.com/</uri>
+      </address>
+    </author>
+
+    <date year='2010' />
+
+    <abstract>
+      <t>
+	This specification defines the Scope Registration Protocol for
+	User-Managed Access (UMA).  This protocol provides a method for a Host
+	to register or update scopes with an Authorization Manager.
+      </t>
+      <t>
+	This document is a product of the User-Managed Access Work Group of the
+	Kantara Initiative. It is currently under active development. It has
+	not yet been submitted to the IETF. The User-Managed Access Work Group
+	operates under Kantara IPR Policy - Option Patent and Copyright:
+	Reciprocal Royalty Free with Opt-Out to Reasonable And Non
+	discriminatory (RAND) and the publication of this document is governed
+	by the policies outlined in this option.
+      </t>
+    </abstract>
+  </front>
+
+  <middle>
+
+    <section title='Introduction'>
+      <t>
+	The Scope Registration Protocol provides a method for a UMA Host to register
+	scopes with an UMA Authorization Manager. 
+      </t>
+      <t>
+	Scopes are basically simple strings which only have meaning to the Host and are
+	completely transparent to the Authorization Manager. For instance a scope can
+	be all photos of a Host being marked as "for family only" or all photos of a 
+	certain resolution.
+      </t>
+      <t>
+	Scopes are registered with an AM by the Host and can be revoked again at any time.
+      </t>
+      <t>
+	Resources are bundled to scopes only on the Host side. The Authorization Manager never
+	knows in advance which resource (and thus URI pointing to one) falls under which scope
+	unless a request is made to a resource in which case the Host informs the Authorization
+	Manager about the scopes it falls under. The Authorization Manager can then make
+	a decision based on the scope information if access is granted or not.
+      </t>
+      <t>
+	In order to do so, resource owners attach policies to scopes. This can be as simple as 
+	being asked on every request or as complex as fulfilling a chain of claims. The resolution
+	of those policy questions is out of scope for this specification though and is part of
+	the UMA core protocol specification.
+      </t>
+
+      <section title='Notational Conventions'>
+        <t>
+          The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT', 'SHOULD', 'SHOULD
+          NOT', 'RECOMMENDED', 'MAY', and 'OPTIONAL' in this document are to be interpreted as
+          described in <xref target='RFC2119' />.
+        </t>
+        <t>
+          This document uses the Augmented Backus-Naur Form (ABNF) notation of
+          <xref target='I-D.ietf-httpbis-p1-messaging' />. Additionally, the realm and auth-param
+          rules are included from <xref target='RFC2617' />.
+        </t>
+        <t>
+          Unless otherwise noted, all the protocol parameter names and values are case sensitive.
+        </t>
+      </section>
+
+      <section title='Terminology'>
+        <t>
+	  We use the same terminology as the UMA core protocol specification. 
+          <list style='hanging' hangIndent='6'>
+             <t hangText='Scope'>
+              <vspace />
+	      A scope is a string known to a Host describing a set of
+	      resources. An Authorization Manager can add policies to those
+	      scopes which are checked on resource access. Scopes additionally
+	      have a description in order to explain it to the user. 
+            </t>
+          </list>
+        </t>
+      </section>
+    </section>
+
+    <section title='Prerequisites'>
+	<t>
+	    In order for a Host to be able to register scopes with an
+	    Authorization Manager it needs to fulfill the following
+	    prerequisites:
+	</t>
+    	<t>
+    	<list>
+	    <t>
+		The Host has obtained an access token from the Authorization
+		Manager as explained in the UMA core protocol specification,
+		step 1. It can use this token to use the scope registration API
+		of the Authorization Manager.
+	    </t>
+	    <t>
+		The Host has obtained an the URI of the scope registration API
+		as part of the Authorization Manager's metadata as described in
+		the UMA core protocol specification, step 1. 
+	    </t>
+	    <t>
+		The Host has already defined scopes for itself. These are often
+		derivable from the functionality of the Host. For instance a photo
+		site could already have scopes defined like "photos only
+		visible for my family", "photos in a certain group", "photos tagged
+		with a certain tag". The Host needs to define unique strings for 
+		those scopes.
+	    </t>
+    	</list>
+    	</t>
+    </section>
+    <section title='Registering scopes'>
+    	<t>
+    	  The following substeps are performed in order for a Host to register scopes
+	  with an Authorization Manager.
+    	  <list style="numbers">
+	    <t>
+		The Host creates a JSON formatted document describing all the scopes
+		it wishes to register or to delete. 
+	    </t>
+	    <t>
+		The Host sends this document to the Authorization Manager's scope
+		registration API, using the access token it obtained in step 1 of
+		the UMA core protocol.
+	    </t>
+	    <t>
+		The Authorization Manager acknowledges that it received the scopes.
+	    </t>
+    	  </list>
+    	</t>
+    	<section title="Preparing the scope registration document">
+    	<t>
+	    The Host collects all the scopes available to the user the Authorization
+	    Manager's access token is valid for and creates a JSON document of the 
+	    following form:
+    	</t>
+	<figure>
+	    <artwork>
+<![CDATA[
+    {
+        'add' : [
+                    {
+                        'scope' : 'photos_family',
+                        'desc'  : 'Photos available to my family',
+                        'desc_de' : 'Fotos f&uuml;r meine Familie',
+                    },
+                    {
+                        'scope' : 'group_fun',
+                        'desc'  : 'Funny Photos',
+                    }
+                ],
+        'delete' : ['photos_private']
+    }
+]]>
+	    </artwork>
+	</figure>
+	<t>
+	    It lists all the scopes it wished to be added with a description (optionally in multiple languages) 
+	    in the section "add" and it lists all those (previously registered) scopes in the "delete" section
+	    it wants to have deleted. In the latter case it only needs to list the scope names.
+
+	    [[ add description of field names ]]
+	</t>
+	</section>
+    
+    	<section title="Host sending the Scope Registration document">
+	    <t>
+		The Host sends the crafted document to the Scope Registration API endpoint
+		it obtained during metadata discovery. It uses the POST method to do so.
+
+		[[ describe this further with examples ]]
+	    </t>
+	</section>
+    	<section title="Authorization Manager sending a response">
+	    <t>
+		The Authorization Manager answers with a response containing "ok" in the case 
+		of success or with an error message.
+
+		[[ describe this further with examples and use some standard way to do so across the protocol]]
+	    </t>
+	</section>
+    </section>
+    <section title='Security Considerations'>
+      <t>
+	Who needs security anyway these days?
+      </t>
+    </section>
+
+    <appendix title='TODOs'>
+      <t>
+        <list style="symbols">
+          <t>
+            TBS
+          </t>
+       </list>
+      </t>
+    </appendix>
+    <appendix title='Acknowledgements'>
+      <t>
+        <list style="symbols">
+          <t>
+            TBS
+          </t>
+        </list>
+        [[ Add further WG contributors ]]
+      </t>
+    </appendix>
+
+    <appendix title='Document History'>
+      <t>
+        [[ to be removed by RFC editor before publication as an RFC ]]
+      </t>
+    </appendix>
+
+  </middle>
+
+  <back>
+
+    <references title='Normative References'>
+    
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2617.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.5785.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-hammer-hostmeta-13.xml'?>
+      
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p1-messaging-09.xml'?>
+
+<!--
+
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2045.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2104.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2818.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3023.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3447.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3629.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
+-->
+    </references>
+
+  </back>
+
+</rfc>

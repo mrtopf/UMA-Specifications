@@ -1,0 +1,392 @@
+
+
+
+Network Working Group                                     C. Scholz, Ed.
+Internet-Draft                                           COM.lounge GmbH
+Intended status: Standards Track                             M. Machulak
+Expires: February 10, 2011                          Newcastle University
+                                                                E. Maler
+                                                                  PayPal
+                                                          August 9, 2010
+
+
+         User-Managed Access (UMA) Scope Registration Protocol
+                        draft-uma-core-v1-00.txt
+
+Abstract
+
+   This specification defines the Scope Registration Protocol for User-
+   Managed Access (UMA).  This protocol provides a method for a Host to
+   register or update scopes with an Authorization Manager.
+
+   This document is a product of the User-Managed Access Work Group of
+   the Kantara Initiative.  It is currently under active development.
+   It has not yet been submitted to the IETF.  The User-Managed Access
+   Work Group operates under Kantara IPR Policy - Option Patent and
+   Copyright: Reciprocal Royalty Free with Opt-Out to Reasonable And Non
+   discriminatory (RAND) and the publication of this document is
+   governed by the policies outlined in this option.
+
+Status of this Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on February 10, 2011.
+
+Copyright Notice
+
+   Copyright (c) 2010 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+
+
+
+Scholz, et al.          Expires February 10, 2011               [Page 1]
+
+Internet-Draft           UMA Scope Registration              August 2010
+
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . . . 3
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . . . 3
+     1.2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . 3
+   2.  Prerequisites . . . . . . . . . . . . . . . . . . . . . . . . . 4
+   3.  Registering scopes  . . . . . . . . . . . . . . . . . . . . . . 4
+     3.1.  Preparing the scope registration document . . . . . . . . . 4
+     3.2.  Host sending the Scope Registration document  . . . . . . . 5
+     3.3.  Authorization Manager sending a response  . . . . . . . . . 5
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . . . 5
+   Appendix A.  TODOs  . . . . . . . . . . . . . . . . . . . . . . . . 5
+   Appendix B.  Acknowledgements . . . . . . . . . . . . . . . . . . . 6
+   Appendix C.  Document History . . . . . . . . . . . . . . . . . . . 6
+   5.  Normative References  . . . . . . . . . . . . . . . . . . . . . 6
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . . . 6
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Scholz, et al.          Expires February 10, 2011               [Page 2]
+
+Internet-Draft           UMA Scope Registration              August 2010
+
+
+1.  Introduction
+
+   The Scope Registration Protocol provides a method for a UMA Host to
+   register scopes with an UMA Authorization Manager.
+
+   Scopes are basically simple strings which only have meaning to the
+   Host and are completely transparent to the Authorization Manager.
+   For instance a scope can be all photos of a Host being marked as "for
+   family only" or all photos of a certain resolution.
+
+   Scopes are registered with an AM by the Host and can be revoked again
+   at any time.
+
+   Resources are bundled to scopes only on the Host side.  The
+   Authorization Manager never knows in advance which resource (and thus
+   URI pointing to one) falls under which scope unless a request is made
+   to a resource in which case the Host informs the Authorization
+   Manager about the scopes it falls under.  The Authorization Manager
+   can then make a decision based on the scope information if access is
+   granted or not.
+
+   In order to do so, resource owners attach policies to scopes.  This
+   can be as simple as being asked on every request or as complex as
+   fulfilling a chain of claims.  The resolution of those policy
+   questions is out of scope for this specification though and is part
+   of the UMA core protocol specification.
+
+1.1.  Notational Conventions
+
+   The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT',
+   'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'MAY', and 'OPTIONAL' in this
+   document are to be interpreted as described in [RFC2119].
+
+   This document uses the Augmented Backus-Naur Form (ABNF) notation of
+   [I-D.ietf-httpbis-p1-messaging].  Additionally, the realm and auth-
+   param rules are included from [RFC2617].
+
+   Unless otherwise noted, all the protocol parameter names and values
+   are case sensitive.
+
+1.2.  Terminology
+
+   We use the same terminology as the UMA core protocol specification.
+
+   Scope
+         A scope is a string known to a Host describing a set of
+         resources.  An Authorization Manager can add policies to those
+         scopes which are checked on resource access.  Scopes
+
+
+
+Scholz, et al.          Expires February 10, 2011               [Page 3]
+
+Internet-Draft           UMA Scope Registration              August 2010
+
+
+         additionally have a description in order to explain it to the
+         user.
+
+
+2.  Prerequisites
+
+   In order for a Host to be able to register scopes with an
+   Authorization Manager it needs to fulfill the following
+   prerequisites:
+
+      The Host has obtained an access token from the Authorization
+      Manager as explained in the UMA core protocol specification, step
+      1.  It can use this token to use the scope registration API of the
+      Authorization Manager.
+
+      The Host has obtained an the URI of the scope registration API as
+      part of the Authorization Manager's metadata as described in the
+      UMA core protocol specification, step 1.
+
+      The Host has already defined scopes for itself.  These are often
+      derivable from the functionality of the Host.  For instance a
+      photo site could already have scopes defined like "photos only
+      visible for my family", "photos in a certain group", "photos
+      tagged with a certain tag".  The Host needs to define unique
+      strings for those scopes.
+
+
+3.  Registering scopes
+
+   The following substeps are performed in order for a Host to register
+   scopes with an Authorization Manager.
+
+   1.  The Host creates a JSON formatted document describing all the
+       scopes it wishes to register or to delete.
+
+   2.  The Host sends this document to the Authorization Manager's scope
+       registration API, using the access token it obtained in step 1 of
+       the UMA core protocol.
+
+   3.  The Authorization Manager acknowledges that it received the
+       scopes.
+
+3.1.  Preparing the scope registration document
+
+   The Host collects all the scopes available to the user the
+   Authorization Manager's access token is valid for and creates a JSON
+   document of the following form:
+
+
+
+
+Scholz, et al.          Expires February 10, 2011               [Page 4]
+
+Internet-Draft           UMA Scope Registration              August 2010
+
+
+       {
+           'add' : [
+                       {
+                           'scope' : 'photos_family',
+                           'desc'  : 'Photos available to my family',
+                           'desc_de' : 'Fotos f&uuml;r meine Familie',
+                       },
+                       {
+                           'scope' : 'group_fun',
+                           'desc'  : 'Funny Photos',
+                       }
+                   ],
+           'delete' : ['photos_private']
+       }
+
+
+   It lists all the scopes it wished to be added with a description
+   (optionally in multiple languages) in the section "add" and it lists
+   all those (previously registered) scopes in the "delete" section it
+   wants to have deleted.  In the latter case it only needs to list the
+   scope names. [[ add description of field names ]]
+
+3.2.  Host sending the Scope Registration document
+
+   The Host sends the crafted document to the Scope Registration API
+   endpoint it obtained during metadata discovery.  It uses the POST
+   method to do so. [[ describe this further with examples ]]
+
+3.3.  Authorization Manager sending a response
+
+   The Authorization Manager answers with a response containing "ok" in
+   the case of success or with an error message. [[ describe this
+   further with examples and use some standard way to do so across the
+   protocol]]
+
+
+4.  Security Considerations
+
+   Who needs security anyway these days?
+
+
+Appendix A.  TODOs
+
+   o  TBS
+
+
+
+
+
+
+
+Scholz, et al.          Expires February 10, 2011               [Page 5]
+
+Internet-Draft           UMA Scope Registration              August 2010
+
+
+Appendix B.  Acknowledgements
+
+   o  TBS
+
+   [[ Add further WG contributors ]]
+
+
+Appendix C.  Document History
+
+   [[ to be removed by RFC editor before publication as an RFC ]]
+
+
+5.  Normative References
+
+   [I-D.hammer-hostmeta]
+              Hammer-Lahav, E., "Web Host Metadata",
+              draft-hammer-hostmeta-13 (work in progress), June 2010.
+
+   [I-D.ietf-httpbis-p1-messaging]
+              Fielding, R., Gettys, J., Mogul, J., Nielsen, H.,
+              Masinter, L., Leach, P., Berners-Lee, T., and J. Reschke,
+              "HTTP/1.1, part 1: URIs, Connections, and Message
+              Parsing", draft-ietf-httpbis-p1-messaging-09 (work in
+              progress), March 2010.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC2617]  Franks, J., Hallam-Baker, P., Hostetler, J., Lawrence, S.,
+              Leach, P., Luotonen, A., and L. Stewart, "HTTP
+              Authentication: Basic and Digest Access Authentication",
+              RFC 2617, June 1999.
+
+   [RFC5785]  Nottingham, M. and E. Hammer-Lahav, "Defining Well-Known
+              Uniform Resource Identifiers (URIs)", RFC 5785,
+              April 2010.
+
+
+Authors' Addresses
+
+   Christian Scholz (editor)
+   COM.lounge GmbH
+
+   Email: cs@comlounge.net
+   URI:   http://comlounge.net
+
+
+
+
+
+
+Scholz, et al.          Expires February 10, 2011               [Page 6]
+
+Internet-Draft           UMA Scope Registration              August 2010
+
+
+   Maciej Machulak
+   Newcastle University
+
+   Email: m.p.machulak@ncl.ac.uk
+   URI:   http://ncl.ac.uk/
+
+
+   Eve Maler
+   PayPal
+
+   Email: eve@xmlgrrl.com
+   URI:   http://www.paypal.com/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Scholz, et al.          Expires February 10, 2011               [Page 7]
+
