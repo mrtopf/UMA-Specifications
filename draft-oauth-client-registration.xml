@@ -197,9 +197,9 @@
     	    <section title='The authorization server must have the option of strongly
           authenticating the client and its metadata'>
     	      <t>
-          	  In order to prevent spoofing of clients, the authorization server should have the
-              option to verify the provided information. This might be
-              solved using signature verification; relatively weaker authentication might be achieved in a
+          	  In order to prevent spoofing of clients and enable dynamic building of strong trust relationships, 
+          	  the authorization server should have the option to verify the provided information. This might be
+              solved using message signature verification; relatively weaker authentication might be achieved in a
               simpler way by pulling metadata from a trusted client URL.
     	      </t>
     	    </section>
@@ -773,7 +773,7 @@ Host: onlinephotogallery.com        ]]>
 
     {
       "client_id":"5UO9XcL4TQTa",
-      "client_secret":”WdRKN3zeTc20”
+      "client_secret":"WdRKN3zeTc20"
     }
         ]]>
          </artwork>
@@ -866,7 +866,9 @@ Host: onlinephotogallery.com        ]]>
       to allow trustable, unique metadata to be conveyed to an OAuth server and for this instance of the app to
       receive a client identifier and optional secret. We have discussed "device-initiated" and "home base-initiated" pattern options 
       for OAuth dynamic client registration in these circumstances. Device-initiated flows seem more generically applicable (for example,
-      for both UMA host and UMA requester needs).
+      for both UMA host and UMA requester needs). However, a home base-initiated flow may be preferable in case it is 
+      necessary to pre-determine a trust level towards an OAuth server. In this case, the home base server could initiate 
+      the registration process if and only if there exists a trust relationship between the two parties.
     </t>
       <t>
       Following is one option for a device-initiated flow:

@@ -4,10 +4,10 @@
 Network Working Group                                     C. Scholz, Ed.
 Internet-Draft                                           COM.lounge GmbH
 Intended status: Standards Track                             M. Machulak
-Expires: February 10, 2011                          Newcastle University
+Expires: February 11, 2011                          Newcastle University
                                                                 E. Maler
                                                                   PayPal
-                                                          August 9, 2010
+                                                         August 10, 2010
 
 
                OAuth Dynamic Client Registration Protocol
@@ -33,7 +33,7 @@ Status of this Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on February 10, 2011.
+   This Internet-Draft will expire on February 11, 2011.
 
 Copyright Notice
 
@@ -52,7 +52,7 @@ Copyright Notice
 
 
 
-Scholz, et al.          Expires February 10, 2011               [Page 1]
+Scholz, et al.          Expires February 11, 2011               [Page 1]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -91,11 +91,11 @@ Table of Contents
    8.  Native Application Client Registration . . . . . . . . . . . . 17
    9.  Security Considerations  . . . . . . . . . . . . . . . . . . . 18
    Appendix A.  Acknowledgements  . . . . . . . . . . . . . . . . . . 18
-   Appendix B.  Document History  . . . . . . . . . . . . . . . . . . 18
+   Appendix B.  Document History  . . . . . . . . . . . . . . . . . . 19
    10. References . . . . . . . . . . . . . . . . . . . . . . . . . . 19
      10.1. Normative References . . . . . . . . . . . . . . . . . . . 19
      10.2. Non-Normative References . . . . . . . . . . . . . . . . . 19
-   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 19
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 20
 
 
 
@@ -108,7 +108,7 @@ Table of Contents
 
 
 
-Scholz, et al.          Expires February 10, 2011               [Page 2]
+Scholz, et al.          Expires February 11, 2011               [Page 2]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -164,7 +164,7 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
 
-Scholz, et al.          Expires February 10, 2011               [Page 3]
+Scholz, et al.          Expires February 11, 2011               [Page 3]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -220,7 +220,7 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
 
-Scholz, et al.          Expires February 10, 2011               [Page 4]
+Scholz, et al.          Expires February 11, 2011               [Page 4]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -267,16 +267,16 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 3.3.  The authorization server must have the option of strongly
       authenticating the client and its metadata
 
-   In order to prevent spoofing of clients, the authorization server
-   should have the option to verify the provided information.  This
-   might be solved using signature verification; relatively weaker
+   In order to prevent spoofing of clients and enable dynamic building
+   of strong trust relationships, the authorization server should have
+   the option to verify the provided information.  This might be solved
+   using message signature verification; relatively weaker
    authentication might be achieved in a simpler way by pulling metadata
    from a trusted client URL.
 
 
 
-
-Scholz, et al.          Expires February 10, 2011               [Page 5]
+Scholz, et al.          Expires February 11, 2011               [Page 5]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -332,7 +332,7 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
 
-Scholz, et al.          Expires February 10, 2011               [Page 6]
+Scholz, et al.          Expires February 11, 2011               [Page 6]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -388,7 +388,7 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
 
-Scholz, et al.          Expires February 10, 2011               [Page 7]
+Scholz, et al.          Expires February 11, 2011               [Page 7]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -444,7 +444,7 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
 
-Scholz, et al.          Expires February 10, 2011               [Page 8]
+Scholz, et al.          Expires February 11, 2011               [Page 8]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -500,7 +500,7 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
 
-Scholz, et al.          Expires February 10, 2011               [Page 9]
+Scholz, et al.          Expires February 11, 2011               [Page 9]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -556,7 +556,7 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
 
-Scholz, et al.          Expires February 10, 2011              [Page 10]
+Scholz, et al.          Expires February 11, 2011              [Page 10]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -612,7 +612,7 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
 
-Scholz, et al.          Expires February 10, 2011              [Page 11]
+Scholz, et al.          Expires February 11, 2011              [Page 11]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -668,7 +668,7 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
 
-Scholz, et al.          Expires February 10, 2011              [Page 12]
+Scholz, et al.          Expires February 11, 2011              [Page 12]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -724,7 +724,7 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
 
-Scholz, et al.          Expires February 10, 2011              [Page 13]
+Scholz, et al.          Expires February 11, 2011              [Page 13]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -780,7 +780,7 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
 
-Scholz, et al.          Expires February 10, 2011              [Page 14]
+Scholz, et al.          Expires February 11, 2011              [Page 14]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -836,7 +836,7 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
 
-Scholz, et al.          Expires February 10, 2011              [Page 15]
+Scholz, et al.          Expires February 11, 2011              [Page 15]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -892,7 +892,7 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
 
-Scholz, et al.          Expires February 10, 2011              [Page 16]
+Scholz, et al.          Expires February 11, 2011              [Page 16]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
@@ -934,25 +934,29 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
    discussed "device-initiated" and "home base-initiated" pattern
    options for OAuth dynamic client registration in these circumstances.
    Device-initiated flows seem more generically applicable (for example,
-   for both UMA host and UMA requester needs).
+   for both UMA host and UMA requester needs).  However, a home base-
+   initiated flow may be preferable in case it is necessary to pre-
+   determine a trust level towards an OAuth server.  In this case, the
+   home base server could initiate the registration process if and only
+   if there exists a trust relationship between the two parties.
 
    Following is one option for a device-initiated flow:
 
    1.  User provisions native app on device and registers with and
        authenticates to app's home-base web application.
 
-   2.  Home base provisions native app with home base-signed metadata.
-
-   3.  Whenever user tries to use native app to access a protected
-       resource, native app provides home base-provided metadata to
 
 
 
-Scholz, et al.          Expires February 10, 2011              [Page 17]
+Scholz, et al.          Expires February 11, 2011              [Page 17]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
 
 
+   2.  Home base provisions native app with home base-signed metadata.
+
+   3.  Whenever user tries to use native app to access a protected
+       resource, native app provides home base-provided metadata to
        server.
 
    4.  Server verifies home base signature by pulling public key from
@@ -994,20 +998,23 @@ Appendix A.  Acknowledgements
    o  Nat Sakimura
 
 
+
+
+
+
+
+
+Scholz, et al.          Expires February 11, 2011              [Page 18]
+
+Internet-Draft      OAuth Dynamic Client Registration        August 2010
+
+
 Appendix B.  Document History
 
    [[ to be removed by RFC editor before publication as an RFC ]]
 
 
 10.  References
-
-
-
-
-Scholz, et al.          Expires February 10, 2011              [Page 18]
-
-Internet-Draft      OAuth Dynamic Client Registration        August 2010
-
 
 10.1.  Normative References
 
@@ -1050,19 +1057,16 @@ Internet-Draft      OAuth Dynamic Client Registration        August 2010
               UMA+Requirements>.
 
    [UMA-UC]   Akram, H., "UMA Explained", 2010, <http://
-              kantarainitiative.org/confluence/display/uma/
-              UMA+Scenarios+and+Use+Cases>.
 
 
 
-
-
-
-
-
-Scholz, et al.          Expires February 10, 2011              [Page 19]
+Scholz, et al.          Expires February 11, 2011              [Page 19]
 
 Internet-Draft      OAuth Dynamic Client Registration        August 2010
+
+
+              kantarainitiative.org/confluence/display/uma/
+              UMA+Scenarios+and+Use+Cases>.
 
 
 Authors' Addresses
@@ -1112,10 +1116,6 @@ Authors' Addresses
 
 
 
-
-
-
-
-Scholz, et al.          Expires February 10, 2011              [Page 20]
+Scholz, et al.          Expires February 11, 2011              [Page 20]
 
 

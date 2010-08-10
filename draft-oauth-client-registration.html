@@ -144,10 +144,10 @@
 <tr><td class="header">Network Working Group</td><td class="header">C. Scholz, Ed.</td></tr>
 <tr><td class="header">Internet-Draft</td><td class="header">COM.lounge GmbH</td></tr>
 <tr><td class="header">Intended status: Standards Track</td><td class="header">M. Machulak</td></tr>
-<tr><td class="header">Expires: February 10, 2011</td><td class="header">Newcastle University</td></tr>
+<tr><td class="header">Expires: February 11, 2011</td><td class="header">Newcastle University</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">E. Maler</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">PayPal</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">August 9, 2010</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">August 10, 2010</td></tr>
 </table></td></tr></table>
 <h1><br />OAuth Dynamic Client Registration Protocol<br />draft-oauth-dyn-reg-v1-00.txt</h1>
 
@@ -172,7 +172,7 @@ and may be updated, replaced, or obsoleted by other documents at any time.
 It is inappropriate to use Internet-Drafts as reference material or to cite
 them other than as &ldquo;work in progress.&rdquo;</p>
 <p>
-This Internet-Draft will expire on February 10, 2011.</p>
+This Internet-Draft will expire on February 11, 2011.</p>
 
 <h3>Copyright Notice</h3>
 <p>
@@ -450,9 +450,9 @@ The authorization server must have the option of strongly
           authenticating the client and its metadata</h3>
 
 <p>
-          	  In order to prevent spoofing of clients, the authorization server should have the
-              option to verify the provided information. This might be
-              solved using signature verification; relatively weaker authentication might be achieved in a
+          	  In order to prevent spoofing of clients and enable dynamic building of strong trust relationships, 
+          	  the authorization server should have the option to verify the provided information. This might be
+              solved using message signature verification; relatively weaker authentication might be achieved in a
               simpler way by pulling metadata from a trusted client URL.
     	      
 </p>
@@ -1123,7 +1123,7 @@ Client Registration Response</h3>
 
     {
       "client_id":"5UO9XcL4TQTa",
-      "client_secret":”WdRKN3zeTc20”
+      "client_secret":"WdRKN3zeTc20"
     }
 
 </pre></div>
@@ -1219,7 +1219,9 @@ Native Application Client Registration</h3>
       to allow trustable, unique metadata to be conveyed to an OAuth server and for this instance of the app to
       receive a client identifier and optional secret. We have discussed "device-initiated" and "home base-initiated" pattern options 
       for OAuth dynamic client registration in these circumstances. Device-initiated flows seem more generically applicable (for example,
-      for both UMA host and UMA requester needs).
+      for both UMA host and UMA requester needs). However, a home base-initiated flow may be preferable in case it is 
+      necessary to pre-determine a trust level towards an OAuth server. In this case, the home base server could initiate 
+      the registration process if and only if there exists a trust relationship between the two parties.
     
 </p>
 <p>
