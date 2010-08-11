@@ -614,7 +614,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
 
     {
       type: "pull",
-      url: "http://onlinephotogallery.com"
+      client_url: "http://onlinephotogallery.com"
     }
 
         ]]>
