@@ -402,7 +402,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
                 <vspace />
                 OPTIONAL. This field contains a URL for an icon for the client.
             </t>
-             <t hangText="redirect_url">
+             <t hangText="redirect_uri">
                 <vspace />
                 REQUIRED. This field contains the URL to which the authorization server should send its response.
             </t>
@@ -428,7 +428,7 @@ DP10: Complexity should be borne by the authorization endpoint vs. other endpoin
       client_url:  "http://onlinephotogallery.com",
       client_description: "Uploading and also editing capabilities!",
       client_icon: "http://onlinephotogallery.com/icon.png",
-      redirect_url: "https://onlinephotogallery.com/client_reg"
+      redirect_uri: "https://onlinephotogallery.com/client_reg"
     }
         ]]>
          </artwork>
