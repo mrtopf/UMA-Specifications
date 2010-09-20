@@ -76,7 +76,7 @@
 
     <section title='Introduction'>
       <t>
-        The User-Managed Access (UMA) core protocol provides a method, based on [[OAuth20]], for users to 
+        The User-Managed Access (UMA) core protocol provides a method, based on <xref target="OAuth2"></xref>, for users to 
         control access to their protected resources, residing on any number of host sites, through an 
         authorization manager that makes access decisions based on user policy. 
       </t>
@@ -99,13 +99,8 @@
         a policy administrator crafting authorization strategies on his or her own behalf. 
       </t>
       <t>
-        This informal draft discusses a number of requirements for and approaches to
-        automatic registration of clients to the OAuth authorization server, with special
-        emphasis on the needs of the OAuth-based User-Managed Access protocol [[provide citation]].
-      </t>
-      <t>
-        The UMA protocol profiles and extends [[OAuth20]], applying two instances of OAuth flow 
-        patterns among the entities. 
+        The UMA protocol profiles and extends <xref target="OAuth2"></xref>, applying two instances of OAuth flow 
+        patterns among the entities.
       </t>
       <t>
         First, UMA allows a host to trust an AM to which it has been introduced dynamically. To 
@@ -124,9 +119,9 @@
       <t>
         UMA has the following major steps:
         <list style="numbers">
-        <t>The authorizing user introduces a host to an AM</t>
-        <t> The requester gets an access token from the AM</t>
-        <t>The requester wields the access token at the host to gain access</t>
+        <t>The authorizing user introduces a host to an AM.</t>
+        <t> The requester gets an access token from the AM.</t>
+        <t>The requester wields the access token at the host to gain access.</t>
         </list>
       </t>
 
@@ -151,13 +146,13 @@
           <list style='hanging' hangIndent='6'>
              <t hangText='authorizing user'>
               <vspace />
-              An UMA-defined variant of an [[OAuth20]] resource owner; a web user who configures an 
+              An UMA-defined variant of an OAuth resource owner; a web user who configures an 
               authorization manager with policies that control how it makes access decisions when a 
               requester attempts to access a protected resource at a host.
             </t>
             <t hangText='authorization manager'>
               <vspace />
-              An UMA-defined variant of an [[OAuth20]] authorization server that carries out an 
+              An UMA-defined variant of an OAuth authorization server that carries out an 
               authorizing user's policies governing access to a protected resource.
             </t>
             <t hangText='protected resource'>
@@ -166,27 +161,28 @@
             </t>
             <t hangText='host'>
               <vspace />
-              An UMA-defined variant of an [[OAuth20]] resource server that enforces access to the 
+              An UMA-defined variant of an OAuth resource server that enforces access to the 
               protected resources it hosts, as decided by an authorization manager. 
             </t>
             <t hangText='host access token'>
               <vspace />
-              An access token symbolizing the authorizing user's consent for a host to trust a 
+              An access token representing the authorizing user's consent for a host to trust a 
               particular authorization manager for access decisions about resources hosted there.
             </t>
             <t hangText='claim'>
               <vspace />
-              A statement (in the sense of [[IDCclaim]]). Claims are conveyed by a requester on behalf 
+              A statement of the value or values of one
+              or more identity attributes of a requesting party. Claims are conveyed by a requester on behalf 
               of a requesting party to an authorization manager in an attempt to satisfy an authorizing 
               user's policy. 
             </t>
            <t hangText='requester'>
               <vspace />
-              An UMA-defined variant of [[OAuth20]] client that seeks access to a protected resource. 
+              An UMA-defined variant of an OAuth client that seeks access to a protected resource. 
             </t>
             <t hangText='requester access token'>
               <vspace />
-              An access token symbolizing the authorizing user's consent for a requester's access to 
+              An access token representing the authorizing user's consent for a requester's access to 
               particular resources at a host. 
             </t>
             <t hangText='requesting party'>
@@ -205,7 +201,7 @@
     	must introduce the host to the AM. The result is as follows:
     	<list>
         <t>
-        The host has received metadata about the AM, such as [[OAuth20]] endpoints. 
+        The host has received metadata about the AM, such as OAuth endpoints. 
         </t>
         <t>
          The host has received an OAuth access token (known as the host access token) that 
@@ -213,7 +209,7 @@
          resources. This token is used when the host makes requests at host-specific AM endpoints. 
     	</t>
     	<t>
-    	The AM has optionally acquired information about resources on the host it is supposed to 
+    	The AM has optionally acquired information about scopes on the host it is supposed to 
     	protect on behalf of the user.
     	</t>
     	</list>
@@ -221,12 +217,12 @@
     	<t>
     	  The following substeps are performed in order to achieve these results:
     	  <list style="numbers">
-    	  <t>The host looks up the AM metadata and learns about API endpoints and supported formats.</t>
+    	  <t>The host looks up the AM's metadata and learns about its API endpoints and supported formats.</t>
     	  <t>If the host has not yet obtained an OAuth client identifier and optional secret from the AM, 
-    	  it registers with and binds to the AM dynamically, for example via [[draft-oauth-dynamic-reg]].</t>
+    	  it registers with and binds to the AM dynamically, for example via <xref target="Dyn-Reg">Dyn-Reg</xref>.</t>
     	  <t>The host obtains an access token from the AM with the authorizing user's consent, by 
     	  following the OAuth 2.0 web server profile.</t>
-    	  <t>The host optionally registers resources with the AM that are intended to be protected, via
+    	  <t>The host optionally registers scopes with the AM that are intended to be protected, via
     	  [[draft-uma-resource-reg]].</t>
     	  </list>
     	</t>
@@ -240,7 +236,7 @@
     	</t>
     	<t>
     	  From the data provided, discovered, or configured, the host MUST retrieve the hostmeta 
-    	  document as described in section 2 of [[hostmeta]]. For example, if the user supplied 
+    	  document as described in section 2 of <xref target="hostmeta">hostmeta</xref>. For example, if the user supplied 
     	  "am.example.com" as the authorization manager's domain, the host creates the URL 
     	  "https://am.example.com/.well-known/host-meta" and performs a GET request on it.
     	</t>
@@ -260,7 +256,7 @@
     	<t>
     	  (Note that the method of endpoint discovery defined here is intended to be compatible with
     	  the ultimate dynamic discovery, registration, and binding solution proposed by the OAuth group.
-    	  The UMA group has proposed a generic solution at [[draft-uma-dynamic-reg]], with which this
+    	  The UMA group has proposed a generic solution at <xref target="Dyn-Reg">Dyn-Reg</xref>, with which this
     	  discovery step is compatible.)
     	</t>
     	<t>
@@ -311,7 +307,7 @@
           <list style='hanging' hangIndent='6'>
              <t hangText='http://kantarainitiative.org/confluence/display/uma/req_user_uri'>
               <vspace />
-              REQUIRED. Available HTTP methods are as defined by [[OAuth20]] for a user authorization
+              REQUIRED. Available HTTP methods are as defined by <xref target="OAuth2"></xref> for a user authorization
               URL. Supplies the user authorization URL requesters should use to gather the consent 
               of the authorizing user for user delegation flows in synchronous person-to-service sharing 
               scenarios. (See Section @@TODO for the definition of this UMA-specific client profile.)
@@ -320,7 +316,7 @@
             </t>
              <t hangText='http://kantarainitiative.org/confluence/display/uma/req_token_uri'>
               <vspace />
-              REQUIRED. Available HTTP methods are as defined by [[OAuth20]] for a token issuance
+              REQUIRED. Available HTTP methods are as defined by <xref target="OAuth2"></xref> for a token issuance
               URL. Supplies the token URL requesters should use to ask for an access token in step 2.
               This endpoint SHOULD require the use of a transport-layer security 
               mechanism such as TLS.
@@ -362,7 +358,7 @@ href="https://am.example.com/requester/user_uri"></Link>
     	  AM previously, in this substep it MUST do so, in order to engage in OAuth-based interactions with it.
     	  It is anticipated that the OAuth group will define a solution for dynamic registration
     	  and client-authorization server binding; the UMA proposal for this is at
-    	  [[draft-uma-dynamic-reg]].</t>
+    	  <xref target="Dyn-Reg">Dyn-Reg</xref>.</t>
     	</section>
     	<section title="Host obtains host access token">
     	<t>
@@ -371,8 +367,8 @@ href="https://am.example.com/requester/user_uri"></Link>
     	  resources for this user.
     	</t>
     	<t>
-    	  The host MUST use the [[OAuth20]] web server profile (@@TODO: subsequently profile it to use UMA 
-    	  recursively for claims-getting purposes?), utilizing the host_user_uri and host_token_uri endpoints
+    	  The host MUST use the <xref target="OAuth2">OAuth2</xref> web server profile (@@TODO: subsequently profile it to use UMA 
+    	  recursively for claims-getting purposes?), utilizing the end-user authorization and token endpoints
     	  discovered earlier.  The host acts in the role of an OAuth client; the authorizing user acts in the 
     	  role of an OAuth end-user resource owner; and the AM, though the provided endpoint URLs, acts in the 
     	  role of an OAuth authorization server.
@@ -381,7 +377,7 @@ href="https://am.example.com/requester/user_uri"></Link>
     	<section title="Host registers resources to be protected">
     	<t>
     	  Once the host has received an access token, in this substep it MAY, immediately or at any time until 
-    	  user authorization is revoked, wield the token at the AM's host_resource_details_uri endpoint in the
+    	  user authorization is revoked, wield the token at the AM's host_scope_reg_uri endpoint in the
     	  manner defined in [[draft-uma-resource-reg]].
     	</t>
     	<t>
@@ -435,22 +431,10 @@ href="https://am.example.com/requester/user_uri"></Link>
     	</t>
     	<t>
     	  The requester submits a GET request to the access token URL, providing the desired scope of access in 
-    	  the "scope" parameter. The value of this parameter is a URL-encoded JSON array of one or more objects, 
-    	  each consisting of at least two members: a "method" string with an HTTP access method value and a "uri" 
-    	  string with a resource URI value (which MAY have a "*" as the last path component in order to indicate 
-    	  all resources available in that directory on the host). If any additional members are present, they do 
-    	  not affect the interpretation of these two. 
+    	  the "scope" parameter. [@@TBS: Rework this to describe how the desired scope information is provided
+    	  (e.g. whether it is in plain text or is passed through in protected form from the host) and
+    	  whether there are extension points to allow other information to be provided. Provide code examples.]
     	</t>
-    <figure>
-       <preamble>
-         For example, the following "scope" parameter value describes two different resources and different access 
-         methods for them, for which a single refresh token is sought (the example is not URL-encoded, for readability): 
-       </preamble>
-       <artwork>
-[{"method": "GET", "uri": "http://example.com/foo"}, 
-{"method": "POST", "uri": "http://example.com/*"}] 
-       </artwork>
-      </figure>
       <t>
         The requester performs a GET on the access token URL, using the standard HTTP "Accept" header to express the 
         acceptable media type(s) of any claims-required list. The AM responds in one of three ways:
@@ -465,8 +449,7 @@ href="https://am.example.com/requester/user_uri"></Link>
         <t>
           If user policy demands more information from the requester, the AM responds with a claims-required response 
           containing a claims-required list. The list SHOULD use the media type that was indicated by the requester as 
-          acceptable. (@@TODO: We don't want claims to have to be supplied every time for an access token, just a 
-          refresh token or equivalent. How to do this?) 
+          acceptable.
         </t>
         </list>
       </t>
@@ -474,7 +457,8 @@ href="https://am.example.com/requester/user_uri"></Link>
         On receiving a claims-required list, the requester performs a POST to the authorization negotiation URL 
         supplying a claims document, specifying its type in the "Content-Type" header. The AM rejects the document 
         if it does not recognize its type. If the AM accepts the document, it responds with a successful or unsuccessful 
-        access token response as detailed above, or with another claims-required response.
+        access token response as detailed above, or with another claims-required response. [Eventually need a special
+        claims response that allows for the trusted-claims model to unfold.]
       </t>
       <t>
         If the access token request is successful, the access token supplied MUST be in one of the formats contemporaneously 
@@ -484,36 +468,134 @@ href="https://am.example.com/requester/user_uri"></Link>
         This specification does not define the formats of required-claims lists and claims documents. It may ultimately 
         put minimum conformance requirements on requesters and AMs to handle particular claim formats defined in other 
         specifications, as well as specifying requirements that claim formats seeking consideration for use in UMA must meet.
-        (@@TODO: Cite [[Claims2.0]] appropriately.)
+        One candidate specification for lightweight claims requests and responses is <xref target="Claims2.0">Claims2.0</xref>.
       </t>
 	</section>
     <section title="Step 3: Requester wields access token at host to gain access">
-		<t>
+        <t>
 		  In this step, the requester in the role of an OAuth client interacts with the host in the role of an
-		  OAuth resource server in order to gain access to the protected resource. This step extends OAuth to allow 
-		  the host to validate the token at the authorization manager instead of locally. This step has the following substeps:
+		  OAuth resource server in order to gain access to the protected resource. This step extends OAuth to require
+          the host to validate the token at the authorization manager instead of locally.
+        </t>
+		<t>
+		  (This step is currently defined to provide a baseline of functionality and security that relies on
+		  non-cryptographic methods such as a short-lived requester access token; it is anticipated that 
+		  OAuth-compatible digital signature-based methods for authenticating
+		  the requester more strongly will be added.) This step has the following substeps:
 		  <list style="numbers">
-		  <t>Requester presents requester access token in attempting to access resource.</t>
-		  <t>Host either wields host access token at AM's token validation endpoint to ask for validation or validates 
-		  the token locally.</t>
-		  <t>Host either allows access or generates an error.</t>
+		 <t>
+		  Requester presents the requester access token to the host in attempting to access desired resource.
+		</t>
+		<t>
+		  Host asks AM to validate the requester access token.
+		</t>
+		<t>
+		  AM validates the token and responds with either a valid response or an error response; host
+		  passes through the result.
+		</t>
 		  </list>
 		</t>
-		<t>The substep detail is as follows.</t>
+		<section title="Requester attempts access">
 		<t>
-		  The requester presents the requester access token to the host in attempting to access the desired resource, 
-		  as defined in OAuth.
+		  The requester attempts to access the protected resource at the host by presenting the request access
+		  token it was issued by the AM in step 2, using the process described in section 5 of <xref target="OAuth2">OAuth2</xref>.
 		</t>
 		<t>
-		  The host either validates the token locally or wields its host access token in POSTing a validation request 
-		  to the AM's token validation endpoint, providing the requester access token plus a description of the resource 
-		  and method attempted.
+		  If the the request is invalid, for example because it is missing an access token, the host
+		  issues an invalid_request error response as described in section 5.2.1 of <xref target="OAuth2">OAuth2</xref>
+		  and does not proceed.
+		</t>
+		</section>
+		<section title="Host asks AM to validate requester access token">
+		<t>
+		  The host verifies the requester access token by sending it to the AM's token verification endpoint. The 
+		  AM validates the requester access token and returns the result to the host. The AM MUST validate the access 
+		  token and ensure it has not expired and that the host it is used for is the one it was requested for.
 		</t>
 		<t>
-		  The AM responds in one of two ways: the token is valid, or the token is invalid. Correspondingly, the host 
-		either allows access or rejects the requesters' attempt. The requester is free to seek authorization or to 
-		refresh its access token at the AM if it feels the rejection was in error.
+		  The request made by the host to the AM MUST be an OAuth-protected request itself, using the host access token 
+		  obtained in step 1.
 		</t>
+		<t>
+		  The host's request to the AM is made with a POST containing the requester access token and the IP address of the
+		  requester's request. (The host MAY, at its discretion, instead supply the originating IP address indicated in 
+		  the requester's X-Forwarded-For: header value.) The POST uses the 
+		  "application/x-www-form-urlencoded" format as defined by [W3C.REC-html401-19991224].  The IP address or originating
+		  IP address is advisory only; the AM MAY ignore it for token validation purposes.
+		</t>
+		<figure>
+       <preamble>
+         Example of a request to the token verification endpoint that provides the host access token in the header:
+       </preamble>
+       <artwork>
+POST /token_verification HTTP/1.1
+Host: am.example.com
+Authorization: OAuth vF9dft4qmT
+Content-Type: application/x-www-form-urlencoded     
+
+token=sbjsbhs(/SSJHBSUSSJHVhjsgvhsgvshgsv&amp;ipaddr=192.168.1.1
+       </artwork>
+      </figure>
+		</section>
+		<section title="Valid response">
+		<t>
+		  After determining that the token is valid, 
+		  the AM sends the host a response containing a list of scopes applying to this particular requester access 
+		  token. The response usesa JSON document inside the body of an HTTP response using the 200 OK status code.
+		  The scopes come from a list of strings previously registered with the AM by the host (as specified in
+		  Step 1).
+		</t>
+		<figure>
+       <preamble>
+         Example:
+       </preamble>
+       <artwork>
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+"scopes": ['read_private_photos', 'write_private_photos']
+}       </artwork>
+      </figure>
+      		<t>
+		  The host MUST validate if one of the scopes is sufficient for requester to access the requested resource
+		  in the manner originally attempted.  If it is, the host gives access in that manner.
+		</t>
+
+		</section>
+		<section title="Error responses">
+		<t>
+		  Ultimately the host is responsible for either granting the access the requester attempted, or returning
+		  an error response to the requester with a reason for the failure.  <xref target="OAuth2"></xref> defines 
+		  several error responses for a resource server
+		  to return.  UMA makes use of these error responses, but requires the host to "outsource" the determination
+		  of some error conditions to the AM.
+		</t>
+		<t>
+		  The host is responsible for determining "insufficient_scope".  If the requester's attempted access does
+		  not match any of the scopes returned by the AM in its valid-token response to the host, the host returns
+		  an "insufficient_scope" error to the requester.
+		</t>
+		<t>
+		  The host is responsible for determining "invalid_request".  If the requester's request was badly formed,
+		  the host returns an "invalid_request" error to the requester.
+		</t>
+		<t>
+		If the AM determined that the requester access token is invalid, it returns an "invalid_requester_token" error
+		response to the host. [@@TBS: Need to flesh out more and provide an example.] The host then returns an
+		"invalid_token" response to the requester as described in section 5.2.1 of <xref target="OAuth2"></xref>.
+		</t>
+		<t>
+		  If the AM determined that the requester access token has expired, it returns an "expired_requester_token"
+		  error response to the host. [@@TBS: Need to flesh out more and provide an example.] The host then returns an
+		"invalid_token" response to the requester as described in section 5.2.1 of <xref target="OAuth2"></xref>.
+		</t>
+		<t>
+		  If the host's token validation request message itself was badly formed, the AM returns an "invalid_request"
+		  error to the host. [@@Need to say what happens to the requester after that?]
+		</t>
+		</section>
     </section>
     
     <section title='Security Considerations'>
@@ -521,7 +603,7 @@ href="https://am.example.com/requester/user_uri"></Link>
      @@TODO: Provide commentary on any requirements layered on the forthcoming OAuth 
      security considerations section; discuss UMA-layer implications for more meaningful 
      authentication of requesters/requesting parties; discuss implications of user-mediated 
-     AM/host trust model; ... 
+     AM/host trust model; discuss short-lived token technique for lightweight requester correlation... 
       </t>
     </section>
 
@@ -563,7 +645,47 @@ href="https://am.example.com/requester/user_uri"></Link>
       <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-hammer-hostmeta-13.xml'?>
       
       <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p1-messaging-09.xml'?>
+         <reference anchor="OAuth2"
+       target="http://www.ietf.org/id/draft-ietf-oauth-v2-10.txt">
+       <front>
+         <title>The OAuth 2.0 Protocol</title>
+         <author initials="E." surname="Hammer-Lahav">
+           <organization>IETF</organization>
+         </author>
+         <date year="2010" />
+       </front>
+     </reference>
+         <reference anchor="Dyn-Reg"
+       target="http://tools.ietf.org/html/draft-oauth-dyn-reg-v1-00">
+       <front>
+         <title>OAuth Dynamic Client Registration Protocol</title>
+         <author initials="C." surname="Scholz">
+           <organization>IETF</organization>
+         </author>
+         <date year="2010" />
+       </front>
+     </reference>
+     <reference anchor="hostmeta"
+       target="http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-hammer-hostmeta-13.xml">
+       <front>
+         <title>Web Host Metadata</title>
+         <author initials="E." surname="Hammer-Lahav">
+           <organization>Yahoo!</organization>
+         </author>
+         <date year="2010" />
+       </front>
+     </reference>
 
+     <reference anchor="Claims2.0"
+       target="http://kantarainitiative.org/confluence/display/uma/Claims+2.0">
+       <front>
+         <title>Claims 2.0</title>
+         <author initials="E." surname="Maler">
+           <organization>Kantara</organization>
+         </author>
+         <date year="2010" />
+       </front>
+     </reference>
 <!--
 
       <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2045.xml' ?>
