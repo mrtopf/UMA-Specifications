@@ -330,23 +330,33 @@
        <artwork>
       <![CDATA[
 <!-- Applies to both hosts and requesters --> 
-<Property type="http://kantarainitiative.org/confluence/display/uma/token_formats">saml</Property>
-<Property type="http://kantarainitiative.org/confluence/display/uma/claim_formats">json</Property>
+<Property 
+  type="http://wguma.org/confluence/display/uma/token_formats">
+  saml
+</Property>
+<Property 
+  type="http://wguma.org/confluence/display/uma/claim_formats">
+  json
+</Property>
 
 <!-- Host "authorization API" --> 
-<Link rel="http://kantarainitiative.org/confluence/display/uma/host_token_uri"
+<Link 
+rel="http://wguma.org/confluence/display/uma/host_token_uri"
 href="https://am.example.com/host/token_uri"></Link> 
-<Link rel="http://kantarainitiative.org/confluence/display/uma/host_user_uri"
+<Link 
+rel="http://wguma.org/confluence/display/uma/host_user_uri"
 href="https://am.example.com/host/user_uri"></Link> 
-<Link rel="http://kantarainitiative.org/confluence/display/uma/host_resource_details_uri"
+<Link 
+rel="http://wguma.org/confluence/display/uma/host_resource_details_uri"
 href="https://am.example.com/host/resource_details_uri"></Link> 
-<Link rel="http://kantarainitiative.org/confluence/display/uma/host_token_validation_uri"
+<Link 
+rel="http://wguma.org/confluence/display/uma/host_token_validation_uri"
 href="https://am.example.com/host/token_validation_uri"></Link> 
 
 <!-- Requester token-getting endpoints --> 
-<Link rel="http://kantarainitiative.org/confluence/display/uma/req_token_uri"
+<Link rel="http://wguma.org/confluence/display/uma/req_token_uri"
 href="https://am.example.com/requester/token_uri"></Link> 
-<Link rel="http://kantarainitiative.org/confluence/display/uma/req_user_uri"
+<Link rel="http://wguma.org/confluence/display/uma/req_user_uri"
 href="https://am.example.com/requester/user_uri"></Link>
 ]]>
        </artwork>
@@ -677,7 +687,7 @@ Cache-Control: no-store
      </reference>
 
      <reference anchor="Claims2.0"
-       target="http://kantarainitiative.org/confluence/display/uma/Claims+2.0">
+       target="http://wguma.org/confluence/display/uma/Claims+2.0">
        <front>
          <title>Claims 2.0</title>
          <author initials="E." surname="Maler">
