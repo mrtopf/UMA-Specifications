@@ -1,0 +1,736 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en"><head><title>UMA Resource Registration</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="description" content="UMA Resource Registration">
+<meta name="generator" content="xml2rfc v1.35 (http://xml.resource.org/)">
+<style type='text/css'><!--
+        body {
+                font-family: verdana, charcoal, helvetica, arial, sans-serif;
+                font-size: small; color: #000; background-color: #FFF;
+                margin: 2em;
+        }
+        h1, h2, h3, h4, h5, h6 {
+                font-family: helvetica, monaco, "MS Sans Serif", arial, sans-serif;
+                font-weight: bold; font-style: normal;
+        }
+        h1 { color: #900; background-color: transparent; text-align: right; }
+        h3 { color: #333; background-color: transparent; }
+
+        td.RFCbug {
+                font-size: x-small; text-decoration: none;
+                width: 30px; height: 30px; padding-top: 2px;
+                text-align: justify; vertical-align: middle;
+                background-color: #000;
+        }
+        td.RFCbug span.RFC {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: bold; color: #666;
+        }
+        td.RFCbug span.hotText {
+                font-family: charcoal, monaco, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: normal; text-align: center; color: #FFF;
+        }
+
+        table.TOCbug { width: 30px; height: 15px; }
+        td.TOCbug {
+                text-align: center; width: 30px; height: 15px;
+                color: #FFF; background-color: #900;
+        }
+        td.TOCbug a {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, sans-serif;
+                font-weight: bold; font-size: x-small; text-decoration: none;
+                color: #FFF; background-color: transparent;
+        }
+
+        td.header {
+                font-family: arial, helvetica, sans-serif; font-size: x-small;
+                vertical-align: top; width: 33%;
+                color: #FFF; background-color: #666;
+        }
+        td.author { font-weight: bold; font-size: x-small; margin-left: 4em; }
+        td.author-text { font-size: x-small; }
+
+        /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+        a.info {
+                /* This is the key. */
+                position: relative;
+                z-index: 24;
+                text-decoration: none;
+        }
+        a.info:hover {
+                z-index: 25;
+                color: #FFF; background-color: #900;
+        }
+        a.info span { display: none; }
+        a.info:hover span.info {
+                /* The span will display just on :hover state. */
+                display: block;
+                position: absolute;
+                font-size: smaller;
+                top: 2em; left: -5em; width: 15em;
+                padding: 2px; border: 1px solid #333;
+                color: #900; background-color: #EEE;
+                text-align: left;
+        }
+
+        a { font-weight: bold; }
+        a:link    { color: #900; background-color: transparent; }
+        a:visited { color: #633; background-color: transparent; }
+        a:active  { color: #633; background-color: transparent; }
+
+        p { margin-left: 2em; margin-right: 2em; }
+        p.copyright { font-size: x-small; }
+        p.toc { font-size: small; font-weight: bold; margin-left: 3em; }
+        table.toc { margin: 0 0 0 3em; padding: 0; border: 0; vertical-align: text-top; }
+        td.toc { font-size: small; font-weight: bold; vertical-align: text-top; }
+
+        ol.text { margin-left: 2em; margin-right: 2em; }
+        ul.text { margin-left: 2em; margin-right: 2em; }
+        li      { margin-left: 3em; }
+
+        /* RFC-2629 <spanx>s and <artwork>s. */
+        em     { font-style: italic; }
+        strong { font-weight: bold; }
+        dfn    { font-weight: bold; font-style: normal; }
+        cite   { font-weight: normal; font-style: normal; }
+        tt     { color: #036; }
+        tt, pre, pre dfn, pre em, pre cite, pre span {
+                font-family: "Courier New", Courier, monospace; font-size: small;
+        }
+        pre {
+                text-align: left; padding: 4px;
+                color: #000; background-color: #CCC;
+        }
+        pre dfn  { color: #900; }
+        pre em   { color: #66F; background-color: #FFC; font-weight: normal; }
+        pre .key { color: #33C; font-weight: bold; }
+        pre .id  { color: #900; }
+        pre .str { color: #000; background-color: #CFF; }
+        pre .val { color: #066; }
+        pre .rep { color: #909; }
+        pre .oth { color: #000; background-color: #FCF; }
+        pre .err { background-color: #FCC; }
+
+        /* RFC-2629 <texttable>s. */
+        table.all, table.full, table.headers, table.none {
+                font-size: small; text-align: center; border-width: 2px;
+                vertical-align: top; border-collapse: collapse;
+        }
+        table.all, table.full { border-style: solid; border-color: black; }
+        table.headers, table.none { border-style: none; }
+        th {
+                font-weight: bold; border-color: black;
+                border-width: 2px 2px 3px 2px;
+        }
+        table.all th, table.full th { border-style: solid; }
+        table.headers th { border-style: none none solid none; }
+        table.none th { border-style: none; }
+        table.all td {
+                border-style: solid; border-color: #333;
+                border-width: 1px 2px;
+        }
+        table.full td, table.headers td, table.none td { border-style: none; }
+
+        hr { height: 1px; }
+        hr.insert {
+                width: 80%; border-style: none; border-width: 0;
+                color: #CCC; background-color: #CCC;
+        }
+--></style>
+</head>
+<body>
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<table summary="layout" width="66%" border="0" cellpadding="0" cellspacing="0"><tr><td><table summary="layout" width="100%" border="0" cellpadding="2" cellspacing="1">
+<tr><td class="header">Network Working Group</td><td class="header">C. Scholz, Ed.</td></tr>
+<tr><td class="header">Internet-Draft</td><td class="header">COM.lounge GmbH</td></tr>
+<tr><td class="header">Intended status: Standards Track</td><td class="header">M. Machulak</td></tr>
+<tr><td class="header">Expires: June 5, 2011</td><td class="header">Newcastle University</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">E. Maler</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">PayPal</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">December 2, 2010</td></tr>
+</table></td></tr></table>
+<h1><br />UMA Resource Registration<br />draft-uma-resource-reg-v1-00.txt</h1>
+
+<h3>Abstract</h3>
+
+<p>This specification defines the resource registration protocol for User-Managed Access (UMA). This protocol provides a method for a host to register, update, check, and delete resource-related information at an authorization manager (AM) so that the user's resources can be put under scoped protection.
+</p>
+<h3>Status of this Memo</h3>
+<p>
+This Internet-Draft is submitted  in full
+conformance with the provisions of BCP&nbsp;78 and BCP&nbsp;79.</p>
+<p>
+Internet-Drafts are working documents of the Internet Engineering
+Task Force (IETF).  Note that other groups may also distribute
+working documents as Internet-Drafts.  The list of current
+Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
+<p>
+Internet-Drafts are draft documents valid for a maximum of six months
+and may be updated, replaced, or obsoleted by other documents at any time.
+It is inappropriate to use Internet-Drafts as reference material or to cite
+them other than as &ldquo;work in progress.&rdquo;</p>
+<p>
+This Internet-Draft will expire on June 5, 2011.</p>
+
+<h3>Copyright Notice</h3>
+<p>
+Copyright (c) 2010 IETF Trust and the persons identified as the
+document authors.  All rights reserved.</p>
+<p>
+This document is subject to BCP 78 and the IETF Trust's Legal
+Provisions Relating to IETF Documents
+(http://trustee.ietf.org/license-info) in effect on the date of
+publication of this document.  Please review these documents
+carefully, as they describe your rights and restrictions with respect
+to this document. Code Components extracted from this document must
+include Simplified BSD License text as described in Section 4.e of
+the Trust Legal Provisions and are provided without warranty as
+described in the Simplified BSD License.</p>
+<a name="toc"></a><br /><hr />
+<h3>Table of Contents</h3>
+<p class="toc">
+<a href="#anchor1">1.</a>&nbsp;
+Introduction<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor2">1.1.</a>&nbsp;
+Notational Conventions<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor3">1.2.</a>&nbsp;
+Terminology<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor4">1.3.</a>&nbsp;
+Requirements Analysis<br />
+<a href="#anchor5">2.</a>&nbsp;
+Prerequisites<br />
+<a href="#anchor6">3.</a>&nbsp;
+Action and Resource Set Descriptions<br />
+<a href="#anchor7">4.</a>&nbsp;
+Registration API<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor8">4.1.</a>&nbsp;
+Create Action Description<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor9">4.2.</a>&nbsp;
+Read Action Description<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor10">4.3.</a>&nbsp;
+Update Action Description<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor11">4.4.</a>&nbsp;
+Delete Action Description<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor12">4.5.</a>&nbsp;
+List Action Descriptions<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor13">4.6.</a>&nbsp;
+Create Resource Set Description<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor14">4.7.</a>&nbsp;
+Read Resource Set Description<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor15">4.8.</a>&nbsp;
+Update Resource Set Description<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor16">4.9.</a>&nbsp;
+Delete Resource Set Description<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor17">4.10.</a>&nbsp;
+List Resource Set Descriptions<br />
+<a href="#anchor18">5.</a>&nbsp;
+Security Considerations<br />
+<a href="#anchor19">6.</a>&nbsp;
+TODOs<br />
+<a href="#anchor20">7.</a>&nbsp;
+Acknowledgments<br />
+<a href="#anchor21">8.</a>&nbsp;
+Document History<br />
+<a href="#rfc.references1">9.</a>&nbsp;
+Normative References<br />
+<a href="#rfc.authors">&#167;</a>&nbsp;
+Authors' Addresses<br />
+</p>
+<br clear="all" />
+
+<a name="anchor1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1"></a><h3>1.&nbsp;
+Introduction</h3>
+
+<p>This specification defines the resource registration protocol for User-Managed Access (UMA). This protocol provides a method for a host to register, update, check, and delete resource-related information at an authorization manager (AM) so that the user's resources can be put under scoped protection.
+</p>
+<p>The host registers two kinds of information with the AM: information about resources to be protected and information about potential actions that can be performed on them.
+</p>
+<p>The host determines (unilaterally or as instructed by the user) the universe of resources belonging to this user that are to be protected by the AM. The host assigns a resource identifier to each set of one or more resources. Such a set might include a status update API endpoint, an individual status update, a single photo, a photo album, or even all photos with a particular user-assigned tag.
+</p>
+<p>The host also determines (often unilaterally based on its API features, but possibly with user input) the universe of actions that is possible for requesting parties to perform on each resource set. It assigns an action identifier to each. Such actions might involve "viewing", "adding", "printing", or whatever other actions the application supports for that resource set.
+</p>
+<p>Once this information is registered, the AM (under the authorizing user's instructions) is able to map particular authorization constraints to a specific set of resources and a specific set of actions. This mapping conceptually constitutes a "policy", and its resource+action component is involved in steps 2 and 3 of the UMA protocol as an analogue of the OAuth concept of "scope".
+</p>
+<p>Note that the host is free to offer the option to protect any subset of the user's resources using different AMs or other means entirely, or to protect some resources and not others; any such partitioning is outside the scope of this specification.
+</p>
+<a name="anchor2"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.1"></a><h3>1.1.&nbsp;
+Notational Conventions</h3>
+
+<p>The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'MAY', and 'OPTIONAL' in this document are to be interpreted as described in <a class='info' href='#RFC2119'>[RFC2119]<span> (</span><span class='info'>Bradner, S., &ldquo;Key words for use in RFCs to Indicate Requirement Levels,&rdquo; March&nbsp;1997.</span><span>)</span></a>.
+</p>
+<p>Unless otherwise noted, all the protocol parameter names and values are case sensitive.
+</p>
+<a name="anchor3"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.2"></a><h3>1.2.&nbsp;
+Terminology</h3>
+
+<p>See the core UMA protocol spec [[draft-uma-core]] for additional term definitions.
+</p>
+<p></p>
+<blockquote class="text"><dl>
+<dt>registration endpoint</dt>
+<dd> A protected endpoint at the AM capable of receiving resource information from a host. [[Say it must be HTTPS?]]
+</dd>
+<dt>resource set description</dt>
+<dd>A JSON-formatted data structure that represents a set of one or more resources to be AM-protected and maps possible actions to them.
+</dd>
+<dt>action description</dt>
+<dd>A JSON-formatted data structure that represents a possible action on a resource set.
+</dd>
+</dl></blockquote>
+
+<a name="anchor4"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.3"></a><h3>1.3.&nbsp;
+Requirements Analysis</h3>
+
+<p>This specification, in combination with the UMA core protocol, has been informed by the following resource registration requirements:</p>
+<ul class="text">
+<li>The authorizing user needs to be presented with a user interface that clearly indicates what resources and actions are available when they're setting and mapping authorization constraints at the AM.
+</li>
+<li>The AM therefore needs to acquire from the host some description of resources and actions to be protected, which includes enough information to display to the authorizing user.
+</li>
+<li>The requester needs to know what actions are possible on the resource it is trying to access. This requirement is considered out of scope; it is anticipated that host API documentation needs to picks up the slack.
+</li>
+<li>It must not be possible for the requester to be exposed to in-the-clear versions of identifiers for resources in case they compromise the authorizing user's privacy. For example, a protected set of resources might usefully but compromisingly be described as "racy photos from beach vacation". It is assumed that the host already has access to such a privacy-sensitive description and that the nature of the host-AM trust relationship forged by the authorizing user allows the AM to see this description as well.
+</li>
+<li>The AM needs to be told the relevant resource set, in host-described terms, that corresponds to the resource the requester is seeking access to so that it can assess the requesting party's request for an access token against the correct authorization constraints.
+</li>
+<li>The host therefore needs to tell the requester the relevant resource set -- and no more, for privacy reasons -- when the requester attempts access at the host and fails, so that the requester can convey it to the AM. [ISSUE: Should the host also hint at an appropriate action description, or since actions are supposed to be well-known should we leave it out?]
+</li>
+<li>The host needs to be able to validate that a requester's attempt at access in step 3, accompanied by an access token, matches the resource set and action set for which that access token was granted.
+</li>
+<li>The AM therefore needs to associate each requester access token with a resource set and action set. (Currently the UMA core protocol defines a run-time method for the host to ask the AM to confirm this match. An alternative solution that meets the requirement would be for the access token to securely contain this information.)
+</li>
+</ul>
+
+<a name="anchor5"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2"></a><h3>2.&nbsp;
+Prerequisites</h3>
+
+<p>In order for a host to be able to register resource information with an AM it needs to fulfill the following prerequisites:</p>
+<ul class="text">
+<li>The host has obtained a host access token from the AM as explained in UMA core protocol step 1. It MUST use this token to use the registration API of the AM.
+</li>
+<li>The host has obtained the URI of the registration API endpoint as part of the AM's metadata as described in UMA protocol step 1.
+</li>
+<li>The host has already defined, for its own use, sets of resources and possible actions applicable to this user, along with associated identifiers for them and details about them that will help the user in correctly setting policy over them at the AM.
+</li>
+</ul>
+
+<a name="anchor6"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3"></a><h3>3.&nbsp;
+Action and Resource Set Descriptions</h3>
+
+<p>The host registers information with an AM in JSON [[cite]] form. The information is of two types: action descriptions and resource set descriptions.
+</p>
+<p>An action description is an object with the following parameters:</p>
+<blockquote class="text"><dl>
+<dt>name</dt>
+<dd>A human-readable string describing the action. REQUIRED.
+</dd>
+<dt>icon_uri</dt>
+<dd>A URI for a graphic icon representing the action. OPTIONAL.
+</dd>
+</dl></blockquote>
+
+<p>For example:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
+        "action":
+            {
+            "name": "Read",
+            "icon_uri": "http://www.example.com/icons/reading-glasses"
+        }
+}</pre></div>
+<p>A resource set description is an object with the following parameters:</p>
+<blockquote class="text"><dl>
+<dt>name</dt>
+<dd>A human-readable string describing a set of one or more resources. REQUIRED.
+</dd>
+<dt>icon_uri</dt>
+<dd>A URI for a graphic icon representing the resource set. OPTIONAL.
+</dd>
+<dt>actions</dt>
+<dd>An array listing one or more identifiers of actions that are permissible on this resource set. The action identifiers MUST correspond to actions registered by this host for this user at this AM. See section [[cite]] below for how action identifiers are created.
+</dd>
+</dl></blockquote>
+
+<p>For example:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
+        "resource":
+            {
+            "name": "Photo album",
+            "icon_uri": "http://www.example.com/icons/flower",
+            "actions": ["read", "update", "print"]
+        }
+}</pre></div>
+<a name="anchor7"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4"></a><h3>4.&nbsp;
+Registration API</h3>
+
+<p>The host uses a RESTful API at the AM's registration URI to create, read, update, and delete resource set and action descriptions, along with listing groups of such descriptions. The host MUST use its host access token obtained previously in UMA protocol step 1 to gain access to the API.
+</p>
+<p>Individual resource set descriptions are managed at URIs with this structure: "{reguri}/host/{hostid}/user/{userid}/resource/{resourceid}"
+</p>
+<p>Individual action descriptions are managed at URIs with this structure: "{reguri}/host/{hostid}/user/{userid}/action/{actionid}"
+</p>
+<p>The components of these URIs are defined as follows:</p>
+<blockquote class="text"><dl>
+<dt>{reguri}</dt>
+<dd>The AM's registration URI as advertised in its metadata (defined in UMA protocol step 1).
+</dd>
+<dt>{hostid}</dt>
+<dd>A registration area at the AM that is specific to this host.
+</dd>
+<dt>{userid}</dt>
+<dd>The portion of the host's registration area at this AM that is specific to this user.
+</dd>
+<dt>{actionid}</dt>
+<dd>An identifier for an action description, assigned during description document creation (see section [[cite]] below). The identifier has meaning only to the host. Without a specific action identifier, the URI applies to the set of action descriptions already registered.
+</dd>
+<dt>{resourceid}</dt>
+<dd>An identifier for a resource set description, assigned during description document creation (see section [[cite]] below). The identifier has meaning only to the host. Without a specific resource identifier, the URI applies to the set of resource set descriptions already registered.
+</dd>
+</dl></blockquote>
+
+<p>The host MUST register at least action description and one resource set description (with a valid referenced {actionid}).
+</p>
+<p>Following is a summary of registration API operations. Each is defined in its own section below.</p>
+<ul class="text">
+<li>Create action description: PUT /host/{hostid}/user/{userid}/action/{actionid}
+</li>
+<li>Read action description: GET /host/{hostid}/user/{userid}/action/{actionid}
+</li>
+<li>Update action description: PUT /host/{hostid}/user/{userid}/action/{actionid}
+</li>
+<li>Delete action description: DELETE /host/{hostid}/user/{userid}/action/{actionid}
+</li>
+<li>List action descriptions: GET /host/{hostid}user/{userid}/action/
+</li>
+<li>Create resource set description: PUT /host/{hostid}/user/{userid}/resource/{resourceid}
+</li>
+<li>Read resource set description: GET /host/{hostid}/user/{userid}/resource/{resourceid}
+</li>
+<li>Update resource set description: PUT /host/{hostid}/user/{userid}/resource/{resourceid}
+</li>
+<li>Delete resource set description: DELETE /host/{hostid}/user/{userid}/resource/{resourceid}
+</li>
+<li>List resource set descriptions: GET /host/{hostid}user/{userid}/resource/
+</li>
+</ul>
+
+<a name="anchor8"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.1"></a><h3>4.1.&nbsp;
+Create Action Description</h3>
+
+<p>Adds a new action description using the PUT method. The host assigns a unique identifier to the action. The host is free to use its own methods of identifying and describing actions; the AM MUST treat them as opaque for the purpose of authorizing access.
+</p>
+<p>HTTP request:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/{hostid}/user/{userid}/action/{actionid}
+Content-Type: application/json
+...
+
+(Body contains the JSON representation of the action description to be created.)</pre></div>
+<p>HTTP response (success):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 201 Created
+Content-Type: application/json
+Location: (URL of the created action, same as that which was PUT.)
+...</pre></div>
+<a name="anchor9"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.2"></a><h3>4.2.&nbsp;
+Read Action Description</h3>
+
+<p>Reads a previously registered action description using the GET method.
+</p>
+<p>HTTP request:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>GET /host/{hostid}/user/{userid}/action/{actionid} HTTP/1.1
+...</pre></div>
+<p>HTTP response (success):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 200 OK
+Content-Type: application/json
+ETag: (entity tag of the action artifact)
+...
+
+(Body contains JSON representation of action description.)</pre></div>
+<p>HTTP response (not found):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 404 Not Found
+...
+
+(Body provides user-readable explanation of the error.)</pre></div>
+<a name="anchor10"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.3"></a><h3>4.3.&nbsp;
+Update Action Description</h3>
+
+<p>Updates a previously registered action description using the PUT method.
+</p>
+<p>HTTP request:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>UT /host/{hostid}/user/{userid}/action/{actionid}
+Content-Type: application/json
+If-Match: (entity tag of the action if operation is to be idempotent)
+...
+
+(Body contains JSON representation of action description to be updated.)</pre></div>
+<p>HTTP response (success):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>UT /host/{hostid}/user/{userid}/action/{actionid}
+Content-Type: application/json
+If-Match: (entity tag of the action if operation is to be idempotent)
+...
+
+(Body contains JSON representation of action description to be updated.)</pre></div>
+<p>HTTP response (entity tag does not match):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 412 Precondition failed
+...</pre></div>
+<a name="anchor11"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.4"></a><h3>4.4.&nbsp;
+Delete Action Description</h3>
+
+<p>Deletes a previously registered action description using the DELETE method.
+</p>
+<p>HTTP request:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>DELETE /host/{hostid}/user/{userid}/action/{actionid}
+If-Match: (entity tag of the action if operation is to be idempotent)
+...</pre></div>
+<p>HTTP response (success):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 204 No content
+...</pre></div>
+<p>HTTP response (not found):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>TP/1.1 404 Not Found
+...
+
+(The body provides user-readable explanation of the error.)</pre></div>
+<p>HTTP response (entity tag does not match):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 412 Precondition failed
+...</pre></div>
+<a name="anchor12"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.5"></a><h3>4.5.&nbsp;
+List Action Descriptions</h3>
+
+<p>Lists all previously registered action descriptions for this user using the GET method. The list is in the form of a JSON array of {actionid} values.
+</p>
+<p>HTTP request:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>GET /host/{hostid}/user/{userid}/action/
+...</pre></div>
+<p>HTTP response:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>TTP/1.1 200 OK
+Content-Type: application/json
+...
+
+(Body contains JSON array of {actionid} values.)</pre></div>
+<a name="anchor13"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.6"></a><h3>4.6.&nbsp;
+Create Resource Set Description</h3>
+
+<p>Adds a new resource set description using the PUT method. The host assigns a unique identifier to the action. The host is free to use its own methods of identifying and describing resource sets; the AM MUST treat them as opaque for the purpose of authorizing access.
+</p>
+<p>HTTP request:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/{hostid}/user/{userid}/resource/{resourceid}
+Content-Type: application/json
+...
+
+(Body contains JSON representation of resource set description to be created.)</pre></div>
+<p>HTTP response (success):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 201 Created
+Content-Type: application/json
+Location: (URL of the created resource, same as that which was PUT.)
+...</pre></div>
+<a name="anchor14"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.7"></a><h3>4.7.&nbsp;
+Read Resource Set Description</h3>
+
+<p>Reads a previously registered resource set description using the GET method.
+</p>
+<p>HTTP request:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>GET /host/{hostid}/user/{userid}/resource/{resourceid} HTTP/1.1
+...</pre></div>
+<p>HTTP response (success):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 200 OK
+Content-Type: application/json
+ETag: (entity tag of the resource artifact)
+...
+
+(Body contains JSON representation of the resource set description.)</pre></div>
+<p>HTTP response (not found):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 404 Not Found
+...
+
+(Body provides user-readable explanation of the error.)</pre></div>
+<a name="anchor15"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.8"></a><h3>4.8.&nbsp;
+Update Resource Set Description</h3>
+
+<p>Updates a previously registered resource set description using the PUT method.
+</p>
+<p>HTTP request:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/{hostid}/user/{userid}/resource/{resourceid}
+Content-Type: application/json
+If-Match: (entity tag of the resource if operation is to be idempotent)
+...
+
+(Body contains JSON representation of resource set description to be updated.)</pre></div>
+<p>HTTP response (success):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 204 No Content
+...</pre></div>
+<p>HTTP response (entity tag does not match):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 412 Precondition failed
+...</pre></div>
+<a name="anchor16"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.9"></a><h3>4.9.&nbsp;
+Delete Resource Set Description</h3>
+
+<p>Deletes a previously registered resource set description using the DELETE method.
+</p>
+<p>HTTP request:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>DELETE /host/{hostid}/user/{userid}/resource/{resourceid}
+If-Match: (entity tag of the resource if operation to be idempotent)
+...</pre></div>
+<p>HTTP response (success):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 204 No content
+...</pre></div>
+<p>HTTP response (not found):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 404 Not Found
+...
+
+(Body provides user-readable explanation of the error.)</pre></div>
+<p>HTTP response (entity tag does not match):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 412 Precondition failed
+...</pre></div>
+<a name="anchor17"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.10"></a><h3>4.10.&nbsp;
+List Resource Set Descriptions</h3>
+
+<p>Lists all previously registered resource set descriptions for this user using the GET method. The list is in the form of a JSON array of {resourceid} values.
+</p>
+<p>HTTP request:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>GET /host/{hostid}/user/{userid}/resource/
+...</pre></div>
+<p>HTTP response:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 200 OK
+Content-Type: application/json
+...
+
+(Body contains JSON array of {resourceid} values.)</pre></div>
+<a name="anchor18"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5"></a><h3>5.&nbsp;
+Security Considerations</h3>
+
+<p>[To be supplied. Use of HTTPS, requirement for host access token, etc.]
+</p>
+<a name="anchor19"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6"></a><h3>6.&nbsp;
+TODOs</h3>
+
+<p></p>
+<ul class="text">
+<li>Incorporate a reference to this spec in the core protocol spec, and state whether it is optional and what should happen if it's optional and not done. Should the sentence above about a requirement to register at least one of each kind of description appear here, or in the core spec (assuming it's correct)?
+</li>
+<li>Change the "resource" registration URI in the core spec to just a "registration" URI.
+</li>
+<li>Flesh out citations and fix references section.
+</li>
+<li>Flesh out security considerations section.
+</li>
+<li>Add privacy considerations section?
+</li>
+<li>Require HTTPS for API interactions? If so, mention both here and in core spec?
+</li>
+<li>Consider the question of i18n of resource set and action "name" strings.
+</li>
+<li>Consider the question of whether to explicitly allow description extensions.
+</li>
+<li>How and when does the /host/{hostid} path component get created?
+</li>
+<li>How and when does the /user/{userid} path component get created? Are there privacy considerations around the userid?
+</li>
+<li>Would implementers expect the "list all" methods to return just a list of IDs, or the whole set of structures?
+</li>
+<li>Here or in the core spec, we have to say how a {resourceid} plus one or more {actionid}s gets used and flows around as normal OAuth scope information. Base64-encode a JSON representation? Something else?
+</li>
+</ul>
+
+<a name="anchor20"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.7"></a><h3>7.&nbsp;
+Acknowledgments</h3>
+
+<p></p>
+<ul class="text">
+<li>Paul Bryan
+</li>
+<li>[Others TBS]
+</li>
+</ul>
+
+<a name="anchor21"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.8"></a><h3>8.&nbsp;
+Document History</h3>
+
+<p>[[ to be removed by RFC editor before publication as an RFC ]]
+</p>
+<a name="rfc.references1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>9.&nbsp;Normative References</h3>
+<table width="99%" border="0">
+<tr><td class="author-text" valign="top"><a name="I-D.hammer-hostmeta">[I-D.hammer-hostmeta]</a></td>
+<td class="author-text">Hammer-Lahav, E., &ldquo;<a href="http://www.ietf.org/internet-drafts/draft-hammer-hostmeta-13.txt">Web Host Metadata</a>,&rdquo; draft-hammer-hostmeta-13 (work in progress), June&nbsp;2010 (<a href="http://www.ietf.org/internet-drafts/draft-hammer-hostmeta-13.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2119">[RFC2119]</a></td>
+<td class="author-text"><a href="mailto:sob@harvard.edu">Bradner, S.</a>, &ldquo;<a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>,&rdquo; BCP&nbsp;14, RFC&nbsp;2119, March&nbsp;1997 (<a href="http://www.rfc-editor.org/rfc/rfc2119.txt">TXT</a>, <a href="http://xml.resource.org/public/rfc/html/rfc2119.html">HTML</a>, <a href="http://xml.resource.org/public/rfc/xml/rfc2119.xml">XML</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2617">[RFC2617]</a></td>
+<td class="author-text"><a href="mailto:john@math.nwu.edu">Franks, J.</a>, <a href="mailto:pbaker@verisign.com">Hallam-Baker, P.</a>, <a href="mailto:jeff@AbiSource.com">Hostetler, J.</a>, <a href="mailto:lawrence@agranat.com">Lawrence, S.</a>, <a href="mailto:paulle@microsoft.com">Leach, P.</a>, Luotonen, A., and <a href="mailto:stewart@OpenMarket.com">L. Stewart</a>, &ldquo;<a href="http://tools.ietf.org/html/rfc2617">HTTP Authentication: Basic and Digest Access Authentication</a>,&rdquo; RFC&nbsp;2617, June&nbsp;1999 (<a href="http://www.rfc-editor.org/rfc/rfc2617.txt">TXT</a>, <a href="http://xml.resource.org/public/rfc/html/rfc2617.html">HTML</a>, <a href="http://xml.resource.org/public/rfc/xml/rfc2617.xml">XML</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC4627">[RFC4627]</a></td>
+<td class="author-text">Crockford, D., &ldquo;<a href="http://tools.ietf.org/html/rfc4627">The application/json Media Type for JavaScript Object Notation (JSON)</a>,&rdquo; RFC&nbsp;4627, July&nbsp;2006 (<a href="http://www.rfc-editor.org/rfc/rfc4627.txt">TXT</a>).</td></tr>
+</table>
+
+<a name="rfc.authors"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>Authors' Addresses</h3>
+<table width="99%" border="0" cellpadding="0" cellspacing="0">
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Christian Scholz (editor)</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">COM.lounge GmbH</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text"><a href="mailto:cs@comlounge.net">cs@comlounge.net</a></td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://comlounge.net">http://comlounge.net</a></td></tr>
+<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Maciej Machulak</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Newcastle University</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text"><a href="mailto:m.p.machulak@ncl.ac.uk">m.p.machulak@ncl.ac.uk</a></td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://ncl.ac.uk/">http://ncl.ac.uk/</a></td></tr>
+<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Eve Maler</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">PayPal</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text"><a href="mailto:eve@xmlgrrl.com">eve@xmlgrrl.com</a></td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://www.paypal.com/">http://www.paypal.com/</a></td></tr>
+</table>
+</body></html>
+
