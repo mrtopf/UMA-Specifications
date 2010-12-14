@@ -58,6 +58,32 @@
       </address>
     </author>
 
+    <author fullname="Paul Bryan" initials="P" surname="Bryan">
+      <organization>P. Bryan Consulting</organization>
+
+      <address>
+        <postal>
+          <street></street>
+
+          <city></city>
+
+          <region></region>
+
+          <code></code>
+
+          <country></country>
+        </postal>
+
+        <phone></phone>
+
+        <facsimile></facsimile>
+
+        <email>email@pbryan.net</email>
+
+        <uri></uri>
+      </address>
+    </author>
+
     <date day="2" month="December" year="2010" />
 
     <abstract>
@@ -83,24 +109,25 @@
 
       <t>The host determines (unilaterally or as instructed by the user) the
       universe of resources belonging to this user that are to be protected by
-      the AM. The host assigns a resource identifier to each set of one or
-      more resources. Such a set might include a status update API endpoint,
-      an individual status update, a single photo, a photo album, or even all
+      the AM, and assigns a resource identifier to each set of one or more
+      resources. Such a set might include a status update API endpoint, an
+      individual status update, a single photo, a photo album, or even all
       photos with a particular user-assigned tag.</t>
 
       <t>The host also determines (often unilaterally based on its API
       features, but possibly with user input) the universe of actions that is
-      possible for requesting parties to perform on each resource set. It
+      possible for requesting parties to perform on each resource set, and
       assigns an action identifier to each. Such actions might involve
       "viewing", "adding", "printing", or whatever other actions the
       application supports for that resource set.</t>
 
-      <t>Once this information is registered, the AM (under the authorizing
-      user's instructions) is able to map particular authorization constraints
-      to a specific set of resources and a specific set of actions. This
-      mapping conceptually constitutes a "policy", and its resource+action
-      component is involved in steps 2 and 3 of the UMA protocol as an
-      analogue of the OAuth concept of "scope".</t>
+      <t>Once the host has registered these identifiers and other descriptive
+      information with the AM, the AM (under the authorizing user's
+      instructions) is able to map particular authorization constraints to a
+      particular set of resources and a particular set of actions. This
+      mapping conceptually constitutes a "policy", and its
+      resource-set-and-actions component is involved in steps 2 and 3 of the
+      UMA protocol as an analogue of the OAuth concept of "scope".</t>
 
       <t>Note that the host is free to offer the option to protect any subset
       of the user's resources using different AMs or other means entirely, or
@@ -122,9 +149,9 @@
         term definitions.</t>
 
         <t><list hangIndent="6" style="hanging">
-            <t hangText="registration endpoint"><vspace /> A protected
-            endpoint at the AM capable of receiving resource information from
-            a host. [[Say it must be HTTPS?]]</t>
+            <t hangText="registration endpoint"><vspace />A protected endpoint
+            at the AM capable of receiving resource information from a
+            host.</t>
 
             <t hangText="resource set description"><vspace />A JSON-formatted
             data structure that represents a set of one or more resources to
@@ -151,8 +178,8 @@
 
             <t>The requester needs to know what actions are possible on the
             resource it is trying to access. This requirement is considered
-            out of scope; it is anticipated that host API documentation needs
-            to picks up the slack.</t>
+            out of scope for UMA; it is anticipated that host API
+            documentation needs to pick up the slack.</t>
 
             <t>It must not be possible for the requester to be exposed to
             in-the-clear versions of identifiers for resources in case they
@@ -173,9 +200,7 @@
             <t>The host therefore needs to tell the requester the relevant
             resource set -- and no more, for privacy reasons -- when the
             requester attempts access at the host and fails, so that the
-            requester can convey it to the AM. [ISSUE: Should the host also
-            hint at an appropriate action description, or since actions are
-            supposed to be well-known should we leave it out?]</t>
+            requester can convey it to the AM.</t>
 
             <t>The host needs to be able to validate that a requester's
             attempt at access in step 3, accompanied by an access token,
@@ -211,17 +236,23 @@
     </section>
 
     <section title="Action and Resource Set Descriptions">
-      <t>The host registers information with an AM in JSON [[cite]] form. The
-      information is of two types: action descriptions and resource set
-      descriptions.</t>
+      <t>The host registers resource information with an AM in JSON [[cite]]
+      form. The information is of two types: action descriptions and resource
+      set descriptions.</t>
 
-      <t>An action description is an object with the following
-      parameters:<list style="hanging">
-          <t hangText="name">A human-readable string describing the action.
-          REQUIRED.</t>
+      <t>An action description is an object with the following parameters (the
+      description also has an action identifier that is created during the
+      process of registration):<list style="hanging">
+          <t hangText="name">REQUIRED. A human-readable string describing the
+          action. The AM SHOULD use the name in its user interface to assist
+          the user in mapping authorization constraints to resource sets with
+          this permissible action.</t>
 
-          <t hangText="icon_uri">A URI for a graphic icon representing the
-          action. OPTIONAL.</t>
+          <t hangText="icon_uri">OPTIONAL. A URI for a graphic icon
+          representing the action. If provided, the AM SHOULD use the
+          referenced icon in its user interface to assist the user in mapping
+          authorization constraints to resource sets with this permissible
+          action.</t>
         </list></t>
 
       <figure>
@@ -236,19 +267,23 @@
 }]]></artwork>
       </figure>
 
-      <t>A resource set description is an object with the following
-      parameters:<list style="hanging">
-          <t hangText="name">A human-readable string describing a set of one
-          or more resources. REQUIRED.</t>
+      <t>A resource set description is an object with the following parameters
+      (the description also has a resource set identifier that is created
+      during the process of registration):<list style="hanging">
+          <t hangText="name">REQUIRED. A human-readable string describing a
+          set of one or more resources. The AM SHOULD use the name in its user
+          interface to assist the user in mapping authorization constraints to
+          this resource set.</t>
 
-          <t hangText="icon_uri">A URI for a graphic icon representing the
-          resource set. OPTIONAL.</t>
+          <t hangText="icon_uri">OPTIONAL. A URI for a graphic icon
+          representing the resource set. If provided, the AM SHOULD use the
+          referenced icon in its user interface to assist the user in mapping
+          authorization constraints to this resource set.</t>
 
-          <t hangText="actions">An array listing one or more identifiers of
-          actions that are permissible on this resource set. The action
-          identifiers MUST correspond to actions registered by this host for
-          this user at this AM. See section [[cite]] below for how action
-          identifiers are created.</t>
+          <t hangText="actions">REQUIRED. An array listing one or more
+          identifiers of actions that are permissible on this resource set.
+          Each action identifier MUST correspond to an action registered by
+          this host for this user at this AM.</t>
         </list></t>
 
       <figure>
@@ -263,14 +298,18 @@
         }
 }]]></artwork>
       </figure>
+
+      <t>Both action descriptions and resource set descriptions MAY contain
+      extension parameters that are not defined in this specification. The
+      names of extension parameters MUST begin with "x-".</t>
     </section>
 
     <section title="Registration API">
-      <t>The host uses a RESTful API at the AM's registration URI to create,
-      read, update, and delete resource set and action descriptions, along
-      with listing groups of such descriptions. The host MUST use its host
-      access token obtained previously in UMA protocol step 1 to gain access
-      to the API.</t>
+      <t>The host uses a RESTful API at the AM's host registration URI to
+      create, read, update, and delete resource set and action descriptions,
+      along with listing groups of such descriptions. The host MUST use its
+      valid host access token obtained previously in UMA protocol step 1 to
+      gain access to the API.</t>
 
       <t>Individual resource set descriptions are managed at URIs with this
       structure:
@@ -281,26 +320,44 @@
 
       <t>The components of these URIs are defined as follows:<list
           style="hanging">
-          <t hangText="{reguri}">The AM's registration URI as advertised in
-          its metadata (defined in UMA protocol step 1).</t>
+          <t hangText="{reguri}">The AM's host registration URI as advertised
+          in its metadata. This endpoint, its security requirements, and its
+          requirements around advertisement in metadata are defined in UMA
+          protocol step 1 [[uma-core]].</t>
 
           <t hangText="{hostid}">A registration area at the AM that is
-          specific to this host.</t>
+          specific to this host. The host MUST use the OAuth client identifier
+          it was assigned by this AM as its host identifier. If the host
+          identifier does not match the host access token used at the host
+          registration endpoint, the AM MUST report an error and fail to act
+          on the request (see Section [[Error Responses]] below).</t>
 
           <t hangText="{userid}">The portion of the host's registration area
-          at this AM that is specific to this user.</t>
+          at this AM that is specific to this user, assigned during
+          registration of the first description for this user. The host MAY
+          use any identifier scheme to represent each of its users uniquely,
+          but for privacy, it is RECOMMENDED that the host assign an
+          identifier that is both specific to this AM and obscured with
+          respect to any identifier by which the user may be publicly known at
+          this host. The host MAY change a user's identifier at any time by
+          deleting registered resources under one identifier and
+          re-registering them under another.</t>
 
           <t hangText="{actionid}">An identifier for an action description,
-          assigned during description document creation (see section [[cite]]
-          below). The identifier has meaning only to the host. Without a
-          specific action identifier, the URI applies to the set of action
-          descriptions already registered.</t>
+          assigned during initial registration of this description. Without a
+          specific action identifier path component, the URI applies to the
+          set of action descriptions already registered. The identifier has
+          meaning only to the host.</t>
 
           <t hangText="{resourceid}">An identifier for a resource set
-          description, assigned during description document creation (see
-          section [[cite]] below). The identifier has meaning only to the
-          host. Without a specific resource identifier, the URI applies to the
-          set of resource set descriptions already registered.</t>
+          description, assigned during initial registration of this
+          description. Without a specific resource identifier path component,
+          the URI applies to the set of resource set descriptions already
+          registered. The identifier has meaning only to the host. The host
+          MAY use any identifier scheme to represent each resource set
+          uniquely for each user, but for privacy, it is RECOMMENDED that the
+          host assign an identifier that is obscured with respect to any
+          human-readable resource set label used at this host.</t>
         </list></t>
 
       <t>The host MUST register at least action description and one resource
@@ -638,58 +695,77 @@ Content-Type: application/json
       </section>
     </section>
 
+    <section title="Error Responses">
+      <t>In addition to HTTP error conditions and responses explained in the
+      [[Registration API]] section above, the AM is responsible for checking
+      that a host is presenting the correct host access token and host
+      identifier path component in making a resource registration request. If
+      the host identifier (the host's OAuth client identifier at this AM) does
+      not match the host access token used at the host registration endpoint,
+      the AM MUST report a "wrong_host_id" error and fail to act on the
+      request.</t>
+    </section>
+
     <section title="Security Considerations">
-      <t>[To be supplied. Use of HTTPS, requirement for host access token,
-      etc.]</t>
+      <t>This specification relies mainly on OAuth security mechanisms for
+      protecting the host registration endpoint at the AM so that only a
+      properly authorized host can access it on behalf of the intended user.
+      For example, the host needs to use a valid host access token issued
+      through a user authorization process at the endpoint, and the
+      interaction should take place over TLS. It is expected that the host
+      will protect its client secret (if it was issued one) and will protect
+      its host access token, particularly if used in "bearer token"
+      fashion.</t>
+
+      <t>In addition, this specification dictates a binding between the host
+      access token and the host-specific registration area on the AM to
+      prevent a host from interacting with a registration area not its
+      own.</t>
+    </section>
+
+    <section title="Privacy Considerations">
+      <t>The AM comes to be in possession of information (such as names and
+      icons) that may reveal information about the user, which the AM's trust
+      relationship with the host is assumed to accommodate. However, the
+      requester is a less-trusted party (in fact, entirely untrustworthy until
+      it acquires a requester access token in UMA protocol step 2). This
+      specification recommends obscuring user identifiers and resource set
+      identifiers in order to avoid leaking personally identifiable
+      information to requesters through the "scope" mechanism.</t>
     </section>
 
     <section title="TODOs">
       <t><list style="symbols">
-          <t>Incorporate a reference to this spec in the core protocol spec,
-          and state whether it is optional and what should happen if it's
-          optional and not done. Should the sentence above about a requirement
-          to register at least one of each kind of description appear here, or
-          in the core spec (assuming it's correct)?</t>
-
-          <t>Change the "resource" registration URI in the core spec to just a
-          "registration" URI.</t>
-
           <t>Flesh out citations and fix references section.</t>
 
-          <t>Flesh out security considerations section.</t>
-
-          <t>Add privacy considerations section?</t>
-
-          <t>Require HTTPS for API interactions? If so, mention both here and
-          in core spec?</t>
-
           <t>Consider the question of i18n of resource set and action "name"
-          strings.</t>
-
-          <t>Consider the question of whether to explicitly allow description
-          extensions.</t>
-
-          <t>How and when does the /host/{hostid} path component get
-          created?</t>
-
-          <t>How and when does the /user/{userid} path component get created?
-          Are there privacy considerations around the userid?</t>
+          strings in addition to the newly proposed extension-parameter
+          mechanism.</t>
 
           <t>Would implementers expect the "list all" methods to return just a
-          list of IDs, or the whole set of structures?</t>
+          list of IDs, or the whole set of structures? If so, do this through
+          a query parameter? E.g., "?mode={short|verbose}"</t>
 
-          <t>Here or in the core spec, we have to say how a {resourceid} plus
-          one or more {actionid}s gets used and flows around as normal OAuth
-          scope information. Base64-encode a JSON representation? Something
-          else?</t>
+          <t>In the core spec, we have to say how a {resourceid} plus one or
+          more {actionid}s gets used and flows around as normal OAuth scope
+          information. Base64-encode a JSON representation? Extend to allow a
+          resource parameter? Something else? (See the Requirements Analysis
+          above for guiding requirements.)</t>
+
+          <t>Should resource set descriptions list action identifiers, as
+          currently specified, or full action description URLs?</t>
+
+          <t>Flesh out the UMA-level error response section.</t>
+
+          <t>Should the host hint at an appropriate action description to the
+          requester, or since actions are supposed to be well-known should we
+          leave it out?</t>
         </list></t>
     </section>
 
     <section title="Acknowledgments">
       <t><list style="symbols">
-          <t>Paul Bryan</t>
-
-          <t>[Others TBS]</t>
+          <t>[TBS]</t>
         </list></t>
     </section>
 
