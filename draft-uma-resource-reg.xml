@@ -149,9 +149,9 @@
         term definitions.</t>
 
         <t><list hangIndent="6" style="hanging">
-            <t hangText="registration endpoint"><vspace /> A protected
-            endpoint at the AM capable of receiving resource information from
-            a host. [[Say it must be HTTPS?]]</t>
+            <t hangText="registration endpoint"><vspace />A protected endpoint
+            at the AM capable of receiving resource information from a
+            host.</t>
 
             <t hangText="resource set description"><vspace />A JSON-formatted
             data structure that represents a set of one or more resources to
@@ -178,8 +178,8 @@
 
             <t>The requester needs to know what actions are possible on the
             resource it is trying to access. This requirement is considered
-            out of scope; it is anticipated that host API documentation needs
-            to picks up the slack.</t>
+            out of scope for UMA; it is anticipated that host API
+            documentation needs to pick up the slack.</t>
 
             <t>It must not be possible for the requester to be exposed to
             in-the-clear versions of identifiers for resources in case they
@@ -200,9 +200,7 @@
             <t>The host therefore needs to tell the requester the relevant
             resource set -- and no more, for privacy reasons -- when the
             requester attempts access at the host and fails, so that the
-            requester can convey it to the AM. [ISSUE: Should the host also
-            hint at an appropriate action description, or since actions are
-            supposed to be well-known should we leave it out?]</t>
+            requester can convey it to the AM.</t>
 
             <t>The host needs to be able to validate that a requester's
             attempt at access in step 3, accompanied by an access token,
@@ -285,7 +283,7 @@
           <t hangText="actions">REQUIRED. An array listing one or more
           identifiers of actions that are permissible on this resource set.
           Each action identifier MUST correspond to an action registered by
-          this host for this user at this AM. </t>
+          this host for this user at this AM.</t>
         </list></t>
 
       <figure>
@@ -323,14 +321,16 @@
       <t>The components of these URIs are defined as follows:<list
           style="hanging">
           <t hangText="{reguri}">The AM's host registration URI as advertised
-          in its metadata (defined in UMA protocol step 1).</t>
+          in its metadata. This endpoint, its security requirements, and its
+          requirements around advertisement in metadata are defined in UMA
+          protocol step 1 [[uma-core]].</t>
 
           <t hangText="{hostid}">A registration area at the AM that is
           specific to this host. The host MUST use the OAuth client identifier
           it was assigned by this AM as its host identifier. If the host
           identifier does not match the host access token used at the host
           registration endpoint, the AM MUST report an error and fail to act
-          on the request (see Section [[Errors]] below).</t>
+          on the request (see Section [[Error Responses]] below).</t>
 
           <t hangText="{userid}">The portion of the host's registration area
           at this AM that is specific to this user, assigned during
@@ -697,11 +697,13 @@ Content-Type: application/json
 
     <section title="Error Responses">
       <t>In addition to HTTP error conditions and responses explained in the
-      [[Registration API]] section above, the AM is responsible for responding
-      with a "wrong_host" error if a host presents a host access token at the
-      host registration endpoint that does not match the host identifier path
-      component (intended to be its OAuth client identifier) in the requested
-      URI.</t>
+      [[Registration API]] section above, the AM is responsible for checking
+      that a host is presenting the correct host access token and host
+      identifier path component in making a resource registration request. If
+      the host identifier (the host's OAuth client identifier at this AM) does
+      not match the host access token used at the host registration endpoint,
+      the AM MUST report a "wrong_host_id" error and fail to act on the
+      request.</t>
     </section>
 
     <section title="Security Considerations">
@@ -747,12 +749,17 @@ Content-Type: application/json
           <t>In the core spec, we have to say how a {resourceid} plus one or
           more {actionid}s gets used and flows around as normal OAuth scope
           information. Base64-encode a JSON representation? Extend to allow a
-          resource parameter? Something else?</t>
+          resource parameter? Something else? (See the Requirements Analysis
+          above for guiding requirements.)</t>
 
           <t>Should resource set descriptions list action identifiers, as
           currently specified, or full action description URLs?</t>
 
           <t>Flesh out the UMA-level error response section.</t>
+
+          <t>Should the host hint at an appropriate action description to the
+          requester, or since actions are supposed to be well-known should we
+          leave it out?</t>
         </list></t>
     </section>
 
