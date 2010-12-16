@@ -335,9 +335,9 @@ Prerequisites</h3>
 <a name="rfc.section.3"></a><h3>3.&nbsp;
 Action and Resource Set Descriptions</h3>
 
-<p>The host registers resource information with an AM in JSON [[cite]] form. The information is of two types: action descriptions and resource set descriptions.
+<p>The host registers resource information with an AM in JSON [[cite]] form. The information is of two types: action descriptions and resource set descriptions. The act of registering a description creates a unique identifier for it; see Section [[cite]] for more information.
 </p>
-<p>An action description is an object with the following parameters (the description also has an action identifier that is created during the process of registration):</p>
+<p>An action description is an object with the following parameters:</p>
 <blockquote class="text"><dl>
 <dt>name</dt>
 <dd>REQUIRED. A human-readable string describing the action. The AM SHOULD use the name in its user interface to assist the user in mapping authorization constraints to resource sets with this permissible action.
@@ -347,15 +347,15 @@ Action and Resource Set Descriptions</h3>
 </dd>
 </dl></blockquote>
 
-<p>For example:
+<p>For example, this description characterizes an action that involves reading or viewing resources (vs., say, creating them or changing them in some fashion):
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
         "action":
             {
-            "name": "Read",
+            "name": "Reading",
             "icon_uri": "http://www.example.com/icons/reading-glasses"
         }
 }</pre></div>
-<p>A resource set description is an object with the following parameters (the description also has a resource set identifier that is created during the process of registration):</p>
+<p>A resource set description is an object with the following parameters:</p>
 <blockquote class="text"><dl>
 <dt>name</dt>
 <dd>REQUIRED. A human-readable string describing a set of one or more resources. The AM SHOULD use the name in its user interface to assist the user in mapping authorization constraints to this resource set.
@@ -364,11 +364,11 @@ Action and Resource Set Descriptions</h3>
 <dd>OPTIONAL. A URI for a graphic icon representing the resource set. If provided, the AM SHOULD use the referenced icon in its user interface to assist the user in mapping authorization constraints to this resource set.
 </dd>
 <dt>actions</dt>
-<dd>REQUIRED. An array listing one or more identifiers of actions that are permissible on this resource set. Each action identifier MUST correspond to an action registered by this host for this user at this AM.
+<dd>REQUIRED. An array referencing one or more identifiers of actions that are permissible on this resource set. Each action identifier MUST correspond to an action registered by this host for this user at this AM.
 </dd>
 </dl></blockquote>
 
-<p>For example:
+<p>For example, this description characterizes a resource set (a photo album and all of its contined photos) that can potentially be read, updated, or printed by those seeking access to it; the actions listed are citations to identifiers created during earlier registration of these action descriptions:
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
         "resource":
             {
@@ -384,7 +384,7 @@ Action and Resource Set Descriptions</h3>
 <a name="rfc.section.4"></a><h3>4.&nbsp;
 Registration API</h3>
 
-<p>The host uses a RESTful API at the AM's host registration URI to create, read, update, and delete resource set and action descriptions, along with listing groups of such descriptions. The host MUST use its valid host access token obtained previously in UMA protocol step 1 to gain access to the API.
+<p>The host uses a RESTful API at the AM's host_registration_uri to create, read, update, and delete resource set and action descriptions, along with listing groups of such descriptions. The host MUST use its valid host access token obtained previously in UMA protocol step 1 to gain access to the API.
 </p>
 <p>Individual resource set descriptions are managed at URIs with this structure: "{reguri}/host/{hostid}/user/{userid}/resource/{resourceid}"
 </p>
@@ -393,7 +393,7 @@ Registration API</h3>
 <p>The components of these URIs are defined as follows:</p>
 <blockquote class="text"><dl>
 <dt>{reguri}</dt>
-<dd>The AM's host registration URI as advertised in its metadata. This endpoint, its security requirements, and its requirements around advertisement in metadata are defined in UMA protocol step 1 [[uma-core]].
+<dd>The AM's host_registration_uri as advertised in its metadata. This endpoint, its security requirements, and its requirements around advertisement in metadata are defined in UMA protocol step 1 [[uma-core]].
 </dd>
 <dt>{hostid}</dt>
 <dd>A registration area at the AM that is specific to this host. The host MUST use the OAuth client identifier it was assigned by this AM as its host identifier. If the host identifier does not match the host access token used at the host registration endpoint, the AM MUST report an error and fail to act on the request (see Section [[Error Responses]] below).
@@ -483,14 +483,14 @@ Update Action Description</h3>
 <p>Updates a previously registered action description using the PUT method.
 </p>
 <p>HTTP request:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>UT /host/{hostid}/user/{userid}/action/{actionid}
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/{hostid}/user/{userid}/action/{actionid}
 Content-Type: application/json
 If-Match: (entity tag of the action if operation is to be idempotent)
 ...
 
 (Body contains JSON representation of action description to be updated.)</pre></div>
 <p>HTTP response (success):
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>UT /host/{hostid}/user/{userid}/action/{actionid}
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/{hostid}/user/{userid}/action/{actionid}
 Content-Type: application/json
 If-Match: (entity tag of the action if operation is to be idempotent)
 ...
@@ -532,7 +532,7 @@ List Action Descriptions</h3>
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>GET /host/{hostid}/user/{userid}/action/
 ...</pre></div>
 <p>HTTP response:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>TTP/1.1 200 OK
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 200 OK
 Content-Type: application/json
 ...
 

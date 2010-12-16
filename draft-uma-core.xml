@@ -89,10 +89,10 @@
   <middle>
     <section title="Introduction">
       <t>The User-Managed Access (UMA) core protocol provides a method, based
-      on <xref target="OAuth2" />, for users to control access to their
-      protected resources, residing on any number of host sites, through an
-      authorization manager that makes access decisions based on user
-      policy.</t>
+      on <xref target="OAuth2" /> (currently draft 10), for users to control
+      access to their protected resources, residing on any number of host
+      sites, through an authorization manager that makes access decisions
+      based on user policy.</t>
 
       <t>For example, a web user (authorizing user) can authorize a web app
       (requester) to gain one-time or ongoing access to a resource containing
@@ -158,43 +158,43 @@
       <section title="Terminology">
         <t>
           <list hangIndent="6" style="hanging">
-            <t hangText="authorizing user"><vspace /> An UMA-defined variant
-            of an OAuth resource owner; a web user who configures an
+            <t hangText="authorizing user"><vspace />An UMA-defined variant of
+            an OAuth resource owner; a web user who configures an
             authorization manager with policies that control how it makes
             access decisions when a requester attempts to access a protected
             resource at a host.</t>
 
-            <t hangText="authorization manager"><vspace /> An UMA-defined
+            <t hangText="authorization manager"><vspace />An UMA-defined
             variant of an OAuth authorization server that carries out an
             authorizing user's policies governing access to a protected
             resource.</t>
 
-            <t hangText="protected resource"><vspace /> An access-restricted
+            <t hangText="protected resource"><vspace />An access-restricted
             resource at a host.</t>
 
-            <t hangText="host"><vspace /> An UMA-defined variant of an OAuth
+            <t hangText="host"><vspace />An UMA-defined variant of an OAuth
             resource server that enforces access to the protected resources it
             hosts, as decided by an authorization manager.</t>
 
-            <t hangText="host access token"><vspace /> An access token
+            <t hangText="host access token"><vspace />An access token
             representing the authorizing user's consent for a host to trust a
             particular authorization manager for access decisions about
             resources hosted there.</t>
 
-            <t hangText="claim"><vspace /> A statement of the value or values
+            <t hangText="claim"><vspace />A statement of the value or values
             of one or more identity attributes of a requesting party. Claims
             are conveyed by a requester on behalf of a requesting party to an
             authorization manager in an attempt to satisfy an authorizing
             user's policy.</t>
 
-            <t hangText="requester"><vspace /> An UMA-defined variant of an
+            <t hangText="requester"><vspace />An UMA-defined variant of an
             OAuth client that seeks access to a protected resource.</t>
 
-            <t hangText="requester access token"><vspace /> An access token
+            <t hangText="requester access token"><vspace />An access token
             representing the authorizing user's consent for a requester's
             access to particular resources at a host.</t>
 
-            <t hangText="requesting party"><vspace /> A web user, or a
+            <t hangText="requesting party"><vspace />A web user, or a
             corporation (or other legal person), that uses a requester to seek
             access to a protected resource.</t>
           </list>
@@ -377,10 +377,11 @@ href="https://am.example.com/requester/user_uri"></Link>
       <section title="Host dynamically registers with AM">
         <t>If the host has not already obtained a client identifier and
         optional secret from this AM previously, in this substep it MUST do
-        so, in order to engage in OAuth-based interactions with it. It is
-        anticipated that the OAuth group will define a solution for dynamic
-        registration and client-authorization server binding; the UMA proposal
-        for this is at <xref target="Dyn-Reg">Dyn-Reg</xref>.</t>
+        so, if the AM supports dynamic registration, in order to engage in
+        OAuth-based interactions with it. It is anticipated that the OAuth
+        group will define a solution for dynamic registration and
+        client-authorization server binding; the UMA proposal for this is at
+        <xref target="Dyn-Reg">Dyn-Reg</xref>.</t>
       </section>
 
       <section title="Host obtains host access token">
@@ -417,17 +418,6 @@ href="https://am.example.com/requester/user_uri"></Link>
       requester access token from the AM in the role of OAuth authorization
       server.</t>
 
-      <t>If the requester is acting on behalf of a requesting party that is a
-      corporation or other legal person, or a natural person who is not the
-      same as the authorizing user, it MUST use an UMA profile pattern that
-      does not involve use of the OAuth end-user authorization endpoint, to
-      allow for issuing an access token that does not require the authorizing
-      user's presence at the time of issuance. If the requester is acting on
-      behalf of a natural person who is the same person as the authorizing
-      party, it MUST use an UMA profile pattern that involves use of this
-      endpoint, such that this person synchronously approves token issuance
-      through presenting user credentials to the AM and consenting.</t>
-
       <t>This step extends OAuth to add a third possible response from the AM
       in addition to successful vs. unsuccessful access token responses. The
       third option is to ask for more information from the requesting party,
@@ -437,10 +427,11 @@ href="https://am.example.com/requester/user_uri"></Link>
 
       <t>This step has the following substeps: <list style="numbers">
           <t>Requester attempts to access resource at host and is given AM's
-          requester_token_uri endpoint.</t>
+          req_token_uri endpoint (and also AM's req_user_uri endpoint,
+          depending on the sharing profile).</t>
 
-          <t>Requester visits this endpoint, providing its desired scope of
-          access.</t>
+          <t>Requester visits req_token_uri endpoint, indicating its desired
+          scope of access.</t>
 
           <t>AM either provides access token, rejects authorization, or asks
           requester for claims.</t>
@@ -452,13 +443,14 @@ href="https://am.example.com/requester/user_uri"></Link>
       <t>The substep detail is as follows.</t>
 
       <t>If the requester knows, by whatever means, the access token URL for
-      the AM that is protecting the desired resource without first approaching
-      the host, it MAY proceed directly to that URL. Alternatively, it MAY
-      attempt to access the resource directly at the host; if it does not
-      present an access token, the host MUST respond with a challenge, using
-      the "HTTP 401 Unauthorized" code and providing the requester_token_uri
-      endpoint (and the requester_user_uri endpoint if appropriate) in the
-      HTTP header "WWW-Authenticate".</t>
+      the AM that is protecting the desired resource and how to express its
+      desired scope of access without first approaching the host, it MAY
+      proceed directly to that URL. Alternatively, it MAY attempt to access
+      the resource directly at the host; if it does not present an access
+      token, the host MUST respond with a challenge, using the "HTTP 401
+      Unauthorized" code and providing the req_token_uri endpoint (and the
+      req_user_uri endpoint, depending on the sharing profile) in the HTTP
+      header "WWW-Authenticate".</t>
 
       <t>The requester submits a GET request to the access token URL,
       providing the desired scope of access in the "scope" parameter. [@@TBS:
@@ -469,7 +461,8 @@ href="https://am.example.com/requester/user_uri"></Link>
 
       <t>The requester performs a GET on the access token URL, using the
       standard HTTP "Accept" header to express the acceptable media type(s) of
-      any claims-required list. The AM responds in one of three ways: <list>
+      any claims-required list. The AM responds in one of three ways: <list
+          style="symbols">
           <t>If the AM requires no claims from the requester in order to grant
           authorization based on user policy, it responds with a successful
           OAuth access token response. The response MAY include a refresh
@@ -506,6 +499,30 @@ href="https://am.example.com/requester/user_uri"></Link>
       claim formats seeking consideration for use in UMA must meet. One
       candidate specification for lightweight claims requests and responses is
       <xref target="Claims2.0">Claims2.0</xref>.</t>
+
+      <section title="Sharing profiles">
+        <t>Access to the protected resource may be sought by one of a variety
+        of parties. In OAuth, typically the same end-user resource owner (who
+        authenticates to the authorization server to grant access) also
+        operates the client application; UMA refers to this as "person-to-self
+        sharing" (in technical terms, an authorizing user who is the same
+        natural person as a requesting party operating a requester). UMA also
+        allows for "person-to-person sharing", in which the requesting party
+        is a natural person different from the authorizing user, and
+        "person-to-organization sharing", in which the requesting party is a
+        corporation or other legal person.</t>
+
+        <t>A requester mediating person-to-person or person-to-organization
+        sharing MUST use an OAuth profile (UMA-extended to include claims
+        support, as specified above) that does not involve use of the
+        req_user_uri endpoint, to allow for issuing an access token that does
+        not require the authorizing user's presence at the time of issuance. A
+        requester mediating person-to-self sharing MUST use OAuth profile
+        (UMA-extended to include claims support, as specified above) that
+        involves use of the req_user_uri endpoint, such that this person
+        synchronously authorizes access through first presenting user
+        credentials to the AM.</t>
+      </section>
     </section>
 
     <section title="Step 3: Requester wields access token at host to gain access">
@@ -646,13 +663,30 @@ Cache-Control: no-store
       correlation...</t>
     </section>
 
-    <appendix title="TODOs">
-      <t>
-        <list style="symbols">
-          <t>TBS</t>
-        </list>
-      </t>
-    </appendix>
+    <section title="Conformance">
+      <t>This section outlines conformance requirements for various entities
+      implementing UMA endpoints. Currently two levels of conformance are
+      defined: minimal and full. (Other types or levels may ultimately be
+      defined in this specification or in other specifications that profile or
+      extend this one.)</t>
+
+      <t>This specification has dependencies on other specifications, as
+      follows:<list style="symbols">
+          <t>OAuth 2.0: AMs, hosts, and requesters MUST support OAuth 2.0
+          features named in this specification for minimal conformance. For
+          example, features related to refresh tokens, client secrets, and the
+          web server profile are mentioned and support for them is
+          REQUIRED.</t>
+
+          <t>Dynamic registration: For full conformance, AMs MUST support
+          dynamic registration. For minimal conformance, AMs are not required
+          to support dynamic registration. Hosts need not support the
+          requesting of dynamic registration at either conformance level.</t>
+
+          <t>Resource registration: For minimal conformance, AMs and hosts
+          MUST support resource registration.</t>
+        </list></t>
+    </section>
 
     <appendix title="Acknowledgements">
       <t><list style="symbols">
