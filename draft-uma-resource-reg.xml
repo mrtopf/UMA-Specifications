@@ -238,11 +238,11 @@
     <section title="Action and Resource Set Descriptions">
       <t>The host registers resource information with an AM in JSON [[cite]]
       form. The information is of two types: action descriptions and resource
-      set descriptions.</t>
+      set descriptions. The act of registering a description creates a unique
+      identifier for it; see Section [[cite]] for more information.</t>
 
-      <t>An action description is an object with the following parameters (the
-      description also has an action identifier that is created during the
-      process of registration):<list style="hanging">
+      <t>An action description is an object with the following
+      parameters:<list style="hanging">
           <t hangText="name">REQUIRED. A human-readable string describing the
           action. The AM SHOULD use the name in its user interface to assist
           the user in mapping authorization constraints to resource sets with
@@ -256,20 +256,21 @@
         </list></t>
 
       <figure>
-        <preamble>For example:</preamble>
+        <preamble>For example, this description characterizes an action that
+        involves reading or viewing resources (vs., say, creating them or
+        changing them in some fashion):</preamble>
 
         <artwork><![CDATA[{
         "action":
             {
-            "name": "Read",
+            "name": "Reading",
             "icon_uri": "http://www.example.com/icons/reading-glasses"
         }
 }]]></artwork>
       </figure>
 
-      <t>A resource set description is an object with the following parameters
-      (the description also has a resource set identifier that is created
-      during the process of registration):<list style="hanging">
+      <t>A resource set description is an object with the following
+      parameters:<list style="hanging">
           <t hangText="name">REQUIRED. A human-readable string describing a
           set of one or more resources. The AM SHOULD use the name in its user
           interface to assist the user in mapping authorization constraints to
@@ -280,14 +281,18 @@
           referenced icon in its user interface to assist the user in mapping
           authorization constraints to this resource set.</t>
 
-          <t hangText="actions">REQUIRED. An array listing one or more
+          <t hangText="actions">REQUIRED. An array referencing one or more
           identifiers of actions that are permissible on this resource set.
           Each action identifier MUST correspond to an action registered by
           this host for this user at this AM.</t>
         </list></t>
 
       <figure>
-        <preamble>For example:</preamble>
+        <preamble>For example, this description characterizes a resource set
+        (a photo album and all of its contined photos) that can potentially be
+        read, updated, or printed by those seeking access to it; the actions
+        listed are citations to identifiers created during earlier
+        registration of these action descriptions:</preamble>
 
         <artwork><![CDATA[{
         "resource":
@@ -305,7 +310,7 @@
     </section>
 
     <section title="Registration API">
-      <t>The host uses a RESTful API at the AM's host registration URI to
+      <t>The host uses a RESTful API at the AM's host_registration_uri to
       create, read, update, and delete resource set and action descriptions,
       along with listing groups of such descriptions. The host MUST use its
       valid host access token obtained previously in UMA protocol step 1 to
@@ -320,7 +325,7 @@
 
       <t>The components of these URIs are defined as follows:<list
           style="hanging">
-          <t hangText="{reguri}">The AM's host registration URI as advertised
+          <t hangText="{reguri}">The AM's host_registration_uri as advertised
           in its metadata. This endpoint, its security requirements, and its
           requirements around advertisement in metadata are defined in UMA
           protocol step 1 [[uma-core]].</t>
@@ -461,7 +466,7 @@ ETag: (entity tag of the action artifact)
         <figure>
           <preamble>HTTP request:</preamble>
 
-          <artwork><![CDATA[UT /host/{hostid}/user/{userid}/action/{actionid}
+          <artwork><![CDATA[PUT /host/{hostid}/user/{userid}/action/{actionid}
 Content-Type: application/json
 If-Match: (entity tag of the action if operation is to be idempotent)
 ...
@@ -472,7 +477,7 @@ If-Match: (entity tag of the action if operation is to be idempotent)
         <figure>
           <preamble>HTTP response (success):</preamble>
 
-          <artwork><![CDATA[UT /host/{hostid}/user/{userid}/action/{actionid}
+          <artwork><![CDATA[PUT /host/{hostid}/user/{userid}/action/{actionid}
 Content-Type: application/json
 If-Match: (entity tag of the action if operation is to be idempotent)
 ...
@@ -539,7 +544,7 @@ If-Match: (entity tag of the action if operation is to be idempotent)
         <figure>
           <preamble>HTTP response:</preamble>
 
-          <artwork><![CDATA[TTP/1.1 200 OK
+          <artwork><![CDATA[HTTP/1.1 200 OK
 Content-Type: application/json
 ...
 
