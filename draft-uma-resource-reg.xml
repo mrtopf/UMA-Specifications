@@ -5,8 +5,7 @@
 <!ENTITY UMA PUBLIC "" "http://kantarainitiative.org/confluence/display/uma/Home">
 <!ENTITY UMAreqs PUBLIC "" "http://kantarainitiative.org/confluence/display/uma/UMA+Requirements">
 ]>
-<rfc category="std" docName="draft-uma-resource-reg-v1-00.txt"
-     ipr="trust200902">
+<rfc category="std" docName="draft-uma-resource-reg" ipr="trust200902">
   <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
   <?rfc toc='yes' ?>
@@ -49,12 +48,8 @@
     </author>
 
     <author fullname="Eve Maler" initials="E" surname="Maler">
-      <organization>PayPal</organization>
-
       <address>
         <email>eve@xmlgrrl.com</email>
-
-        <uri>http://www.paypal.com/</uri>
       </address>
     </author>
 
@@ -62,29 +57,11 @@
       <organization>P. Bryan Consulting</organization>
 
       <address>
-        <postal>
-          <street></street>
-
-          <city></city>
-
-          <region></region>
-
-          <code></code>
-
-          <country></country>
-        </postal>
-
-        <phone></phone>
-
-        <facsimile></facsimile>
-
         <email>email@pbryan.net</email>
-
-        <uri></uri>
       </address>
     </author>
 
-    <date day="2" month="December" year="2010" />
+    <date day="22" month="December" year="2010" />
 
     <abstract>
       <t>This specification defines the resource registration protocol for
@@ -98,10 +75,18 @@
   <middle>
     <section title="Introduction">
       <t>This specification defines the resource registration protocol for
-      User-Managed Access (UMA). This protocol provides a method for a host to
-      register, update, check, and delete resource-related information at an
-      authorization manager (AM) so that the user's resources can be put under
-      scoped protection.</t>
+      User-Managed Access (<xref target="draft-uma-core">UMA</xref>). This
+      protocol provides a method for a host to register, update, check, and
+      delete resource-related information at an authorization manager (AM) so
+      that the user's resources can be put under scoped protection.</t>
+
+      <t>(Intellectual property notice: The User-Managed Access Work Group
+      operates under <eref
+      target="http://kantarainitiative.org/confluence/display/GI/Option+Patent+and+Copyright+%28RAND%29">Kantara
+      IPR Policy - Option Patent &amp; Copyright: Reciprocal Royalty Free with
+      Opt-Out to Reasonable And Non discriminatory (RAND)</eref> and the
+      publication of this document is governed by the policies outlined in
+      this option.)</t>
 
       <t>The host registers two kinds of information with the AM: information
       about resources to be protected and information about potential actions
@@ -145,8 +130,8 @@
       </section>
 
       <section title="Terminology">
-        <t>See the core UMA protocol spec [[draft-uma-core]] for additional
-        term definitions.</t>
+        <t>See <xref target="draft-uma-core">UMA</xref> for additional term
+        definitions.</t>
 
         <t><list hangIndent="6" style="hanging">
             <t hangText="registration endpoint"><vspace />A protected endpoint
@@ -236,13 +221,14 @@
     </section>
 
     <section title="Action and Resource Set Descriptions">
-      <t>The host registers resource information with an AM in JSON [[cite]]
-      form. The information is of two types: action descriptions and resource
-      set descriptions. The act of registering a description creates a unique
-      identifier for it; see Section [[cite]] for more information.</t>
+      <t>The host registers resource information with an AM in <xref
+      format="default" target="RFC4627">JSON</xref> form. The information is
+      of two types: action descriptions and resource set descriptions. The act
+      of registering a description creates a unique identifier for it; see
+      <xref target="reg-api"></xref> for more information.</t>
 
-      <t>An action description is an object with the following
-      parameters:<list style="hanging">
+      <t>An action description is an object with the name "action" and with
+      the following parameters:<list style="hanging">
           <t hangText="name">REQUIRED. A human-readable string describing the
           action. The AM SHOULD use the name in its user interface to assist
           the user in mapping authorization constraints to resource sets with
@@ -269,8 +255,8 @@
 }]]></artwork>
       </figure>
 
-      <t>A resource set description is an object with the following
-      parameters:<list style="hanging">
+      <t>A resource set description is an object with the name "resource_set"
+      and with the following parameters:<list style="hanging">
           <t hangText="name">REQUIRED. A human-readable string describing a
           set of one or more resources. The AM SHOULD use the name in its user
           interface to assist the user in mapping authorization constraints to
@@ -295,7 +281,7 @@
         registration of these action descriptions:</preamble>
 
         <artwork><![CDATA[{
-        "resource":
+        "resource_set":
             {
             "name": "Photo album",
             "icon_uri": "http://www.example.com/icons/flower",
@@ -309,7 +295,7 @@
       names of extension parameters MUST begin with "x-".</t>
     </section>
 
-    <section title="Registration API">
+    <section anchor="reg-api" title="Registration API">
       <t>The host uses a RESTful API at the AM's host_registration_uri to
       create, read, update, and delete resource set and action descriptions,
       along with listing groups of such descriptions. The host MUST use its
@@ -328,14 +314,14 @@
           <t hangText="{reguri}">The AM's host_registration_uri as advertised
           in its metadata. This endpoint, its security requirements, and its
           requirements around advertisement in metadata are defined in UMA
-          protocol step 1 [[uma-core]].</t>
+          protocol step 1 (see <xref target="draft-uma-core">UMA</xref>).</t>
 
           <t hangText="{hostid}">A registration area at the AM that is
           specific to this host. The host MUST use the OAuth client identifier
           it was assigned by this AM as its host identifier. If the host
           identifier does not match the host access token used at the host
-          registration endpoint, the AM MUST report an error and fail to act
-          on the request (see Section [[Error Responses]] below).</t>
+          registration endpoint, the AM MUST report an HTTP 403 Forbidden
+          error (see example below) and fail to act on the request.</t>
 
           <t hangText="{userid}">The portion of the host's registration area
           at this AM that is specific to this user, assigned during
@@ -368,8 +354,9 @@
       <t>The host MUST register at least action description and one resource
       set description (with a valid referenced {actionid}).</t>
 
-      <t>Following is a summary of registration API operations. Each is
-      defined in its own section below.<list style="symbols">
+      <t>Following is a summary of supported registration API operations. Each
+      is defined in its own section below. All other methods are
+      unsupported.<list style="symbols">
           <t>Create action description: PUT
           /host/{hostid}/user/{userid}/action/{actionid}</t>
 
@@ -400,6 +387,20 @@
           <t>List resource set descriptions: GET
           /host/{hostid}user/{userid}/resource/</t>
         </list></t>
+
+      <t>The AM MUST respond to host requests using HTTP methods other than
+      those listed with an HTTP 403 Forbidden error and fail to act on the
+      request.</t>
+
+      <figure>
+        <preamble>HTTP response (unsupported method or host ID not matching
+        the presented host access token):</preamble>
+
+        <artwork><![CDATA[HTTP/1.1 403 Forbidden
+...
+
+(Body provides user-readable explanation of the error.)]]></artwork>
+      </figure>
 
       <section title="Create Action Description">
         <t>Adds a new action description using the PUT method. The host
@@ -700,17 +701,6 @@ Content-Type: application/json
       </section>
     </section>
 
-    <section title="Error Responses">
-      <t>In addition to HTTP error conditions and responses explained in the
-      [[Registration API]] section above, the AM is responsible for checking
-      that a host is presenting the correct host access token and host
-      identifier path component in making a resource registration request. If
-      the host identifier (the host's OAuth client identifier at this AM) does
-      not match the host access token used at the host registration endpoint,
-      the AM MUST report a "wrong_host_id" error and fail to act on the
-      request.</t>
-    </section>
-
     <section title="Security Considerations">
       <t>This specification relies mainly on OAuth security mechanisms for
       protecting the host registration endpoint at the AM so that only a
@@ -741,30 +731,24 @@ Content-Type: application/json
 
     <section title="TODOs">
       <t><list style="symbols">
-          <t>Flesh out citations and fix references section.</t>
-
           <t>Consider the question of i18n of resource set and action "name"
-          strings in addition to the newly proposed extension-parameter
-          mechanism.</t>
+          strings in addition to the extension-parameter mechanism.</t>
 
           <t>Would implementers expect the "list all" methods to return just a
           list of IDs, or the whole set of structures? If so, do this through
           a query parameter? E.g., "?mode={short|verbose}"</t>
 
-          <t>In the core spec, we have to say how a {resourceid} plus one or
-          more {actionid}s gets used and flows around as normal OAuth scope
-          information. Base64-encode a JSON representation? Extend to allow a
-          resource parameter? Something else? (See the Requirements Analysis
-          above for guiding requirements.)</t>
-
           <t>Should resource set descriptions list action identifiers, as
           currently specified, or full action description URLs?</t>
 
-          <t>Flesh out the UMA-level error response section.</t>
+          <t>Should it be possible for a host to tell an AM that it uses some
+          standard set of actions, indicating them by reference, rather than
+          providing descriptions of its supported actions by value?</t>
 
-          <t>Should the host hint at an appropriate action description to the
-          requester, or since actions are supposed to be well-known should we
-          leave it out?</t>
+          <t>Reconsider the issue of including the ID in-band (possibly with
+          the magic "_id" parameter) as well as out-of-band - given that the
+          host creates these resources at the AM, can this be spec'd
+          properly?</t>
         </list></t>
     </section>
 
@@ -775,33 +759,64 @@ Content-Type: application/json
     </section>
 
     <section title="Document History">
-      <t>[[ to be removed by RFC editor before publication as an RFC ]]</t>
+      <t>Changes in 22 Dec 2010 version:<list style="symbols">
+          <t>Unsupported HTTP methods in registration API return 403</t>
+
+          <t>Folded error section in to API section and changed from UMA-level
+          error to 403</t>
+
+          <t>Changed name of "resource" parameter to "resource_set"</t>
+
+          <t>Added TODO issue about referencing standard sets of actions and
+          reconsidering in-band IDs, and cleaned up the TODO list
+          generally</t>
+
+          <t>Fleshed out citations</t>
+        </list></t>
     </section>
   </middle>
 
   <back>
     <references title="Normative References">
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2617.xml' ?>
+      <reference anchor="RFC4627">
+        <front>
+          <title>The application/json Media Type for JavaScript Object
+          Notation (JSON)</title>
 
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml' ?>
+          <author fullname="Douglas Crockford" initials="D"
+                  surname="Crockford"></author>
 
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml' ?>
+          <date month="July" year="2006" />
+        </front>
 
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-hammer-hostmeta-13.xml'?>
+        <format target="http://tools.ietf.org/html/rfc4627" type="TXT" />
+      </reference>
 
-      <!--
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.5785.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2045.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2104.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2818.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3023.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3447.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3629.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml' ?>
-      <?rfc include='http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
--->
+      <reference anchor="RFC2119">
+        <front>
+          <title>Key words for use in RFCs to Indicate Requirement
+          Levels</title>
+
+          <author fullname="S. Bradner" surname="Bradner"></author>
+
+          <date month="March" year="1997" />
+        </front>
+
+        <format target="http://www.ietf.org/rfc/rfc2119.txt" type="TXT" />
+      </reference>
+
+      <reference anchor="draft-uma-core">
+        <front>
+          <title>UMA 1.0 Core Protocol</title>
+
+          <author fullname="Christian Scholz" initials="C" surname="Scholz"></author>
+
+          <date month="December" year="2010" />
+        </front>
+
+        <format target="http://mrtopf.clprojects.net/uma/draft-uma-core.html"
+                type="HTML" />
+      </reference>
     </references>
   </back>
 </rfc>
