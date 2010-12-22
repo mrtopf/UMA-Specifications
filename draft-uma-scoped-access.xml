@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
+"http://xml.resource.org/authoring/rfc2629.dtd" [
+<!ENTITY rfc2119 PUBLIC "" "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY UMA PUBLIC "" "http://kantarainitiative.org/confluence/display/uma/Home">
+<!ENTITY UMAreqs PUBLIC "" "http://kantarainitiative.org/confluence/display/uma/UMA+Requirements">
+]>
+<rfc category="std" docName="draft-uma-scoped-access" ipr="trust200902">
+  <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+
+  <?rfc toc='yes' ?>
+
+  <?rfc tocdepth='3' ?>
+
+  <?rfc symrefs='yes' ?>
+
+  <?rfc sortrefs='yes' ?>
+
+  <?rfc compact='yes' ?>
+
+  <?rfc subcompact='no' ?>
+
+  <?rfc strict='yes' ?>
+
+  <front>
+    <title abbrev="UMA Resource Registration">UMA Scoped Access
+    Proposal</title>
+
+    <author fullname="Eve Maler" initials="E" surname="Maler">
+      <organization>PayPal</organization>
+
+      <address>
+        <email>eve@xmlgrrl.com</email>
+      </address>
+    </author>
+
+    <author fullname="Paul Bryan" initials="P" surname="Bryan">
+      <organization>P. Bryan Consulting</organization>
+
+      <address>
+        <email>email@pbryan.net</email>
+      </address>
+    </author>
+
+    <date day="21" month="December" year="2010" />
+
+    <abstract>
+      <t>This specification proposes a method for achieving scoped access with
+      User-Managed Access (UMA). This method assumes that, as currently
+      specified in the UMA core protocol, a host must outsource the validation
+      of requester access tokens to the authorization manager (AM) when access
+      is attempted on a protected resource.</t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section title="Introduction">
+      <t>This specification proposes a method for achieving scoped access with
+      User-Managed Access (UMA). This method assumes that, as currently
+      specified in the UMA core protocol, a host must outsource the validation
+      of requester access tokens to the authorization manager (AM) when access
+      is attempted on a protected resource.</t>
+
+      <t>After a host registers resource set identifiers and the identifiers
+      of permissible actions on those resource sets, the authorization manager
+      (AM) is responsible for following the authorizing user's instructions in
+      mapping authorization constraints to particular combinations of these
+      identifiers. The triple of a set of constraints, a resource set, and a
+      list of actions can be considered a "policy", and its latter two-thirds,
+      the resource set/actions portion, can be considered a "permission",
+      granted by the AM on the user's behalf when the requesting party meets
+      the constraints.</t>
+
+      <t>In order to enable communication about scopes and permissions in the
+      process of granting and controlling access, this specification defines a
+      JSON-formatted data structure that describes a set of one or more
+      permissions, called a scope description, and defines how to use a unique
+      scope identifier that refers to this description.</t>
+
+      <t>Following is the flow of scope communications:<list style="numbers">
+          <t>Step 1:<list style="letters">
+              <t>Host registers resource set descriptions and action
+              descriptions with AM (described in
+              [[draft-uma-resource-reg]]).</t>
+
+              <t>AM maps authorization constraints to permissions according to
+              the user's instructions (out of band).</t>
+            </list></t>
+
+          <t>Step 2:<list style="letters">
+              <t>Requester attempts to access protected resource at host,
+              allowing host to infer the requester's desired resource set and
+              action.</t>
+
+              <t>Host tells requester the identifier of a resource set that
+              would suffice for access to the resource, and redirects
+              requester to AM (defined in this specification for now). It is
+              assumed that the requester has out-of-band knowledge of possible
+              actions on the resource to which it had attempted access,
+              through host API documentation.</t>
+
+              <t>Requester asks AM for an access token, specifying the
+              identifiers of the desired resource set and action(s) (defined
+              in this specification for now).</t>
+
+              <t>AM looks up the authorization constraints associated with
+              these identifiers and asks for claims as required to satisfy the
+              constraints.</t>
+
+              <t>Assuming the constraints are satisfied, AM issues an access
+              token and optional refresh token to requester.</t>
+
+              <t>AM registers, in the user-specific portion of the host
+              registration area, a scope description that lists the
+              permissions corresponding to the issued access token (defined in
+              this specification for now).</t>
+            </list></t>
+
+          <t>Step 3:<list style="letters">
+              <t>Requester attempts to access the resource again, this time
+              presenting its requester access token.</t>
+
+              <t>Host conveys token to AM for validation.</t>
+
+              <t>AM responds saying if the token is still valid (not expired)
+              and providing the token's scope identifier (defined in this
+              specification for now).</t>
+
+              <t>Host looks up scope description and confirms that the
+              attempted access matches the permissions granted for this token
+              (defined in this specification for now).</t>
+            </list></t>
+        </list></t>
+
+      <section title="Notational Conventions">
+        <t>The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT',
+        'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'MAY', and 'OPTIONAL' in this
+        document are to be interpreted as described in <xref
+        target="RFC2119"></xref>.</t>
+
+        <t>Unless otherwise noted, all the protocol parameter names and values
+        are case sensitive.</t>
+      </section>
+
+      <section title="Terminology">
+        <t>See the core UMA protocol spec [[draft-uma-core]] and the UMA
+        resource registration spec [[draft-uma-resource-reg]] for additional
+        term definitions.</t>
+
+        <t><list hangIndent="6" style="hanging">
+            <t hangText="scope description"><vspace />A JSON-formatted data
+            structure that represents a set of one or more permissions that
+            have been granted to a requesting party.</t>
+
+            <t hangText="scope identifier">A unique identifier representing a
+            scope description. (The word "scope" may be used to represent
+            either this identifier or the corresponding description, depending
+            on context.)</t>
+
+            <t hangText="permission"><vspace />A resource set identifier and a
+            list of action identifiers, which together represent a range of
+            access abilities that an authorizing user is willing to grant.</t>
+          </list></t>
+      </section>
+    </section>
+
+    <section title="Host tells requester resource set identifier">
+      <t>TBS (see item 2b in flow list above)</t>
+    </section>
+
+    <section title="Requester supplies desired resource set and action(s) to AM">
+      <t>TBS (see item 2c in flow list above)</t>
+    </section>
+
+    <section title="AM registers scope description">
+      <t>(See item 2f in flow list above)</t>
+
+      <t>The AM registers scope descriptions as a way to record the
+      permissions associated with a requester access token in a persistent
+      fashion. A scope description is in JSON [[cite]] form. It is an object
+      with the following parameters:</t>
+
+      <t>An action description is an object with the name "scope" and the
+      following parameters:<list style="hanging">
+          <t hangText="_id">REQUIRED. An identifier that MUST be identical to
+          the {scopeid} path component of the scope description URI (see
+          below). Some RESTful database technologies provide special features
+          for populating this parameter automatically.</t>
+
+          <t hangText="permissions">REQUIRED. Contains an array of at least
+          one object that has "resource_set" and "actions" parameters:<list
+              style="hanging">
+              <t hangText="resource_set">REQUIRED. The identifier of a
+              resource set. The identifier MUST correspond to a resource set
+              registered by this host for this user at this AM.</t>
+
+              <t hangText="actions">REQUIRED. An array referencing one or more
+              identifiers of actions that are authorized on this resource set.
+              Each action identifier MUST correspond to an action registered
+              by this host for this user at this AM.</t>
+            </list></t>
+        </list></t>
+
+      <figure>
+        <preamble>For example, this description characterizes a scope whose
+        single permission involves reading and updating a resource set
+        representing "all" resources being protected for this user at this
+        host:</preamble>
+
+        <artwork><![CDATA[{
+   "scope": {
+       "_id": 1234afbd,
+       "permissions": [
+           {
+               "resource_set": "all",
+               "actions": [ "read", "update" ]
+           }, ...
+       ]
+   }
+}]]></artwork>
+      </figure>
+
+      <t>Scope descriptions MAY contain extension parameters that are not
+      defined in this specification. The names of extension parameters MUST
+      begin with "x-".</t>
+    </section>
+
+    <section title="AM provides the token's scope identifier">
+      <t>TBS (see item 3c in flow list above)</t>
+    </section>
+
+    <section title="Host looks up token's scope description">
+      <t>(See item 3d in flow list above)</t>
+
+      <t>The host uses a RESTful API at the AM's host_registration_uri to read
+      scope descriptions at the time of token validation. The host MUST use
+      its valid host access token obtained previously in UMA protocol step 1
+      to gain access to the API.</t>
+
+      <t>Individual scope descriptions are managed at URIs with this
+      structure: "{reguri}/host/{hostid}/user/{userid}/scope/{scopeid}"</t>
+
+      <t>The components of these URIs are defined as follows:<list
+          style="hanging">
+          <t hangText="{reguri}">The AM's host_registration_uri as advertised
+          in its metadata. This endpoint, its security requirements, and its
+          requirements around advertisement in metadata are defined in UMA
+          protocol step 1 [[uma-draft-core]].</t>
+
+          <t hangText="{hostid}">A registration area at the AM that is
+          specific to this host. The host MUST use the OAuth client identifier
+          it was assigned by this AM as its host identifier. If the host
+          identifier does not match the host access token used at the host
+          registration endpoint, the AM MUST report an error and fail to act
+          on the request (see Section [[Error Responses]] below).</t>
+
+          <t hangText="{userid}">The portion of the host's registration area
+          at this AM that is specific to this user, assigned during
+          registration of resource information for this user.</t>
+
+          <t hangText="{scopeid}">An identifier for a scope description,
+          assigned during initial registration of this description.</t>
+        </list></t>
+
+      <t>The only allowed scope lookup API operation is:<list style="symbols">
+          <t>Read scope description: GET
+          /host/{hostid}/user/{userid}/scope/{scopeid}</t>
+        </list></t>
+
+      <t>With this operation, a host reads a previously registered scope
+      description at the AM using the GET method. If any other HTTP method is
+      attempted, the AM MUST respond with a 403 Forbidden message and fail to
+      take any other action.</t>
+
+      <figure>
+        <preamble>HTTP request:</preamble>
+
+        <artwork><![CDATA[GET /host/{hostid}/user/{userid}/scope/{scopeid} HTTP/1.1
+...]]></artwork>
+      </figure>
+
+      <figure>
+        <preamble>HTTP response (success):</preamble>
+
+        <artwork><![CDATA[HTTP/1.1 200 OK
+Content-Type: application/json
+ETag: (entity tag of the scope artifact)
+...
+
+(Body contains JSON representation of scope description.)]]></artwork>
+      </figure>
+
+      <figure>
+        <preamble>HTTP response (not found):</preamble>
+
+        <artwork><![CDATA[HTTP/1.1 404 Not Found
+...
+
+(Body provides user-readable explanation of the error.)]]></artwork>
+      </figure>
+
+      <figure>
+        <preamble>HTTP response to any method other than GET or to a {hostid}
+        path component that does not match the presented host access token
+        (forbidden):</preamble>
+
+        <artwork><![CDATA[HTTP/1.1 403 Forbidden
+...
+
+(Body provides user-readable explanation of the error.)]]></artwork>
+      </figure>
+    </section>
+
+    <section title="Security Considerations">
+      <t>TBS</t>
+    </section>
+
+    <section title="Privacy Considerations">
+      <t>TBS</t>
+    </section>
+
+    <section title="TODOs">
+      <t><list style="symbols">
+          <t>ISSUE: How is the {userid} established at the point when an AM
+          needs to register a scope description? (See item 2f in the flow list
+          in the introduction, above.)</t>
+
+          <t>Should the AM respond to a token validation request by returning
+          the applicable scope structure rather than by pointing to it through
+          a scope identifier? Alternatively, is the scope description
+          mechanism needed at all? If the host were to supply candidate
+          resource sets and actions when asking for validation, the AM could
+          perform the lookup and matching operation itself, and return a
+          simple "YES" or "NO". However, if we chose this option, the host
+          could not cache the token/scope mapping, and the scope description
+          mechanism would not be available for other uses (such as eventual
+          token scope upgrading).</t>
+        </list></t>
+    </section>
+
+    <section title="Acknowledgments">
+      <t><list style="symbols">
+          <t>[TBS]</t>
+        </list></t>
+    </section>
+
+    <section title="Document History">
+      <t>[[ to be removed by RFC editor before publication as an RFC ]]</t>
+    </section>
+  </middle>
+
+  <back>
+    <references title="Normative References">
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2617.xml' ?>
+
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml' ?>
+
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml' ?>
+
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-hammer-hostmeta-13.xml'?>
+
+      <!--
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.5785.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2045.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2104.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2818.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3023.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3447.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3629.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml' ?>
+      <?rfc include='http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml' ?>
+-->
+    </references>
+  </back>
+</rfc>
