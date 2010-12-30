@@ -61,7 +61,7 @@
       </address>
     </author>
 
-    <date day="22" month="December" year="2010" />
+    <date day="30" month="December" year="2010" />
 
     <abstract>
       <t>This specification defines the resource registration protocol for
@@ -148,56 +148,61 @@
       </section>
 
       <section title="Requirements Analysis">
-        <t>This specification, in combination with the UMA core protocol, has
-        been informed by the following resource registration
-        requirements:<list style="symbols">
+        <t>This specification, in combination with the UMA core protocol
+        specification and the scoped-access specification, has been informed
+        by the following resource registration requirements:<list
+            style="symbols">
             <t>The authorizing user needs to be presented with a user
             interface that clearly indicates what resources and actions are
             available when they're setting and mapping authorization
-            constraints at the AM.</t>
+            constraints at the AM. (User interface considerations are out of
+            scope of UMA protocol specifications, but this requirement has
+            protocol dependencies.)</t>
 
             <t>The AM therefore needs to acquire from the host some
             description of resources and actions to be protected, which
-            includes enough information to display to the authorizing
-            user.</t>
+            includes enough information to display to the authorizing user.
+            (Solved by this specification.)</t>
 
-            <t>The requester needs to know what actions are possible on the
-            resource it is trying to access. This requirement is considered
-            out of scope for UMA; it is anticipated that host API
-            documentation needs to pick up the slack.</t>
-
-            <t>It must not be possible for the requester to be exposed to
-            in-the-clear versions of identifiers for resources in case they
-            compromise the authorizing user's privacy. For example, a
-            protected set of resources might usefully but compromisingly be
-            described as "racy photos from beach vacation". It is assumed that
-            the host already has access to such a privacy-sensitive
-            description and that the nature of the host-AM trust relationship
-            forged by the authorizing user allows the AM to see this
-            description as well.</t>
+            <t>The requester should not be exposed to in-the-clear versions of
+            identifiers for resources in case they compromise the authorizing
+            user's privacy. For example, a protected set of resources might
+            usefully but compromisingly be described as "racy photos from
+            beach vacation". It is assumed that the host already has access to
+            such a description and that the nature of the host-AM trust
+            relationship forged by the authorizing user may qualify the AM to
+            see this description as well. (Solved by this specificationl.)</t>
 
             <t>The AM needs to be told the relevant resource set, in
             host-described terms, that corresponds to the resource the
             requester is seeking access to so that it can assess the
             requesting party's request for an access token against the correct
-            authorization constraints.</t>
+            authorization constraints. (Solved by the scoped-access
+            specification.)</t>
 
             <t>The host therefore needs to tell the requester the relevant
             resource set -- and no more, for privacy reasons -- when the
             requester attempts access at the host and fails, so that the
-            requester can convey it to the AM.</t>
+            requester can convey it to the AM. (Solved by the scoped-access
+            specification.)</t>
 
             <t>The host needs to be able to validate that a requester's
             attempt at access in step 3, accompanied by an access token,
             matches the resource set and action set for which that access
-            token was granted.</t>
+            token was granted. (Solved by the scoped-access
+            specification.)</t>
 
             <t>The AM therefore needs to associate each requester access token
-            with a resource set and action set. (Currently the UMA core
-            protocol defines a run-time method for the host to ask the AM to
-            confirm this match. An alternative solution that meets the
-            requirement would be for the access token to securely contain this
-            information.)</t>
+            with a resource set and action set. (Solved by the core protocol
+            specification. Currently it defines a run-time method for the host
+            to ask the AM to confirm this match. An alternative solution that
+            meets the requirement would be for the access token to securely
+            contain this information.)</t>
+
+            <t>The requester needs to know what actions are possible on the
+            resource it is trying to access. (This requirement is considered
+            out of scope for UMA; it is anticipated that host API
+            documentation will pick up the slack.)</t>
           </list></t>
       </section>
     </section>
@@ -207,8 +212,7 @@
       an AM it needs to fulfill the following prerequisites:<list
           style="symbols">
           <t>The host has obtained a host access token from the AM as
-          explained in UMA core protocol step 1. It MUST use this token to use
-          the registration API of the AM.</t>
+          explained in UMA core protocol step 1.</t>
 
           <t>The host has obtained the URI of the registration API endpoint as
           part of the AM's metadata as described in UMA protocol step 1.</t>
@@ -218,6 +222,182 @@
           identifiers for them and details about them that will help the user
           in correctly setting policy over them at the AM.</t>
         </list></t>
+    </section>
+
+    <section title="Example">
+      <t>The following example illustrates the intent and usage of the
+      resource registration protocol.</t>
+
+      <t>This example contains some steps that are exclusively in the realm of
+      user experience rather than web protocol, to achieve realistic
+      illustration; these steps are labeled "User experience only". Some other
+      steps are exclusively internal to the operation of the entity being
+      discussed; these are labeled "Internal only".</t>
+
+      <t>A user, Alice Adams, has just uploaded a photo of her new puppy to a
+      host, Photoz.com, and wants to ensure that this specific photo is not
+      publicly accessible.</t>
+
+      <t>Alice has already introduced this host to her AM, CopMonkey.com, and
+      thus Photoz has already obtained an OAuth client ID and an UMA host
+      access token from CopMonkey. However, Alice has not previously
+      instructed Photoz to use CopMonkey to protect any other photos of
+      hers.</t>
+
+      <t>Alice has previously visited CopMonkey to map a default "do not share
+      with anyone" authorization constraint to any resource sets registered by
+      Photoz, until such time as she maps some other less-Draconian
+      constraints to those resources. (User experience only; this may have
+      been done at the time Alice introduced the host to the AM, and/or it
+      could have been a global or host-specific preference setting.) Other
+      kinds of constraints she may eventually map to particular photos or
+      albums might be "Share only with husband@email.com" or "Share only with
+      people in my 'family' group".</t>
+
+      <t>Photoz itself has an API that allows for photo viewing and printing.
+      It defines for itself, and for applications using that API, actions
+      applicable to photos that are accessed by authorized third parties
+      (internal only; this is comparable to determining and documenting OAuth
+      scopes).</t>
+
+      <t>While visiting Photoz, Alice selects a link or button that instructs
+      the site to "Protect" or "Share" this single photo (user experience
+      only; Photoz could have made this a default or preference setting).
+      Photoz defines for itself a resource set that represents this photo
+      (internal only; Photoz is the only application that knows how to map a
+      particular photo URL to a particular resource set).</t>
+
+      <t>Photoz prepares the following two action descriptions, which are
+      probably standard for this site across all of its users. The "name"
+      parameter values are intended to be used by Alice (and similarly by
+      other users of the same site) in mapping authorization constraints to
+      specific resource sets and actions when she visits CopMonkey, such that
+      Alice would see the strings "View" and "Print", likely accompanied by
+      the referenced icons, when she visits there. </t>
+
+      <figure>
+        <artwork><![CDATA[{
+        "action":
+            {
+            "name": "View",
+            "icon_uri": "http://www.example.com/icons/reading-glasses"
+        }
+}]]></artwork>
+      </figure>
+
+      <figure>
+        <artwork><![CDATA[{
+        "action":
+            {
+            "name": "Print",
+            "icon_uri": "http://www.example.com/icons/printer"
+        }
+}]]></artwork>
+      </figure>
+
+      <t>Photoz uses the "create action description" method of CopMonkey's
+      resource registration API, presenting its Alice-specific host access
+      token there, to register and assign identifiers to these action
+      descriptions. The "com.photoz" path component reflects Photz's unique
+      host identifier (its OAuth client ID). Since this is Photoz's first-ever
+      use of this API, the "ABCD001" path component has the effect of
+      assigning a unique identifier to an Alice-specific area underneath
+      Photoz's host registration area. The "view" and "print" path components,
+      respectively, assign unique identifiers to these action descriptions
+      that can then be referenced in resource set descriptions. (Photoz likely
+      could have registered action descriptions at any time upon being
+      introduced to CopMonkey by Alice.) @@should we prepare for actions to be
+      reusable across users by allowing/requiring them to be registered
+      "above" the user-specific level? @@show token being used etc. in the
+      method?</t>
+
+      <figure>
+        <artwork><![CDATA[PUT /host/com.photoz/user/ABCD001/action/view
+Content-Type: application/json
+...
+
+{
+        "action":
+            {
+            "name": "View",
+            "icon_uri": "http://www.example.com/icons/reading-glasses"
+        }
+}]]></artwork>
+      </figure>
+
+      <figure>
+        <artwork><![CDATA[PUT /host/com.photoz/user/ABCD001/action/print
+Content-Type: application/json
+...
+
+{
+        "action":
+            {
+            "name": "Print",
+            "icon_uri": "http://www.example.com/icons/printer"
+        }
+}]]></artwork>
+      </figure>
+
+      <t>When Alice indicates she wants to protect her puppy photo, Photoz
+      prepares the following resource set description, which is specific to
+      Alice and her photo. The "name" parameter value is intended to be used
+      by Alice in mapping authorization constraints to specific resource sets
+      and actions when she visits CopMonkey, such that Alice would see the
+      string "Steve the puppy!", likely accompanied by the referenced icon,
+      when she visits there. The possible actions on this resource set are
+      indicated with references to the identifiers of the action descriptions,
+      as defined just above.</t>
+
+      <figure>
+        <artwork><![CDATA[{
+        "resource_set":
+            {
+            "name": "Steve the puppy!",
+            "icon_uri": "http://www.example.com/icons/flower",
+            "actions": ["view", "print"]
+        }
+}]]></artwork>
+      </figure>
+
+      <t>Photoz uses the "create resource set description" method of
+      CopMonkey's resource registration API, presenting its Alice-specific
+      host access token there, to register and assign an identifier to the
+      resource set description. The "00001" path component assigns an
+      identifier that does not reveal any of Alice's personal information to
+      an outsider but allows Photoz to know that it is the "Steve the puppy!"
+      photo being referred to. @@show token being used etc. in the method?</t>
+
+      <figure>
+        <artwork><![CDATA[PUT /host/com.photoz/user/ABCD001/resource/00001
+Content-Type: application/json
+...
+
+{
+        "resource_set":
+            {
+            "name": "Steve the puppy!",
+            "icon_uri": "http://www.example.com/icons/flower",
+            "actions": ["view", "print"]
+        }
+}]]></artwork>
+      </figure>
+
+      <t>Once these descriptions have been successfully registered, Photoz is
+      responsible for responding to requesters' attempts to access this photo
+      in the manner described in <xref target="draft-uma-core">UMA</xref>,
+      achieving protection of the resource by "outsourcing" this task to
+      CopMonkey.</t>
+
+      <t>Photoz can choose to redirect Alice to CopMonkey for further
+      authorization constraint mapping, access auditing, and other AM-related
+      tasks (user experience only).</t>
+
+      <t>Over time, as Alice uploads other photos and creates and organizes
+      photo albums, and as Photoz makes new action functionality available,
+      Photoz can use additional methods of the resource registration API to
+      ensure that CopMonkey's understanding of Alice's protected resources
+      matches its own.</t>
     </section>
 
     <section title="Action and Resource Set Descriptions">
@@ -295,7 +475,7 @@
       names of extension parameters MUST begin with "x-".</t>
     </section>
 
-    <section anchor="reg-api" title="Registration API">
+    <section anchor="reg-api" title="Resource Registration API">
       <t>The host uses a RESTful API at the AM's host_registration_uri to
       create, read, update, and delete resource set and action descriptions,
       along with listing groups of such descriptions. The host MUST use its
@@ -346,9 +526,11 @@
           the URI applies to the set of resource set descriptions already
           registered. The identifier has meaning only to the host. The host
           MAY use any identifier scheme to represent each resource set
-          uniquely for each user, but for privacy, it is RECOMMENDED that the
-          host assign an identifier that is obscured with respect to any
-          human-readable resource set label used at this host.</t>
+          uniquely for each user, including using a URL-formatted string that
+          corresponds directly to a URL that can be used by authorized parties
+          to retrieve the resource. However, for privacy, it is RECOMMENDED
+          that the host assign an identifier that is obscured with respect to
+          any human-readable resource set label used at this host.</t>
         </list></t>
 
       <t>The host MUST register at least action description and one resource
@@ -557,7 +739,11 @@ Content-Type: application/json
         <t>Adds a new resource set description using the PUT method. The host
         assigns a unique identifier to the action. The host is free to use its
         own methods of identifying and describing resource sets; the AM MUST
-        treat them as opaque for the purpose of authorizing access.</t>
+        treat them as opaque for the purpose of authorizing access. On
+        successfully registering a resource set, the host MUST use UMA
+        mechanisms to limit access to any resources corresponding to this
+        resource set, as defined in <xref target="draft-uma-core">UMA</xref>.
+        @@Specify error to produce if referenced actions are incorrect?</t>
 
         <figure>
           <preamble>HTTP request:</preamble>
@@ -613,7 +799,8 @@ ETag: (entity tag of the resource artifact)
 
       <section title="Update Resource Set Description">
         <t>Updates a previously registered resource set description using the
-        PUT method.</t>
+        PUT method. @@Specify error to produce if referenced actions are
+        incorrect?</t>
 
         <figure>
           <preamble>HTTP request:</preamble>
@@ -759,7 +946,7 @@ Content-Type: application/json
     </section>
 
     <section title="Document History">
-      <t>Changes in 22 Dec 2010 version:<list style="symbols">
+      <t>Changes in 30 Dec 2010 version:<list style="symbols">
           <t>Unsupported HTTP methods in registration API return 403</t>
 
           <t>Folded error section in to API section and changed from UMA-level
@@ -771,7 +958,10 @@ Content-Type: application/json
           reconsidering in-band IDs, and cleaned up the TODO list
           generally</t>
 
-          <t>Fleshed out citations</t>
+          <t>Fleshed out citations and requirements analysis</t>
+
+          <t>Added huge worked-example section at the beginning (which
+          contains issues not yet captured in the TODO section)</t>
         </list></t>
     </section>
   </middle>
