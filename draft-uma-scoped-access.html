@@ -1,0 +1,510 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en"><head><title>UMA Scoped Access Proposal</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="description" content="UMA Scoped Access Proposal">
+<meta name="generator" content="xml2rfc v1.35 (http://xml.resource.org/)">
+<style type='text/css'><!--
+        body {
+                font-family: verdana, charcoal, helvetica, arial, sans-serif;
+                font-size: small; color: #000; background-color: #FFF;
+                margin: 2em;
+        }
+        h1, h2, h3, h4, h5, h6 {
+                font-family: helvetica, monaco, "MS Sans Serif", arial, sans-serif;
+                font-weight: bold; font-style: normal;
+        }
+        h1 { color: #900; background-color: transparent; text-align: right; }
+        h3 { color: #333; background-color: transparent; }
+
+        td.RFCbug {
+                font-size: x-small; text-decoration: none;
+                width: 30px; height: 30px; padding-top: 2px;
+                text-align: justify; vertical-align: middle;
+                background-color: #000;
+        }
+        td.RFCbug span.RFC {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: bold; color: #666;
+        }
+        td.RFCbug span.hotText {
+                font-family: charcoal, monaco, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: normal; text-align: center; color: #FFF;
+        }
+
+        table.TOCbug { width: 30px; height: 15px; }
+        td.TOCbug {
+                text-align: center; width: 30px; height: 15px;
+                color: #FFF; background-color: #900;
+        }
+        td.TOCbug a {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, sans-serif;
+                font-weight: bold; font-size: x-small; text-decoration: none;
+                color: #FFF; background-color: transparent;
+        }
+
+        td.header {
+                font-family: arial, helvetica, sans-serif; font-size: x-small;
+                vertical-align: top; width: 33%;
+                color: #FFF; background-color: #666;
+        }
+        td.author { font-weight: bold; font-size: x-small; margin-left: 4em; }
+        td.author-text { font-size: x-small; }
+
+        /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+        a.info {
+                /* This is the key. */
+                position: relative;
+                z-index: 24;
+                text-decoration: none;
+        }
+        a.info:hover {
+                z-index: 25;
+                color: #FFF; background-color: #900;
+        }
+        a.info span { display: none; }
+        a.info:hover span.info {
+                /* The span will display just on :hover state. */
+                display: block;
+                position: absolute;
+                font-size: smaller;
+                top: 2em; left: -5em; width: 15em;
+                padding: 2px; border: 1px solid #333;
+                color: #900; background-color: #EEE;
+                text-align: left;
+        }
+
+        a { font-weight: bold; }
+        a:link    { color: #900; background-color: transparent; }
+        a:visited { color: #633; background-color: transparent; }
+        a:active  { color: #633; background-color: transparent; }
+
+        p { margin-left: 2em; margin-right: 2em; }
+        p.copyright { font-size: x-small; }
+        p.toc { font-size: small; font-weight: bold; margin-left: 3em; }
+        table.toc { margin: 0 0 0 3em; padding: 0; border: 0; vertical-align: text-top; }
+        td.toc { font-size: small; font-weight: bold; vertical-align: text-top; }
+
+        ol.text { margin-left: 2em; margin-right: 2em; }
+        ul.text { margin-left: 2em; margin-right: 2em; }
+        li      { margin-left: 3em; }
+
+        /* RFC-2629 <spanx>s and <artwork>s. */
+        em     { font-style: italic; }
+        strong { font-weight: bold; }
+        dfn    { font-weight: bold; font-style: normal; }
+        cite   { font-weight: normal; font-style: normal; }
+        tt     { color: #036; }
+        tt, pre, pre dfn, pre em, pre cite, pre span {
+                font-family: "Courier New", Courier, monospace; font-size: small;
+        }
+        pre {
+                text-align: left; padding: 4px;
+                color: #000; background-color: #CCC;
+        }
+        pre dfn  { color: #900; }
+        pre em   { color: #66F; background-color: #FFC; font-weight: normal; }
+        pre .key { color: #33C; font-weight: bold; }
+        pre .id  { color: #900; }
+        pre .str { color: #000; background-color: #CFF; }
+        pre .val { color: #066; }
+        pre .rep { color: #909; }
+        pre .oth { color: #000; background-color: #FCF; }
+        pre .err { background-color: #FCC; }
+
+        /* RFC-2629 <texttable>s. */
+        table.all, table.full, table.headers, table.none {
+                font-size: small; text-align: center; border-width: 2px;
+                vertical-align: top; border-collapse: collapse;
+        }
+        table.all, table.full { border-style: solid; border-color: black; }
+        table.headers, table.none { border-style: none; }
+        th {
+                font-weight: bold; border-color: black;
+                border-width: 2px 2px 3px 2px;
+        }
+        table.all th, table.full th { border-style: solid; }
+        table.headers th { border-style: none none solid none; }
+        table.none th { border-style: none; }
+        table.all td {
+                border-style: solid; border-color: #333;
+                border-width: 1px 2px;
+        }
+        table.full td, table.headers td, table.none td { border-style: none; }
+
+        hr { height: 1px; }
+        hr.insert {
+                width: 80%; border-style: none; border-width: 0;
+                color: #CCC; background-color: #CCC;
+        }
+--></style>
+</head>
+<body>
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<table summary="layout" width="66%" border="0" cellpadding="0" cellspacing="0"><tr><td><table summary="layout" width="100%" border="0" cellpadding="2" cellspacing="1">
+<tr><td class="header">Network Working Group</td><td class="header">E. Maler</td></tr>
+<tr><td class="header">Internet-Draft</td><td class="header">PayPal</td></tr>
+<tr><td class="header">Intended status: Standards Track</td><td class="header">P. Bryan</td></tr>
+<tr><td class="header">Expires: June 24, 2011</td><td class="header">P. Bryan Consulting</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">December 21, 2010</td></tr>
+</table></td></tr></table>
+<h1><br />UMA Scoped Access Proposal<br />draft-uma-scoped-access</h1>
+
+<h3>Abstract</h3>
+
+<p>This specification proposes a method for achieving scoped access with User-Managed Access (UMA). This method assumes that, as currently specified in the UMA core protocol, a host must outsource the validation of requester access tokens to the authorization manager (AM) when access is attempted on a protected resource.
+</p>
+<h3>Status of this Memo</h3>
+<p>
+This Internet-Draft is submitted  in full
+conformance with the provisions of BCP&nbsp;78 and BCP&nbsp;79.</p>
+<p>
+Internet-Drafts are working documents of the Internet Engineering
+Task Force (IETF).  Note that other groups may also distribute
+working documents as Internet-Drafts.  The list of current
+Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
+<p>
+Internet-Drafts are draft documents valid for a maximum of six months
+and may be updated, replaced, or obsoleted by other documents at any time.
+It is inappropriate to use Internet-Drafts as reference material or to cite
+them other than as &ldquo;work in progress.&rdquo;</p>
+<p>
+This Internet-Draft will expire on June 24, 2011.</p>
+
+<h3>Copyright Notice</h3>
+<p>
+Copyright (c) 2010 IETF Trust and the persons identified as the
+document authors.  All rights reserved.</p>
+<p>
+This document is subject to BCP 78 and the IETF Trust's Legal
+Provisions Relating to IETF Documents
+(http://trustee.ietf.org/license-info) in effect on the date of
+publication of this document.  Please review these documents
+carefully, as they describe your rights and restrictions with respect
+to this document. Code Components extracted from this document must
+include Simplified BSD License text as described in Section 4.e of
+the Trust Legal Provisions and are provided without warranty as
+described in the Simplified BSD License.</p>
+<a name="toc"></a><br /><hr />
+<h3>Table of Contents</h3>
+<p class="toc">
+<a href="#anchor1">1.</a>&nbsp;
+Introduction<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor2">1.1.</a>&nbsp;
+Notational Conventions<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor3">1.2.</a>&nbsp;
+Terminology<br />
+<a href="#anchor4">2.</a>&nbsp;
+Host tells requester resource set identifier<br />
+<a href="#anchor5">3.</a>&nbsp;
+Requester supplies desired resource set and action(s) to AM<br />
+<a href="#anchor6">4.</a>&nbsp;
+AM registers scope description<br />
+<a href="#anchor7">5.</a>&nbsp;
+AM provides the token's scope identifier<br />
+<a href="#anchor8">6.</a>&nbsp;
+Host looks up token's scope description<br />
+<a href="#anchor9">7.</a>&nbsp;
+Security Considerations<br />
+<a href="#anchor10">8.</a>&nbsp;
+Privacy Considerations<br />
+<a href="#anchor11">9.</a>&nbsp;
+TODOs<br />
+<a href="#anchor12">10.</a>&nbsp;
+Acknowledgments<br />
+<a href="#anchor13">11.</a>&nbsp;
+Document History<br />
+<a href="#rfc.references1">12.</a>&nbsp;
+Normative References<br />
+<a href="#rfc.authors">&#167;</a>&nbsp;
+Authors' Addresses<br />
+</p>
+<br clear="all" />
+
+<a name="anchor1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1"></a><h3>1.&nbsp;
+Introduction</h3>
+
+<p>This specification proposes a method for achieving scoped access with User-Managed Access (UMA). This method assumes that, as currently specified in the UMA core protocol, a host must outsource the validation of requester access tokens to the authorization manager (AM) when access is attempted on a protected resource.
+</p>
+<p>After a host registers resource set identifiers and the identifiers of permissible actions on those resource sets, the authorization manager (AM) is responsible for following the authorizing user's instructions in mapping authorization constraints to particular combinations of these identifiers. The triple of a set of constraints, a resource set, and a list of actions can be considered a "policy", and its latter two-thirds, the resource set/actions portion, can be considered a "permission", granted by the AM on the user's behalf when the requesting party meets the constraints.
+</p>
+<p>In order to enable communication about scopes and permissions in the process of granting and controlling access, this specification defines a JSON-formatted data structure that describes a set of one or more permissions, called a scope description, and defines how to use a unique scope identifier that refers to this description.
+</p>
+<p>Following is the flow of scope communications:</p>
+<ol class="text">
+<li>Step 1:
+<blockquote class="text"><dl>
+<dt>A.</dt>
+<dd>Host registers resource set descriptions and action descriptions with AM (described in [[draft-uma-resource-reg]]).
+</dd>
+<dt>B.</dt>
+<dd>AM maps authorization constraints to permissions according to the user's instructions (out of band).
+</dd>
+</dl></blockquote>
+</li>
+<li>Step 2:
+<blockquote class="text"><dl>
+<dt>A.</dt>
+<dd>Requester attempts to access protected resource at host, allowing host to infer the requester's desired resource set and action.
+</dd>
+<dt>B.</dt>
+<dd>Host tells requester the identifier of a resource set that would suffice for access to the resource, and redirects requester to AM (defined in this specification for now). It is assumed that the requester has out-of-band knowledge of possible actions on the resource to which it had attempted access, through host API documentation.
+</dd>
+<dt>C.</dt>
+<dd>Requester asks AM for an access token, specifying the identifiers of the desired resource set and action(s) (defined in this specification for now).
+</dd>
+<dt>D.</dt>
+<dd>AM looks up the authorization constraints associated with these identifiers and asks for claims as required to satisfy the constraints.
+</dd>
+<dt>E.</dt>
+<dd>Assuming the constraints are satisfied, AM issues an access token and optional refresh token to requester.
+</dd>
+<dt>F.</dt>
+<dd>AM registers, in the user-specific portion of the host registration area, a scope description that lists the permissions corresponding to the issued access token (defined in this specification for now).
+</dd>
+</dl></blockquote>
+</li>
+<li>Step 3:
+<blockquote class="text"><dl>
+<dt>A.</dt>
+<dd>Requester attempts to access the resource again, this time presenting its requester access token.
+</dd>
+<dt>B.</dt>
+<dd>Host conveys token to AM for validation.
+</dd>
+<dt>C.</dt>
+<dd>AM responds saying if the token is still valid (not expired) and providing the token's scope identifier (defined in this specification for now).
+</dd>
+<dt>D.</dt>
+<dd>Host looks up scope description and confirms that the attempted access matches the permissions granted for this token (defined in this specification for now).
+</dd>
+</dl></blockquote>
+</li>
+</ol>
+
+<a name="anchor2"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.1"></a><h3>1.1.&nbsp;
+Notational Conventions</h3>
+
+<p>The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'MAY', and 'OPTIONAL' in this document are to be interpreted as described in <a class='info' href='#RFC2119'>[RFC2119]<span> (</span><span class='info'>Bradner, S., &ldquo;Key words for use in RFCs to Indicate Requirement Levels,&rdquo; March&nbsp;1997.</span><span>)</span></a>.
+</p>
+<p>Unless otherwise noted, all the protocol parameter names and values are case sensitive.
+</p>
+<a name="anchor3"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.2"></a><h3>1.2.&nbsp;
+Terminology</h3>
+
+<p>See the core UMA protocol spec [[draft-uma-core]] and the UMA resource registration spec [[draft-uma-resource-reg]] for additional term definitions.
+</p>
+<p></p>
+<blockquote class="text"><dl>
+<dt>scope description</dt>
+<dd>A JSON-formatted data structure that represents a set of one or more permissions that have been granted to a requesting party.
+</dd>
+<dt>scope identifier</dt>
+<dd>A unique identifier representing a scope description. (The word "scope" may be used to represent either this identifier or the corresponding description, depending on context.)
+</dd>
+<dt>permission</dt>
+<dd>A resource set identifier and a list of action identifiers, which together represent a range of access abilities that an authorizing user is willing to grant.
+</dd>
+</dl></blockquote>
+
+<a name="anchor4"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2"></a><h3>2.&nbsp;
+Host tells requester resource set identifier</h3>
+
+<p>TBS (see item 2b in flow list above)
+</p>
+<a name="anchor5"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3"></a><h3>3.&nbsp;
+Requester supplies desired resource set and action(s) to AM</h3>
+
+<p>TBS (see item 2c in flow list above)
+</p>
+<a name="anchor6"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4"></a><h3>4.&nbsp;
+AM registers scope description</h3>
+
+<p>(See item 2f in flow list above)
+</p>
+<p>The AM registers scope descriptions as a way to record the permissions associated with a requester access token in a persistent fashion. A scope description is in JSON [[cite]] form. It is an object with the following parameters:
+</p>
+<p>An action description is an object with the name "scope" and the following parameters:</p>
+<blockquote class="text"><dl>
+<dt>_id</dt>
+<dd>REQUIRED. An identifier that MUST be identical to the {scopeid} path component of the scope description URI (see below). Some RESTful database technologies provide special features for populating this parameter automatically.
+</dd>
+<dt>permissions</dt>
+<dd>REQUIRED. Contains an array of at least one object that has "resource_set" and "actions" parameters:
+<blockquote class="text"><dl>
+<dt>resource_set</dt>
+<dd>REQUIRED. The identifier of a resource set. The identifier MUST correspond to a resource set registered by this host for this user at this AM.
+</dd>
+<dt>actions</dt>
+<dd>REQUIRED. An array referencing one or more identifiers of actions that are authorized on this resource set. Each action identifier MUST correspond to an action registered by this host for this user at this AM.
+</dd>
+</dl></blockquote>
+</dd>
+</dl></blockquote>
+
+<p>For example, this description characterizes a scope whose single permission involves reading and updating a resource set representing "all" resources being protected for this user at this host:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
+   "scope": {
+       "_id": 1234afbd,
+       "permissions": [
+           {
+               "resource_set": "all",
+               "actions": [ "read", "update" ]
+           }, ...
+       ]
+   }
+}</pre></div>
+<p>Scope descriptions MAY contain extension parameters that are not defined in this specification. The names of extension parameters MUST begin with "x-".
+</p>
+<a name="anchor7"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5"></a><h3>5.&nbsp;
+AM provides the token's scope identifier</h3>
+
+<p>TBS (see item 3c in flow list above)
+</p>
+<a name="anchor8"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6"></a><h3>6.&nbsp;
+Host looks up token's scope description</h3>
+
+<p>(See item 3d in flow list above)
+</p>
+<p>The host uses a RESTful API at the AM's host_registration_uri to read scope descriptions at the time of token validation. The host MUST use its valid host access token obtained previously in UMA protocol step 1 to gain access to the API.
+</p>
+<p>Individual scope descriptions are managed at URIs with this structure: "{reguri}/host/{hostid}/user/{userid}/scope/{scopeid}"
+</p>
+<p>The components of these URIs are defined as follows:</p>
+<blockquote class="text"><dl>
+<dt>{reguri}</dt>
+<dd>The AM's host_registration_uri as advertised in its metadata. This endpoint, its security requirements, and its requirements around advertisement in metadata are defined in UMA protocol step 1 [[uma-draft-core]].
+</dd>
+<dt>{hostid}</dt>
+<dd>A registration area at the AM that is specific to this host. The host MUST use the OAuth client identifier it was assigned by this AM as its host identifier. If the host identifier does not match the host access token used at the host registration endpoint, the AM MUST report an error and fail to act on the request (see Section [[Error Responses]] below).
+</dd>
+<dt>{userid}</dt>
+<dd>The portion of the host's registration area at this AM that is specific to this user, assigned during registration of resource information for this user.
+</dd>
+<dt>{scopeid}</dt>
+<dd>An identifier for a scope description, assigned during initial registration of this description.
+</dd>
+</dl></blockquote>
+
+<p>The only allowed scope lookup API operation is:</p>
+<ul class="text">
+<li>Read scope description: GET /host/{hostid}/user/{userid}/scope/{scopeid}
+</li>
+</ul>
+
+<p>With this operation, a host reads a previously registered scope description at the AM using the GET method. If any other HTTP method is attempted, the AM MUST respond with a 403 Forbidden message and fail to take any other action.
+</p>
+<p>HTTP request:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>GET /host/{hostid}/user/{userid}/scope/{scopeid} HTTP/1.1
+...</pre></div>
+<p>HTTP response (success):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 200 OK
+Content-Type: application/json
+ETag: (entity tag of the scope artifact)
+...
+
+(Body contains JSON representation of scope description.)</pre></div>
+<p>HTTP response (not found):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 404 Not Found
+...
+
+(Body provides user-readable explanation of the error.)</pre></div>
+<p>HTTP response to any method other than GET or to a {hostid} path component that does not match the presented host access token (forbidden):
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 403 Forbidden
+...
+
+(Body provides user-readable explanation of the error.)</pre></div>
+<a name="anchor9"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.7"></a><h3>7.&nbsp;
+Security Considerations</h3>
+
+<p>TBS
+</p>
+<a name="anchor10"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.8"></a><h3>8.&nbsp;
+Privacy Considerations</h3>
+
+<p>TBS
+</p>
+<a name="anchor11"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9"></a><h3>9.&nbsp;
+TODOs</h3>
+
+<p></p>
+<ul class="text">
+<li>ISSUE: How is the {userid} established at the point when an AM needs to register a scope description? (See item 2f in the flow list in the introduction, above.)
+</li>
+<li>Should the AM respond to a token validation request by returning the applicable scope structure rather than by pointing to it through a scope identifier? Alternatively, is the scope description mechanism needed at all? If the host were to supply candidate resource sets and actions when asking for validation, the AM could perform the lookup and matching operation itself, and return a simple "YES" or "NO". However, if we chose this option, the host could not cache the token/scope mapping, and the scope description mechanism would not be available for other uses (such as eventual token scope upgrading).
+</li>
+</ul>
+
+<a name="anchor12"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.10"></a><h3>10.&nbsp;
+Acknowledgments</h3>
+
+<p></p>
+<ul class="text">
+<li>[TBS]
+</li>
+</ul>
+
+<a name="anchor13"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.11"></a><h3>11.&nbsp;
+Document History</h3>
+
+<p>[[ to be removed by RFC editor before publication as an RFC ]]
+</p>
+<a name="rfc.references1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>12.&nbsp;Normative References</h3>
+<table width="99%" border="0">
+<tr><td class="author-text" valign="top"><a name="I-D.hammer-hostmeta">[I-D.hammer-hostmeta]</a></td>
+<td class="author-text">Hammer-Lahav, E., &ldquo;<a href="http://www.ietf.org/internet-drafts/draft-hammer-hostmeta-13.txt">Web Host Metadata</a>,&rdquo; draft-hammer-hostmeta-13 (work in progress), June&nbsp;2010 (<a href="http://www.ietf.org/internet-drafts/draft-hammer-hostmeta-13.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2119">[RFC2119]</a></td>
+<td class="author-text"><a href="mailto:sob@harvard.edu">Bradner, S.</a>, &ldquo;<a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>,&rdquo; BCP&nbsp;14, RFC&nbsp;2119, March&nbsp;1997 (<a href="http://www.rfc-editor.org/rfc/rfc2119.txt">TXT</a>, <a href="http://xml.resource.org/public/rfc/html/rfc2119.html">HTML</a>, <a href="http://xml.resource.org/public/rfc/xml/rfc2119.xml">XML</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2617">[RFC2617]</a></td>
+<td class="author-text"><a href="mailto:john@math.nwu.edu">Franks, J.</a>, <a href="mailto:pbaker@verisign.com">Hallam-Baker, P.</a>, <a href="mailto:jeff@AbiSource.com">Hostetler, J.</a>, <a href="mailto:lawrence@agranat.com">Lawrence, S.</a>, <a href="mailto:paulle@microsoft.com">Leach, P.</a>, Luotonen, A., and <a href="mailto:stewart@OpenMarket.com">L. Stewart</a>, &ldquo;<a href="http://tools.ietf.org/html/rfc2617">HTTP Authentication: Basic and Digest Access Authentication</a>,&rdquo; RFC&nbsp;2617, June&nbsp;1999 (<a href="http://www.rfc-editor.org/rfc/rfc2617.txt">TXT</a>, <a href="http://xml.resource.org/public/rfc/html/rfc2617.html">HTML</a>, <a href="http://xml.resource.org/public/rfc/xml/rfc2617.xml">XML</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC4627">[RFC4627]</a></td>
+<td class="author-text">Crockford, D., &ldquo;<a href="http://tools.ietf.org/html/rfc4627">The application/json Media Type for JavaScript Object Notation (JSON)</a>,&rdquo; RFC&nbsp;4627, July&nbsp;2006 (<a href="http://www.rfc-editor.org/rfc/rfc4627.txt">TXT</a>).</td></tr>
+</table>
+
+<a name="rfc.authors"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>Authors' Addresses</h3>
+<table width="99%" border="0" cellpadding="0" cellspacing="0">
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Eve Maler</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">PayPal</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text"><a href="mailto:eve@xmlgrrl.com">eve@xmlgrrl.com</a></td></tr>
+<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Paul Bryan</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">P. Bryan Consulting</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text"><a href="mailto:email@pbryan.net">email@pbryan.net</a></td></tr>
+</table>
+</body></html>
+
