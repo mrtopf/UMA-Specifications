@@ -144,12 +144,12 @@
 <tr><td class="header">Network Working Group</td><td class="header">C. Scholz, Ed.</td></tr>
 <tr><td class="header">Internet-Draft</td><td class="header">COM.lounge GmbH</td></tr>
 <tr><td class="header">Intended status: Standards Track</td><td class="header">M. Machulak</td></tr>
-<tr><td class="header">Expires: July 3, 2011</td><td class="header">Newcastle University</td></tr>
+<tr><td class="header">Expires: July 11, 2011</td><td class="header">Newcastle University</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">E. Maler</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">&nbsp;</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">P. Bryan</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">P. Bryan Consulting</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">December 30, 2010</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">January 7, 2011</td></tr>
 </table></td></tr></table>
 <h1><br />UMA Resource Registration<br />draft-uma-resource-reg</h1>
 
@@ -172,11 +172,11 @@ and may be updated, replaced, or obsoleted by other documents at any time.
 It is inappropriate to use Internet-Drafts as reference material or to cite
 them other than as &ldquo;work in progress.&rdquo;</p>
 <p>
-This Internet-Draft will expire on July 3, 2011.</p>
+This Internet-Draft will expire on July 11, 2011.</p>
 
 <h3>Copyright Notice</h3>
 <p>
-Copyright (c) 2010 IETF Trust and the persons identified as the
+Copyright (c) 2011 IETF Trust and the persons identified as the
 document authors.  All rights reserved.</p>
 <p>
 This document is subject to BCP 78 and the IETF Trust's Legal
@@ -203,41 +203,33 @@ Requirements Analysis<br />
 Prerequisites<br />
 <a href="#anchor6">3.</a>&nbsp;
 Example<br />
-<a href="#anchor7">4.</a>&nbsp;
-Action and Resource Set Descriptions<br />
-<a href="#reg-api">5.</a>&nbsp;
+<a href="#action-desc">4.</a>&nbsp;
+Action Description<br />
+<a href="#resource-set-desc">5.</a>&nbsp;
+Resource Set Description<br />
+<a href="#reg-api">6.</a>&nbsp;
 Resource Registration API<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor8">5.1.</a>&nbsp;
-Create Action Description<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor9">5.2.</a>&nbsp;
-Read Action Description<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor10">5.3.</a>&nbsp;
-Update Action Description<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor11">5.4.</a>&nbsp;
-Delete Action Description<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor12">5.5.</a>&nbsp;
-List Action Descriptions<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor13">5.6.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#create-resource-set">6.1.</a>&nbsp;
 Create Resource Set Description<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor14">5.7.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#read-resource-set">6.2.</a>&nbsp;
 Read Resource Set Description<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor15">5.8.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#update-resource-set">6.3.</a>&nbsp;
 Update Resource Set Description<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor16">5.9.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#delete-resource-set">6.4.</a>&nbsp;
 Delete Resource Set Description<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor17">5.10.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#list-resource-sets">6.5.</a>&nbsp;
 List Resource Set Descriptions<br />
-<a href="#anchor18">6.</a>&nbsp;
+<a href="#anchor7">7.</a>&nbsp;
 Security Considerations<br />
-<a href="#anchor19">7.</a>&nbsp;
+<a href="#anchor8">8.</a>&nbsp;
 Privacy Considerations<br />
-<a href="#anchor20">8.</a>&nbsp;
+<a href="#anchor9">9.</a>&nbsp;
 TODOs<br />
-<a href="#anchor21">9.</a>&nbsp;
+<a href="#anchor10">10.</a>&nbsp;
 Acknowledgments<br />
-<a href="#anchor22">10.</a>&nbsp;
+<a href="#anchor11">11.</a>&nbsp;
 Document History<br />
-<a href="#rfc.references1">11.</a>&nbsp;
+<a href="#rfc.references1">12.</a>&nbsp;
 Normative References<br />
 <a href="#rfc.authors">&#167;</a>&nbsp;
 Authors' Addresses<br />
@@ -253,13 +245,13 @@ Introduction</h3>
 </p>
 <p>(Intellectual property notice: The User-Managed Access Work Group operates under <a href='http://kantarainitiative.org/confluence/display/GI/Option+Patent+and+Copyright+%28RAND%29'>Kantara IPR Policy - Option Patent &amp; Copyright: Reciprocal Royalty Free with Opt-Out to Reasonable And Non discriminatory (RAND)</a> and the publication of this document is governed by the policies outlined in this option.)
 </p>
-<p>The host registers two kinds of information with the AM: information about resources to be protected and information about potential actions that can be performed on them.
+<p>The host needs to register information about resources to be protected so that the AM can apply authorization constraints to them according to the user's wishes.
 </p>
-<p>The host determines (unilaterally or as instructed by the user) the universe of resources belonging to this user that are to be protected by the AM, and assigns a resource identifier to each set of one or more resources. Such a set might include a status update API endpoint, an individual status update, a single photo, a photo album, or even all photos with a particular user-assigned tag.
+<p>The host determines (unilaterally or as instructed by the user) the universe of resources belonging to this user that are to be protected by the AM, and assigns a resource identifier to sets of these resources. Such a set might include a status update API endpoint (applying to the user's entire update stream), or an individual status update, or a photo album, or all photos with a particular user-assigned tag, or even the set of "all resources managed by this user at this host".
 </p>
-<p>The host also determines (often unilaterally based on its API features, but possibly with user input) the universe of actions that is possible for requesting parties to perform on each resource set, and assigns an action identifier to each. Such actions might involve "viewing", "adding", "printing", or whatever other actions the application supports for that resource set.
+<p>The host also determines the universe of actions that is possible for requesting parties to perform on each resource set. Such actions might involve "viewing", "adding", "printing", or whatever other actions the application supports for that resource set. Typically each action covers a broad list of methods in the host's published API.
 </p>
-<p>Once the host has registered these identifiers and other descriptive information with the AM, the AM (under the authorizing user's instructions) is able to map particular authorization constraints to a particular set of resources and a particular set of actions. This mapping conceptually constitutes a "policy", and its resource-set-and-actions component is involved in steps 2 and 3 of the UMA protocol as an analogue of the OAuth concept of "scope".
+<p>Once the host has registered resource sets and their descriptive information with the AM, the AM (under the authorizing user's instructions) is able to map particular authorization constraints to a particular set of resources and a particular set of actions and to take part in the process of limiting (scoping) access to resource sets.
 </p>
 <p>Note that the host is free to offer the option to protect any subset of the user's resources using different AMs or other means entirely, or to protect some resources and not others; any such partitioning is outside the scope of this specification.
 </p>
@@ -299,17 +291,17 @@ Requirements Analysis</h3>
 
 <p>This specification, in combination with the UMA core protocol specification and the scoped-access specification, has been informed by the following resource registration requirements:</p>
 <ul class="text">
-<li>The authorizing user needs to be presented with a user interface that clearly indicates what resources and actions are available when they're setting and mapping authorization constraints at the AM. (User interface considerations are out of scope of UMA protocol specifications, but this requirement has protocol dependencies.)
+<li>The authorizing user needs to be presented with a user interface at the AM that clearly indicates what resources and actions are available when they're setting and mapping authorization constraints. (User interface considerations are out of scope of UMA protocol specifications, but this requirement has protocol dependencies.)
 </li>
 <li>The AM therefore needs to acquire from the host some description of resources and actions to be protected, which includes enough information to display to the authorizing user. (Solved by this specification.)
 </li>
-<li>The requester should not be exposed to in-the-clear versions of identifiers for resources in case they compromise the authorizing user's privacy. For example, a protected set of resources might usefully but compromisingly be described as "racy photos from beach vacation". It is assumed that the host already has access to such a description and that the nature of the host-AM trust relationship forged by the authorizing user may qualify the AM to see this description as well. (Solved by this specificationl.)
+<li>The requester and requesting party, prior to receiving an access token, should not be exposed to resource information that compromises the authorizing user's privacy. For example, a protected set of resources might usefully but embarrassingly be described as "racy photos from beach vacation". It is assumed that the host already has access to such a description and that the nature of the host-AM trust relationship forged by the authorizing user may qualify the AM to see this description as well. (Solved by this specification.)
 </li>
 <li>The AM needs to be told the relevant resource set, in host-described terms, that corresponds to the resource the requester is seeking access to so that it can assess the requesting party's request for an access token against the correct authorization constraints. (Solved by the scoped-access specification.)
 </li>
-<li>The host therefore needs to tell the requester the relevant resource set -- and no more, for privacy reasons -- when the requester attempts access at the host and fails, so that the requester can convey it to the AM. (Solved by the scoped-access specification.)
+<li>Therefore, when the requester attempts access at the host and fails, the host needs to convey enough information to the AM (whether through the requester directly or by other means) for the latter to do this job. For privacy reasons, if the host asks the requester to convey information directly, privacy considerations come into play. (Solved by the scoped-access specification.)
 </li>
-<li>The host needs to be able to validate that a requester's attempt at access in step 3, accompanied by an access token, matches the resource set and action set for which that access token was granted. (Solved by the scoped-access specification.)
+<li>The host needs to be able to validate that a requester's access attempt in step 3, accompanied by an access token, matches the resource set and action set for which that access token was granted. (Solved by the scoped-access specification.)
 </li>
 <li>The AM therefore needs to associate each requester access token with a resource set and action set. (Solved by the core protocol specification. Currently it defines a run-time method for the host to ask the AM to confirm this match. An alternative solution that meets the requirement would be for the access token to securely contain this information.)
 </li>
@@ -328,8 +320,6 @@ Prerequisites</h3>
 </li>
 <li>The host has obtained the URI of the registration API endpoint as part of the AM's metadata as described in UMA protocol step 1.
 </li>
-<li>The host has already defined, for its own use, sets of resources and possible actions applicable to this user, along with associated identifiers for them and details about them that will help the user in correctly setting policy over them at the AM.
-</li>
 </ul>
 
 <a name="anchor6"></a><br /><hr />
@@ -341,107 +331,107 @@ Example</h3>
 </p>
 <p>This example contains some steps that are exclusively in the realm of user experience rather than web protocol, to achieve realistic illustration; these steps are labeled "User experience only". Some other steps are exclusively internal to the operation of the entity being discussed; these are labeled "Internal only".
 </p>
-<p>A user, Alice Adams, has just uploaded a photo of her new puppy to a host, Photoz.com, and wants to ensure that this specific photo is not publicly accessible.
+<p>An authorizing user, Alice Adams, has just uploaded a photo of her new puppy to a host, Photoz.example.com, and wants to ensure that this specific photo is not publicly accessible.
 </p>
-<p>Alice has already introduced this host to her AM, CopMonkey.com, and thus Photoz has already obtained an OAuth client ID and an UMA host access token from CopMonkey. However, Alice has not previously instructed Photoz to use CopMonkey to protect any other photos of hers.
+<p>Alice has already introduced this host to her AM, CopMonkey.example.com, and thus Photoz has already obtained an OAuth client ID and an UMA host access token from CopMonkey. However, Alice has not previously instructed Photoz to use CopMonkey to protect any other photos of hers.
 </p>
-<p>Alice has previously visited CopMonkey to map a default "do not share with anyone" authorization constraint to any resource sets registered by Photoz, until such time as she maps some other less-Draconian constraints to those resources. (User experience only; this may have been done at the time Alice introduced the host to the AM, and/or it could have been a global or host-specific preference setting.) Other kinds of constraints she may eventually map to particular photos or albums might be "Share only with husband@email.com" or "Share only with people in my 'family' group".
+<p>Alice has previously visited CopMonkey to map a default "do not share with anyone" authorization constraint to any resource sets registered by Photoz, until such time as she maps some other less-draconian constraints to those resources. (User experience only. This may have been done at the time Alice introduced the host to the AM, and/or it could have been a global or host-specific preference setting. A different constraint or no constraint at all might be associated with newly protected resources.) Other kinds of constraints she may eventually map to particular photos or albums might be "Share only with husband@email.example.net" or "Share only with people in my 'family' group".
 </p>
-<p>Photoz itself has an API that allows for photo viewing and printing. It defines for itself, and for applications using that API, actions applicable to photos that are accessed by authorized third parties (internal only; this is comparable to determining and documenting OAuth scopes).
-</p>
-<p>While visiting Photoz, Alice selects a link or button that instructs the site to "Protect" or "Share" this single photo (user experience only; Photoz could have made this a default or preference setting). Photoz defines for itself a resource set that represents this photo (internal only; Photoz is the only application that knows how to map a particular photo URL to a particular resource set).
-</p>
-<p>Photoz prepares the following two action descriptions, which are probably standard for this site across all of its users. The "name" parameter values are intended to be used by Alice (and similarly by other users of the same site) in mapping authorization constraints to specific resource sets and actions when she visits CopMonkey, such that Alice would see the strings "View" and "Print", likely accompanied by the referenced icons, when she visits there. 
+<p>Photoz itself has a publicly documented API that offers two dozen different methods that apply to single photos, such as "addTags" and "getSizes", but rolls them up into two photo-related actions: "viewing" (consisting of varous read-only operations) and "all" (consisting of various reading, editing, and printing operations). It defines two Web-accessible JSON-encoded documents called action descriptions that represent these actions, which it is able to reuse for all of its users (not just Alice). The "name" parameter values are intended to be seen by Alice when she maps authorization constraints to specific resource sets and actions while visiting CopMonkey, such that Alice would see the strings "View Photo and Related Info" and "All Actions", likely accompanied by the referenced icons, in the CopMonkey interface. (Other users of Photoz might similarly see the same labels at CopMonkey or whatever other AM they use.)
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
         "action":
             {
-            "name": "View",
+            "_id": "view"
+            "name": "View Photo and Related Info",
             "icon_uri": "http://www.example.com/icons/reading-glasses"
         }
 }</pre></div><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
         "action":
             {
-            "name": "Print",
-            "icon_uri": "http://www.example.com/icons/printer"
+            "_id": "all"
+            "name": "All Actions",
+            "icon_uri": "http://www.example.com/icons/galaxy"
         }
 }</pre></div>
-<p>Photoz uses the "create action description" method of CopMonkey's resource registration API, presenting its Alice-specific host access token there, to register and assign identifiers to these action descriptions. The "com.photoz" path component reflects Photz's unique host identifier (its OAuth client ID). Since this is Photoz's first-ever use of this API, the "ABCD001" path component has the effect of assigning a unique identifier to an Alice-specific area underneath Photoz's host registration area. The "view" and "print" path components, respectively, assign unique identifiers to these action descriptions that can then be referenced in resource set descriptions. (Photoz likely could have registered action descriptions at any time upon being introduced to CopMonkey by Alice.) @@should we prepare for actions to be reusable across users by allowing/requiring them to be registered "above" the user-specific level? @@show token being used etc. in the method?
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/com.photoz/user/ABCD001/action/view
-Content-Type: application/json
-...
-
-{
-        "action":
-            {
-            "name": "View",
-            "icon_uri": "http://www.example.com/icons/reading-glasses"
-        }
-}</pre></div><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/com.photoz/user/ABCD001/action/print
-Content-Type: application/json
-...
-
-{
-        "action":
-            {
-            "name": "Print",
-            "icon_uri": "http://www.example.com/icons/printer"
-        }
-}</pre></div>
-<p>When Alice indicates she wants to protect her puppy photo, Photoz prepares the following resource set description, which is specific to Alice and her photo.  The "name" parameter value is intended to be used by Alice in mapping authorization constraints to specific resource sets and actions when she visits CopMonkey, such that Alice would see the string "Steve the puppy!", likely accompanied by the referenced icon, when she visits there. The possible actions on this resource set are indicated with references to the identifiers of the action descriptions, as defined just above.
+<p>While visiting Photoz, Alice selects a link or button that instructs the site to "Protect" or "Share" this single photo (user experience only; Photoz could have made this a default or preference setting).
+</p>
+<p>As a result, Photoz defines for itself a resource set that represents this photo (internal only; Photoz is the only application that knows how to map a particular photo to a particular resource set). Photoz also prepares the following resource set description, which is specific to Alice and her photo. The "name" parameter value is intended to be seen by Alice in mapping authorization constraints to specific resource sets and actions when she visits CopMonkey, such that Alice would see the string "Steve the puppy!", likely accompanied by the referenced icon, in the CopMonkey interface. The possible actions on this resource set are indicated with URI references to the action descriptions, as defined just above.
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
         "resource_set":
             {
+            "_id": "112210f47de98100"
             "name": "Steve the puppy!",
             "icon_uri": "http://www.example.com/icons/flower",
-            "actions": ["view", "print"]
+            "actions":
+                        ["http://photoz.example.com/dev/actions/view",
+                        "http://photoz.example.com/dev/actions/all"]
         }
 }</pre></div>
-<p>Photoz uses the "create resource set description" method of CopMonkey's resource registration API, presenting its Alice-specific host access token there, to register and assign an identifier to the resource set description. The "00001" path component assigns an identifier that does not reveal any of Alice's personal information to an outsider but allows Photoz to know that it is the "Steve the puppy!" photo being referred to. @@show token being used etc. in the method?
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/com.photoz/user/ABCD001/resource/00001
+<p>Photoz uses the "create resource set description" method of CopMonkey's standard UMA-based resource registration API, presenting its Alice-specific host access token there, to register and assign an identifier to the resource set description. The resource set identifier path component of the URL matches the "_id" parameter value in the description.
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/photoz.example.com/resource/112210f47de98100
 Content-Type: application/json
 ...
 
 {
         "resource_set":
-            {
-            "name": "Steve the puppy!",
-            "icon_uri": "http://www.example.com/icons/flower",
-            "actions": ["view", "print"]
-        }
+           {
+           "_id": "112210f47de98100"
+           "name": "Steve the puppy!",
+           "icon_uri": "http://www.example.com/icons/flower",
+           "actions":
+                        ["http://photoz.example.com/dev/actions/view",
+                        "http://photoz.example.com/dev/actions/all"]
+         }
 }</pre></div>
-<p>Once these descriptions have been successfully registered, Photoz is responsible for responding to requesters' attempts to access this photo in the manner described in <a class='info' href='#draft-uma-core'>UMA<span> (</span><span class='info'>Scholz, C., &ldquo;UMA 1.0 Core Protocol,&rdquo; December&nbsp;2010.</span><span>)</span></a> [draft&#8209;uma&#8209;core], achieving protection of the resource by "outsourcing" this task to CopMonkey.
+<p>Once this description has been successfully registered, Photoz is responsible for responding to requesters' attempts to access this photo in the manner described in <a class='info' href='#draft-uma-core'>UMA<span> (</span><span class='info'>Scholz, C., &ldquo;UMA 1.0 Core Protocol,&rdquo; December&nbsp;2010.</span><span>)</span></a> [draft&#8209;uma&#8209;core], achieving protection of the resource by "outsourcing" this task to CopMonkey.
 </p>
-<p>Photoz can choose to redirect Alice to CopMonkey for further authorization constraint mapping, access auditing, and other AM-related tasks (user experience only).
+<p>At the time Alice indicates she would like this photo protected, Photoz can choose to redirect Alice to CopMonkey for further authorization constraint mapping, access auditing, and other AM-related tasks (user experience only).
 </p>
 <p>Over time, as Alice uploads other photos and creates and organizes photo albums, and as Photoz makes new action functionality available, Photoz can use additional methods of the resource registration API to ensure that CopMonkey's understanding of Alice's protected resources matches its own.
 </p>
-<a name="anchor7"></a><br /><hr />
+<a name="action-desc"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.4"></a><h3>4.&nbsp;
-Action and Resource Set Descriptions</h3>
+Action Description</h3>
 
-<p>The host registers resource information with an AM in <a class='info' href='#RFC4627'>JSON<span> (</span><span class='info'>Crockford, D., &ldquo;The application/json Media Type for JavaScript Object Notation (JSON),&rdquo; July&nbsp;2006.</span><span>)</span></a> [RFC4627] form. The information is of two types: action descriptions and resource set descriptions. The act of registering a description creates a unique identifier for it; see <a class='info' href='#reg-api'>Section&nbsp;5<span> (</span><span class='info'>Resource Registration API</span><span>)</span></a> for more information.
+<p>The host defines an action that is available for use with resources it manages in an action description encoded in <a class='info' href='#RFC4627'>JSON<span> (</span><span class='info'>Crockford, D., &ldquo;The application/json Media Type for JavaScript Object Notation (JSON),&rdquo; July&nbsp;2006.</span><span>)</span></a> [RFC4627] form and made publicly accessible through a URI reference (it MAY include a fragment identifier). The actions available for use at any one host MUST have unique URI references so that the host's action descriptions are distinguishable by URI reference. Action descriptions MAY reside anywhere; the host is not required to self-host action descriptions and may wish to point to standardized action descriptions residing elsewhere.
 </p>
 <p>An action description is an object with the name "action" and with the following parameters:</p>
 <blockquote class="text"><dl>
+<dt>_id</dt>
+<dd>REQUIRED. A string that uniquely identifies the action across all actions available at this host.
+</dd>
 <dt>name</dt>
 <dd>REQUIRED. A human-readable string describing the action. The AM SHOULD use the name in its user interface to assist the user in mapping authorization constraints to resource sets with this permissible action.
 </dd>
 <dt>icon_uri</dt>
-<dd>OPTIONAL. A URI for a graphic icon representing the action. If provided, the AM SHOULD use the referenced icon in its user interface to assist the user in mapping authorization constraints to resource sets with this permissible action.
+<dd>OPTIONAL. A URI for a graphic icon representing the action. If this is provided, the AM SHOULD use the referenced icon in its user interface to assist the user in mapping authorization constraints to resource sets with this permissible action.
 </dd>
 </dl></blockquote>
 
-<p>For example, this description characterizes an action that involves reading or viewing resources (vs., say, creating them or changing them in some fashion):
+<p>For example, this description characterizes an action that involves reading or viewing resources (vs. creating them or edit them in some fashion):
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
         "action":
             {
-            "name": "Reading",
+            "_id": "view"
+            "name": "Read-only",
             "icon_uri": "http://www.example.com/icons/reading-glasses"
         }
 }</pre></div>
+<p>Action descriptions MAY contain extension parameters that are not defined in this specification. The names of extension parameters MUST begin with "x-" or "X-".
+</p>
+<a name="resource-set-desc"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5"></a><h3>5.&nbsp;
+Resource Set Description</h3>
+
+<p>The host defines a resource set that needs UMA protection in a resource set description encoded in <a class='info' href='#RFC4627'>JSON<span> (</span><span class='info'>Crockford, D., &ldquo;The application/json Media Type for JavaScript Object Notation (JSON),&rdquo; July&nbsp;2006.</span><span>)</span></a> [RFC4627] form. The host registers the description and manages its lifecycle at the AM through the resource registration API.
+</p>
 <p>A resource set description is an object with the name "resource_set" and with the following parameters:</p>
 <blockquote class="text"><dl>
+<dt>_id</dt>
+<dd>REQUIRED. A string that uniquely identifies the resource set across all resource sets belonging to this user. It is RECOMMENDED that this identifier be unique across all users' resource sets at this host. This identifier MUST match the resource set identifier path component of the URI used to manage this description in the resource registration API. (Typically this parameter's value is populated automatically in order to ensure the required uniqueness and matching.)
+</dd>
 <dt>name</dt>
 <dd>REQUIRED. A human-readable string describing a set of one or more resources. The AM SHOULD use the name in its user interface to assist the user in mapping authorization constraints to this resource set.
 </dd>
@@ -453,27 +443,29 @@ Action and Resource Set Descriptions</h3>
 </dd>
 </dl></blockquote>
 
-<p>For example, this description characterizes a resource set (a photo album and all of its contined photos) that can potentially be read, updated, or printed by those seeking access to it; the actions listed are citations to identifiers created during earlier registration of these action descriptions:
+<p>For example, this description characterizes a resource set (a photo album) that can potentially be only viewed, or alternatively to which full access can be granted; the URIs point to action descriptions, as dictated in <a class='info' href='#action-desc'>Section&nbsp;4<span> (</span><span class='info'>Action Description</span><span>)</span></a>:
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
         "resource_set":
             {
             "name": "Photo album",
             "icon_uri": "http://www.example.com/icons/flower",
-            "actions": ["read", "update", "print"]
+           "actions":
+                        ["http://photoz.example.com/dev/actions/view",
+                        "http://photoz.example.com/dev/actions/all"]
         }
 }</pre></div>
-<p>Both action descriptions and resource set descriptions MAY contain extension parameters that are not defined in this specification. The names of extension parameters MUST begin with "x-".
+<p>Resource set descriptions descriptions MAY contain extension parameters that are not defined in this specification. The names of extension parameters MUST begin with "x-" or "X-".
+</p>
+<p>When a host creates or updates a resource set description (see <a class='info' href='#reg-api'>Section&nbsp;6<span> (</span><span class='info'>Resource Registration API</span><span>)</span></a>), the AM MUST attempt to retrieve the referenced action descriptions. It MAY cache such descriptions as long as indicated in the HTTP header for the action description resource unless the resource set description is subsequently updated within the validity period. At the beginning of an authorizing user's login session at the AM, the AM MUST attempt to re-retrieve action descriptions applying to that user whose cached versions have expired.
 </p>
 <a name="reg-api"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5"></a><h3>5.&nbsp;
+<a name="rfc.section.6"></a><h3>6.&nbsp;
 Resource Registration API</h3>
 
-<p>The host uses a RESTful API at the AM's host_registration_uri to create, read, update, and delete resource set and action descriptions, along with listing groups of such descriptions. The host MUST use its valid host access token obtained previously in UMA protocol step 1 to gain access to the API.
+<p>The host uses a RESTful API at the AM's host_registration_uri to create, read, update, and delete resource set descriptions, along with listing groups of such descriptions. The host MUST use its valid host access token obtained previously in UMA protocol step 1 to gain access to the API.
 </p>
-<p>Individual resource set descriptions are managed at URIs with this structure: "{reguri}/host/{hostid}/user/{userid}/resource/{resourceid}"
-</p>
-<p>Individual action descriptions are managed at URIs with this structure: "{reguri}/host/{hostid}/user/{userid}/action/{actionid}"
+<p>Individual resource set descriptions are managed at URIs with this structure: "{reguri}/host/{hostid}/resource_set/{resourcesetid}"
 </p>
 <p>The components of these URIs are defined as follows:</p>
 <blockquote class="text"><dl>
@@ -483,158 +475,38 @@ Resource Registration API</h3>
 <dt>{hostid}</dt>
 <dd>A registration area at the AM that is specific to this host. The host MUST use the OAuth client identifier it was assigned by this AM as its host identifier. If the host identifier does not match the host access token used at the host registration endpoint, the AM MUST report an HTTP 403 Forbidden error (see example below) and fail to act on the request.
 </dd>
-<dt>{userid}</dt>
-<dd>The portion of the host's registration area at this AM that is specific to this user, assigned during registration of the first description for this user. The host MAY use any identifier scheme to represent each of its users uniquely, but for privacy, it is RECOMMENDED that the host assign an identifier that is both specific to this AM and obscured with respect to any identifier by which the user may be publicly known at this host. The host MAY change a user's identifier at any time by deleting registered resources under one identifier and re-registering them under another.
-</dd>
-<dt>{actionid}</dt>
-<dd>An identifier for an action description, assigned during initial registration of this description. Without a specific action identifier path component, the URI applies to the set of action descriptions already registered. The identifier has meaning only to the host.
-</dd>
-<dt>{resourceid}</dt>
-<dd>An identifier for a resource set description, assigned during initial registration of this description. Without a specific resource identifier path component, the URI applies to the set of resource set descriptions already registered. The identifier has meaning only to the host. The host MAY use any identifier scheme to represent each resource set uniquely for each user, including using a URL-formatted string that corresponds directly to a URL that can be used by authorized parties to retrieve the resource. However, for privacy, it is RECOMMENDED that the host assign an identifier that is obscured with respect to any human-readable resource set label used at this host.
+<dt>{resourcesetid}</dt>
+<dd>An identifier for a resource set description. The identifier MUST match the "_id" parameter value in the description itself. Without a specific resource identifier path component, the URI applies to the set of resource set descriptions already registered. The identifier has meaning only to the host, except insofar as the AM is able to map this resource set description to a particular user by virtue of the particular host access token used to access the resource registration API. The host MAY use any identifier scheme to represent each resource set uniquely for each user. However, for privacy, it is RECOMMENDED that the host assign an identifier that is obscured with respect to any human-readable resource set label used at this host.
 </dd>
 </dl></blockquote>
 
-<p>The host MUST register at least action description and one resource set description (with a valid referenced {actionid}).
-</p>
 <p>Following is a summary of supported registration API operations. Each is defined in its own section below. All other methods are unsupported.</p>
 <ul class="text">
-<li>Create action description: PUT /host/{hostid}/user/{userid}/action/{actionid}
+<li>Create resource set description: PUT /host/{hostid}/resource_set/{resourcesetid}
 </li>
-<li>Read action description: GET /host/{hostid}/user/{userid}/action/{actionid}
+<li>Read resource set description: GET /host/{hostid}/resource_set/{resourcesetid}
 </li>
-<li>Update action description: PUT /host/{hostid}/user/{userid}/action/{actionid}
+<li>Update resource set description: PUT /host/{hostid}/resource_set/{resourcesetid}
 </li>
-<li>Delete action description: DELETE /host/{hostid}/user/{userid}/action/{actionid}
+<li>Delete resource set description: DELETE /host/{hostid}/resource_set/{resourcesetid}
 </li>
-<li>List action descriptions: GET /host/{hostid}user/{userid}/action/
-</li>
-<li>Create resource set description: PUT /host/{hostid}/user/{userid}/resource/{resourceid}
-</li>
-<li>Read resource set description: GET /host/{hostid}/user/{userid}/resource/{resourceid}
-</li>
-<li>Update resource set description: PUT /host/{hostid}/user/{userid}/resource/{resourceid}
-</li>
-<li>Delete resource set description: DELETE /host/{hostid}/user/{userid}/resource/{resourceid}
-</li>
-<li>List resource set descriptions: GET /host/{hostid}user/{userid}/resource/
+<li>List resource set descriptions: GET /host/{hostid}/resource_set/
 </li>
 </ul>
 
-<p>The AM MUST respond to host requests using HTTP methods other than those listed with an HTTP 403 Forbidden error and fail to act on the request.
+<p>The AM MUST respond to host requests using HTTP methods other than those listed with an HTTP 403 Forbidden error and MUST fail to act on the request.
 </p>
 <p>HTTP response (unsupported method or host ID not matching the presented host access token):
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 403 Forbidden
 ...
 
 (Body provides user-readable explanation of the error.)</pre></div>
-<a name="anchor8"></a><br /><hr />
+<a name="create-resource-set"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.1"></a><h3>5.1.&nbsp;
-Create Action Description</h3>
-
-<p>Adds a new action description using the PUT method. The host assigns a unique identifier to the action. The host is free to use its own methods of identifying and describing actions; the AM MUST treat them as opaque for the purpose of authorizing access.
-</p>
-<p>HTTP request:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/{hostid}/user/{userid}/action/{actionid}
-Content-Type: application/json
-...
-
-(Body contains the JSON representation of the action description to be created.)</pre></div>
-<p>HTTP response (success):
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 201 Created
-Content-Type: application/json
-Location: (URL of the created action, same as that which was PUT.)
-...</pre></div>
-<a name="anchor9"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.2"></a><h3>5.2.&nbsp;
-Read Action Description</h3>
-
-<p>Reads a previously registered action description using the GET method.
-</p>
-<p>HTTP request:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>GET /host/{hostid}/user/{userid}/action/{actionid} HTTP/1.1
-...</pre></div>
-<p>HTTP response (success):
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 200 OK
-Content-Type: application/json
-ETag: (entity tag of the action artifact)
-...
-
-(Body contains JSON representation of action description.)</pre></div>
-<p>HTTP response (not found):
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 404 Not Found
-...
-
-(Body provides user-readable explanation of the error.)</pre></div>
-<a name="anchor10"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.3"></a><h3>5.3.&nbsp;
-Update Action Description</h3>
-
-<p>Updates a previously registered action description using the PUT method.
-</p>
-<p>HTTP request:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/{hostid}/user/{userid}/action/{actionid}
-Content-Type: application/json
-If-Match: (entity tag of the action if operation is to be idempotent)
-...
-
-(Body contains JSON representation of action description to be updated.)</pre></div>
-<p>HTTP response (success):
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/{hostid}/user/{userid}/action/{actionid}
-Content-Type: application/json
-If-Match: (entity tag of the action if operation is to be idempotent)
-...
-
-(Body contains JSON representation of action description to be updated.)</pre></div>
-<p>HTTP response (entity tag does not match):
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 412 Precondition failed
-...</pre></div>
-<a name="anchor11"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.4"></a><h3>5.4.&nbsp;
-Delete Action Description</h3>
-
-<p>Deletes a previously registered action description using the DELETE method.
-</p>
-<p>HTTP request:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>DELETE /host/{hostid}/user/{userid}/action/{actionid}
-If-Match: (entity tag of the action if operation is to be idempotent)
-...</pre></div>
-<p>HTTP response (success):
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 204 No content
-...</pre></div>
-<p>HTTP response (not found):
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>TP/1.1 404 Not Found
-...
-
-(The body provides user-readable explanation of the error.)</pre></div>
-<p>HTTP response (entity tag does not match):
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 412 Precondition failed
-...</pre></div>
-<a name="anchor12"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.5"></a><h3>5.5.&nbsp;
-List Action Descriptions</h3>
-
-<p>Lists all previously registered action descriptions for this user using the GET method. The list is in the form of a JSON array of {actionid} values.
-</p>
-<p>HTTP request:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>GET /host/{hostid}/user/{userid}/action/
-...</pre></div>
-<p>HTTP response:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 200 OK
-Content-Type: application/json
-...
-
-(Body contains JSON array of {actionid} values.)</pre></div>
-<a name="anchor13"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.6"></a><h3>5.6.&nbsp;
+<a name="rfc.section.6.1"></a><h3>6.1.&nbsp;
 Create Resource Set Description</h3>
 
-<p>Adds a new resource set description using the PUT method. The host assigns a unique identifier to the action. The host is free to use its own methods of identifying and describing resource sets; the AM MUST treat them as opaque for the purpose of authorizing access. On successfully registering a resource set, the host MUST use UMA mechanisms to limit access to any resources corresponding to this resource set, as defined in <a class='info' href='#draft-uma-core'>UMA<span> (</span><span class='info'>Scholz, C., &ldquo;UMA 1.0 Core Protocol,&rdquo; December&nbsp;2010.</span><span>)</span></a> [draft&#8209;uma&#8209;core]. @@Specify error to produce if referenced actions are incorrect?
+<p>Adds a new resource set description using the PUT method. The host assigns a unique identifier to the action. The host is free to use its own methods of identifying and describing resource sets; the AM MUST treat them as opaque for the purpose of authorizing access, other than associating them with the authorizing user represented by the host access token used to access the API. On successfully registering a resource set, the host MUST use UMA mechanisms to limit access to any resources corresponding to this resource set, as defined in <a class='info' href='#draft-uma-core'>UMA<span> (</span><span class='info'>Scholz, C., &ldquo;UMA 1.0 Core Protocol,&rdquo; December&nbsp;2010.</span><span>)</span></a> [draft&#8209;uma&#8209;core].
 </p>
 <p>HTTP request:
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/{hostid}/user/{userid}/resource/{resourceid}
@@ -647,9 +519,9 @@ Content-Type: application/json
 Content-Type: application/json
 Location: (URL of the created resource, same as that which was PUT.)
 ...</pre></div>
-<a name="anchor14"></a><br /><hr />
+<a name="read-resource-set"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.7"></a><h3>5.7.&nbsp;
+<a name="rfc.section.6.2"></a><h3>6.2.&nbsp;
 Read Resource Set Description</h3>
 
 <p>Reads a previously registered resource set description using the GET method.
@@ -669,12 +541,12 @@ ETag: (entity tag of the resource artifact)
 ...
 
 (Body provides user-readable explanation of the error.)</pre></div>
-<a name="anchor15"></a><br /><hr />
+<a name="update-resource-set"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.8"></a><h3>5.8.&nbsp;
+<a name="rfc.section.6.3"></a><h3>6.3.&nbsp;
 Update Resource Set Description</h3>
 
-<p>Updates a previously registered resource set description using the PUT method. @@Specify error to produce if referenced actions are incorrect?
+<p>Updates a previously registered resource set description using the PUT method.
 </p>
 <p>HTTP request:
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>PUT /host/{hostid}/user/{userid}/resource/{resourceid}
@@ -689,9 +561,9 @@ If-Match: (entity tag of the resource if operation is to be idempotent)
 <p>HTTP response (entity tag does not match):
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 412 Precondition failed
 ...</pre></div>
-<a name="anchor16"></a><br /><hr />
+<a name="delete-resource-set"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.9"></a><h3>5.9.&nbsp;
+<a name="rfc.section.6.4"></a><h3>6.4.&nbsp;
 Delete Resource Set Description</h3>
 
 <p>Deletes a previously registered resource set description using the DELETE method.
@@ -711,60 +583,64 @@ If-Match: (entity tag of the resource if operation to be idempotent)
 <p>HTTP response (entity tag does not match):
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 412 Precondition failed
 ...</pre></div>
-<a name="anchor17"></a><br /><hr />
+<a name="list-resource-sets"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.10"></a><h3>5.10.&nbsp;
+<a name="rfc.section.6.5"></a><h3>6.5.&nbsp;
 List Resource Set Descriptions</h3>
 
-<p>Lists all previously registered resource set descriptions for this user using the GET method. The list is in the form of a JSON array of {resourceid} values.
+<p>Lists all previously registered resource set identifiers for this user using the GET method. The list is in the form of a JSON array of {resourcesetid} values.
 </p>
 <p>HTTP request:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>GET /host/{hostid}/user/{userid}/resource/
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>GET /host/{hostid}/resource_set/
 ...</pre></div>
 <p>HTTP response:
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>HTTP/1.1 200 OK
 Content-Type: application/json
 ...
 
-(Body contains JSON array of {resourceid} values.)</pre></div>
-<a name="anchor18"></a><br /><hr />
+(Body contains JSON array of {resourcesetid} values.)</pre></div>
+<a name="anchor7"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.6"></a><h3>6.&nbsp;
+<a name="rfc.section.7"></a><h3>7.&nbsp;
 Security Considerations</h3>
 
 <p>This specification relies mainly on OAuth security mechanisms for protecting the host registration endpoint at the AM so that only a properly authorized host can access it on behalf of the intended user. For example, the host needs to use a valid host access token issued through a user authorization process at the endpoint, and the interaction should take place over TLS. It is expected that the host will protect its client secret (if it was issued one) and will protect its host access token, particularly if used in "bearer token" fashion.
 </p>
 <p>In addition, this specification dictates a binding between the host access token and the host-specific registration area on the AM to prevent a host from interacting with a registration area not its own.
 </p>
-<a name="anchor19"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.7"></a><h3>7.&nbsp;
-Privacy Considerations</h3>
-
-<p>The AM comes to be in possession of information (such as names and icons) that may reveal information about the user, which the AM's trust relationship with the host is assumed to accommodate. However, the requester is a less-trusted party (in fact, entirely untrustworthy until it acquires a requester access token in UMA protocol step 2). This specification recommends obscuring user identifiers and resource set identifiers in order to avoid leaking personally identifiable information to requesters through the "scope" mechanism.
-</p>
-<a name="anchor20"></a><br /><hr />
+<a name="anchor8"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.8"></a><h3>8.&nbsp;
+Privacy Considerations</h3>
+
+<p>The AM comes to be in possession of information (such as names and icons) that may reveal information about the user, which the AM's trust relationship with the host is assumed to accommodate. However, the requester is a less-trusted party (in fact, entirely untrustworthy until it acquires a requester access token in UMA protocol step 2). This specification recommends obscuring resource set identifiers in order to avoid leaking personally identifiable information to requesters through the "scope" mechanism.
+</p>
+<a name="anchor9"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9"></a><h3>9.&nbsp;
 TODOs</h3>
 
 <p></p>
 <ul class="text">
+<li>Isn't it the case (see <a class='info' href='#resource-set-desc'>Section&nbsp;5<span> (</span><span class='info'>Resource Set Description</span><span>)</span></a>) that resource set IDs now MUST be unique across the whole host at this AM, such that we should REQUIRE this and not just that it be unique across this user at this host? (It's still a SHOULD that the ID be unique across this host for any AM.)
+</li>
+<li>In <a class='info' href='#action-desc'>Section&nbsp;4<span> (</span><span class='info'>Action Description</span><span>)</span></a>, should the action description have an "_id" parameter or a normal "id" parameter so that the URI path component that must match the ID can be human-readable ("view") vs. machine-assigned gobbledygook?
+</li>
+<li>In <a class='info' href='#action-desc'>Section&nbsp;4<span> (</span><span class='info'>Action Description</span><span>)</span></a>, are the new caching/refreshing rules for action description retrieval okay?
+</li>
+<li>Should the {hostid} component instead be a pseudonym assigned by the AM (during or after OAuth client ID provisioning)? Check this throughout the scoped-access spec progress.
+</li>
+<li>In <a class='info' href='#create-resource-set'>Section&nbsp;6.1<span> (</span><span class='info'>Create Resource Set Description</span><span>)</span></a> and <a class='info' href='#update-resource-set'>Section&nbsp;6.3<span> (</span><span class='info'>Update Resource Set Description</span><span>)</span></a>, specify error to produce if referenced actions can't be retrieved or are incorrectly formatted.
+</li>
+<li>Give example of what a list of resource set IDs looks like in <a class='info' href='#list-resource-sets'>Section&nbsp;6.5<span> (</span><span class='info'>List Resource Set Descriptions</span><span>)</span></a>.
+</li>
 <li>Consider the question of i18n of resource set and action "name" strings in addition to the extension-parameter mechanism.
-</li>
-<li>Would implementers expect the "list all" methods to return just a list of IDs, or the whole set of structures? If so, do this through a query parameter? E.g., "?mode={short|verbose}"
-</li>
-<li>Should resource set descriptions list action identifiers, as currently specified, or full action description URLs?
-</li>
-<li>Should it be possible for a host to tell an AM that it uses some standard set of actions, indicating them by reference, rather than providing descriptions of its supported actions by value?
-</li>
-<li>Reconsider the issue of including the ID in-band (possibly with the magic "_id" parameter) as well as out-of-band - given that the host creates these resources at the AM, can this be spec'd properly?
 </li>
 </ul>
 
-<a name="anchor21"></a><br /><hr />
+<a name="anchor10"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9"></a><h3>9.&nbsp;
+<a name="rfc.section.10"></a><h3>10.&nbsp;
 Acknowledgments</h3>
 
 <p></p>
@@ -773,10 +649,30 @@ Acknowledgments</h3>
 </li>
 </ul>
 
-<a name="anchor22"></a><br /><hr />
+<a name="anchor11"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.10"></a><h3>10.&nbsp;
+<a name="rfc.section.11"></a><h3>11.&nbsp;
 Document History</h3>
+
+<p>Changes in 6 Jan 2011 version:</p>
+<ul class="text">
+<li>Removed action-related API methods.
+</li>
+<li>Revised Example section to take into account the new "passive" way of declaring actions.
+</li>
+<li>Added "_id" parameters.
+</li>
+<li>Changed "resource" to "resource set", "{resourcesetid}, or "resource_set" as appropriate throughout.
+</li>
+<li>Removed user-specific path component of the registration URI.
+</li>
+<li>Allowed "X-" in addition to "x-" for extension parameters.
+</li>
+<li>Broke out the two descriptions into their own sections.
+</li>
+<li>A bit of editorial cleanup all over.
+</li>
+</ul>
 
 <p>Changes in 30 Dec 2010 version:</p>
 <ul class="text">
@@ -796,7 +692,7 @@ Document History</h3>
 
 <a name="rfc.references1"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<h3>11.&nbsp;Normative References</h3>
+<h3>12.&nbsp;Normative References</h3>
 <table width="99%" border="0">
 <tr><td class="author-text" valign="top"><a name="RFC2119">[RFC2119]</a></td>
 <td class="author-text">Bradner, &ldquo;<a href="http://www.ietf.org/rfc/rfc2119.txt">Key words for use in RFCs to Indicate Requirement Levels</a>,&rdquo; March&nbsp;1997.</td></tr>
