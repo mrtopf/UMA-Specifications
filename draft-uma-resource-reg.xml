@@ -54,14 +54,14 @@
     </author>
 
     <author fullname="Paul Bryan" initials="P" surname="Bryan">
-      <organization>P. Bryan Consulting</organization>
+      <organization>ForgeRock</organization>
 
       <address>
         <email>email@pbryan.net</email>
       </address>
     </author>
 
-    <date day="7" month="January" year="2011" />
+    <date day="20" month="February" year="2011" />
 
     <abstract>
       <t>This specification defines the resource registration protocol for
@@ -186,17 +186,17 @@
             requester to convey information directly, privacy considerations
             come into play. (Solved by the scoped-access specification.)</t>
 
-            <t>The host needs to be able to validate that a requester's access
-            attempt in step 3, accompanied by an access token, matches the
-            resource set and action set for which that access token was
-            granted. (Solved by the scoped-access specification.)</t>
+            <t>"The host needs to be able to validate that a requester's
+            access attempt in step 3, accompanied by an access token, matches
+            a resource set and action associated with that access token.
+            (Solved by the scoped-access specification.)</t>
 
-            <t>The AM therefore needs to associate each requester access token
-            with a resource set and action set. (Solved by the core protocol
-            specification. Currently it defines a run-time method for the host
-            to ask the AM to confirm this match. An alternative solution that
-            meets the requirement would be for the access token to securely
-            contain this information.)</t>
+            <t>The AM therefore needs to make an association between requester
+            access tokens and resource sets/actions. (Solved by the core
+            protocol specification. Currently it defines a run-time method for
+            the host to ask the AM to confirm this match. An alternative
+            solution that meets the requirement would be for the access token
+            to securely contain this information.)</t>
 
             <t>The requester needs to know what actions are possible on the
             resource it is trying to access. (This requirement is considered
@@ -204,18 +204,6 @@
             documentation will pick up the slack.)</t>
           </list></t>
       </section>
-    </section>
-
-    <section title="Prerequisites">
-      <t>In order for a host to be able to register resource information with
-      an AM it needs to fulfill the following prerequisites:<list
-          style="symbols">
-          <t>The host has obtained a host access token from the AM as
-          explained in UMA core protocol step 1.</t>
-
-          <t>The host has obtained the URI of the registration API endpoint as
-          part of the AM's metadata as described in UMA protocol step 1.</t>
-        </list></t>
     </section>
 
     <section title="Example">
@@ -360,6 +348,18 @@ Content-Type: application/json
       matches its own.</t>
     </section>
 
+    <section title="Prerequisites">
+      <t>In order for a host to be able to register resource information with
+      an AM it needs to fulfill the following prerequisites:<list
+          style="symbols">
+          <t>The host has obtained a host access token from the AM as
+          explained in UMA core protocol step 1.</t>
+
+          <t>The host has obtained the URI of the registration API endpoint as
+          part of the AM's metadata as described in UMA protocol step 1.</t>
+        </list></t>
+    </section>
+
     <section anchor="action-desc" title="Action Description">
       <t>The host defines an action that is available for use with resources
       it manages in an action description encoded in <xref format="default"
@@ -390,8 +390,8 @@ Content-Type: application/json
 
       <figure>
         <preamble>For example, this description characterizes an action that
-        involves reading or viewing resources (vs. creating them or edit them
-        in some fashion):</preamble>
+        involves reading or viewing resources (vs. creating them or editing
+        them in some fashion):</preamble>
 
         <artwork><![CDATA[{
         "action":
@@ -418,13 +418,21 @@ Content-Type: application/json
       <t>A resource set description is an object with the name "resource_set"
       and with the following parameters:<list style="hanging">
           <t hangText="_id">REQUIRED. A string that uniquely identifies the
-          resource set across all resource sets belonging to this user. It is
-          RECOMMENDED that this identifier be unique across all users'
-          resource sets at this host. This identifier MUST match the resource
-          set identifier path component of the URI used to manage this
-          description in the resource registration API. (Typically this
-          parameter's value is populated automatically in order to ensure the
-          required uniqueness and matching.)</t>
+          resource set. The resource set identifier has meaning only to the
+          host, except insofar as the AM is able to map this resource set
+          description to a particular user by virtue of the particular host
+          access token used to access the resource registration API. The host
+          MAY use any identifier scheme to represent resource sets, for
+          example, making its identifiers unique across all users of this host
+          or allowing for the sharing of resource set identifiers among users.
+          However, for privacy reasons, it is RECOMMENDED that the host assign
+          an identifier that is obscured with respect to any human-readable
+          resource set label used at this host. Further, this identifier MUST
+          match the resource set identifier path component of the URI used to
+          manage this description in the resource registration API; see <xref
+          target="reg-api"></xref> for more information. (Typically this
+          matching is achieved through automatically populating the parameter
+          value on initial registration of the description.)</t>
 
           <t hangText="name">REQUIRED. A human-readable string describing a
           set of one or more resources. The AM SHOULD use the name in its user
@@ -454,7 +462,7 @@ Content-Type: application/json
             {
             "name": "Photo album",
             "icon_uri": "http://www.example.com/icons/flower",
-           "actions":
+            "actions":
                         ["http://photoz.example.com/dev/actions/view",
                         "http://photoz.example.com/dev/actions/all"]
         }
@@ -501,21 +509,15 @@ Content-Type: application/json
 
           <t hangText="{resourcesetid}">An identifier for a resource set
           description. The identifier MUST match the "_id" parameter value in
-          the description itself. Without a specific resource identifier path
-          component, the URI applies to the set of resource set descriptions
-          already registered. The identifier has meaning only to the host,
-          except insofar as the AM is able to map this resource set
-          description to a particular user by virtue of the particular host
-          access token used to access the resource registration API. The host
-          MAY use any identifier scheme to represent each resource set
-          uniquely for each user. However, for privacy, it is RECOMMENDED that
-          the host assign an identifier that is obscured with respect to any
-          human-readable resource set label used at this host.</t>
+          the description itself.</t>
         </list></t>
 
-      <t>Following is a summary of supported registration API operations. Each
-      is defined in its own section below. All other methods are
-      unsupported.<list style="symbols">
+      <t>Without a specific resource identifier path component, the URI
+      applies to the set of resource set descriptions already registered.</t>
+
+      <t>Following is a summary of the five registration API operations the AM
+      is REQUIRED to support. Each is defined in its own section below. All
+      other methods are unsupported.<list style="symbols">
           <t>Create resource set description: PUT
           /host/{hostid}/resource_set/{resourcesetid}</t>
 
@@ -532,9 +534,9 @@ Content-Type: application/json
           /host/{hostid}/resource_set/</t>
         </list></t>
 
-      <t>The AM MUST respond to host requests using HTTP methods other than
-      those listed with an HTTP 403 Forbidden error and MUST fail to act on
-      the request.</t>
+      <t>The AM MUST respond to host requests using unsupported HTTP methods
+      with an HTTP 403 Forbidden error and MUST fail to act on the
+      request.</t>
 
       <figure>
         <preamble>HTTP response (unsupported method or host ID not matching
@@ -734,28 +736,15 @@ Content-Type: application/json
 
     <section title="TODOs">
       <t><list style="symbols">
-          <t>Isn't it the case (see <xref target="resource-set-desc"></xref>)
-          that resource set IDs now MUST be unique across the whole host at
-          this AM, such that we should REQUIRE this and not just that it be
-          unique across this user at this host? (It's still a SHOULD that the
-          ID be unique across this host for any AM.)</t>
-
           <t>In <xref target="action-desc"></xref>, should the action
           description have an "_id" parameter or a normal "id" parameter so
           that the URI path component that must match the ID can be
           human-readable ("view") vs. machine-assigned gobbledygook?</t>
 
-          <t>In <xref target="action-desc"></xref>, are the new
-          caching/refreshing rules for action description retrieval okay?</t>
-
           <t>Should the {hostid} component instead be a pseudonym assigned by
-          the AM (during or after OAuth client ID provisioning)? Check this
+          the AM (during or after OAuth client ID provisioning) to allow for
+          hosts' client IDs to be a string like "anonymous"? Check this
           throughout the scoped-access spec progress.</t>
-
-          <t>In <xref target="create-resource-set"></xref> and <xref
-          target="update-resource-set"></xref>, specify error to produce if
-          referenced actions can't be retrieved or are incorrectly
-          formatted.</t>
 
           <t>Give example of what a list of resource set IDs looks like in
           <xref target="list-resource-sets"></xref>.</t>
@@ -772,6 +761,21 @@ Content-Type: application/json
     </section>
 
     <section title="Document History">
+      <t>Changes in 20 Feb 2011 version:<list style="symbols">
+          <t>Cleaned up nits and minor wording revisions noted in comments
+          sent to the mailing list on 13 Feb 2011 (<eref
+          target="http://groups.google.com/group/kantara-initiative-uma-wg/browse_frm/thread/f498afdb5bfe7f60"></eref>).</t>
+
+          <t>Revised the discussion of resource set identifier uniqueness and
+          redistributed some information about this identifier between
+          Sections 5 and 6.</t>
+
+          <t>Switched the positions of the Example and Prerequisites
+          sections.</t>
+
+          <t>Revised TODOs accordingly.</t>
+        </list></t>
+
       <t>Changes in 6 Jan 2011 version:<list style="symbols">
           <t>Removed action-related API methods.</t>
 
